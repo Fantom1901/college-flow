@@ -1,39 +1,143 @@
-# 🧭 Nixa Duty | Developer Navigation Table v2.0
+# 🧭 Nixa Duty | Developer Navigation Table v1.0
 
 ## 1. Назначение документа
 
-Эта таблица служит **главным навигатором для всей команды разработки**, показывая, какие спецификации должны изучить каждый участник.  
-Файл обеспечивает быстрый доступ к Markdown-файлам на GitHub и минимизирует вопросы «где что лежит».  
+Этот документ является **центральным навигатором для команды разработки**.  
+Он показывает, какие спецификации должны изучить участники проекта, и обеспечивает быстрый доступ к Markdown-файлам на GitHub.  
 
-Все ссылки актуальны и ведут в папку `docs` вашего репозитория.
-
----
-
-## 2. Таблица навигации
-
-| Роль            | Спецификация                       | Ссылка на GitHub                                                                                                             |
-|-----------------|------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
-| **Backend** 🖥️ | Duty Lifecycle                     | [duty-lifecycle-spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/duty-lifecycle-spec.md)                   |
-| **Backend** 🖥️ | Schedule Generation                | [schedule-generation-spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/schedule-generation-spec.md)         |
-| **Backend** 🖥️ | Group Membership Policy            | [group-membership-policy.md](https://github.com/Fantom1901/college-flow/blob/main/docs/group-membership-policy.md)           |
-| **Backend** 🖥️ | API Specification                  | [api_spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/api_spec.md)                                         |
-| **Backend** 🖥️ | Backend Specification              | [backend-spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/backend-spec.md)                                 |
-| **Backend** 🖥️ | Database Schema                    | [db-schema-spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/db-schema-spec.md)                             |
-| **Frontend** ⚡  | Frontend State Contract            | [frontend-state-contract.md](https://github.com/Fantom1901/college-flow/blob/main/docs/frontend-state-contract.md)           |
-| **Frontend** ⚡  | Telegram UI Integration            | [telegram-ui-integration-spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/telegram-ui-integration-spec.md) |
-| **Frontend** ⚡  | User Experience (UX) Specification | [user-experience-spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/user-experience-spec.md)                 |
-| **Frontend** ⚡  | Frontend Technical Specification   | [frontend-spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/frontend-spec.md)                               |
-| **Designer** 🎨 | User Experience (UX) Specification | [user-experience-spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/user-experience-spec.md)                 |
-| **Designer** 🎨 | UI/UX Design Specification         | [designer_spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/designer_spec.md)                               |
-| **Designer** 🎨 | Frontend Technical Specification   | [frontend-spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/frontend-spec.md)                               |
+> Все ссылки актуальны и ведут в папку `docs` репозитория [College Flow](https://github.com/Fantom1901/college-flow).
 
 ---
 
-## 3. Рекомендации по использованию
+## 2. Быстрая таблица навигации с номерами
+
+| №   | Роль            | Спецификация                       | Ссылка на GitHub                                                                                                             |
+|-----|-----------------|------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
+| 1.1 | **Backend** 🖥️ | Duty Lifecycle                     | [duty-lifecycle-spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/duty-lifecycle-spec.md)                   |
+| 1.2 | **Backend** 🖥️ | Schedule Generation                | [schedule-generation-spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/schedule-generation-spec.md)         |
+| 1.3 | **Backend** 🖥️ | Group Membership Policy            | [group-membership-policy.md](https://github.com/Fantom1901/college-flow/blob/main/docs/group-membership-policy.md)           |
+| 1.4 | **Backend** 🖥️ | API Specification                  | [api_spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/api_spec.md)                                         |
+| 1.5 | **Backend** 🖥️ | Backend Specification              | [backend-spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/backend-spec.md)                                 |
+| 1.6 | **Backend** 🖥️ | Database Schema                    | [db-schema-spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/db-schema-spec.md)                             |
+| 2.1 | **Frontend** ⚡  | Frontend State Contract            | [frontend-state-contract.md](https://github.com/Fantom1901/college-flow/blob/main/docs/frontend-state-contract.md)           |
+| 2.2 | **Frontend** ⚡  | Telegram UI Integration            | [telegram-ui-integration-spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/telegram-ui-integration-spec.md) |
+| 2.3 | **Frontend** ⚡  | User Experience (UX) Specification | [user-experience-spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/user-experience-spec.md)                 |
+| 2.4 | **Frontend** ⚡  | Frontend Technical Specification   | [frontend-spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/frontend-spec.md)                               |
+| 3.1 | **Designer** 🎨 | User Experience (UX) Specification | [user-experience-spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/user-experience-spec.md)                 |
+| 3.2 | **Designer** 🎨 | UI/UX Design Specification         | [designer_spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/designer_spec.md)                               |
+| 3.3 | **Designer** 🎨 | Frontend Technical Specification   | [frontend-spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/frontend-spec.md)                               |
+
+---
+
+## 3. Подробное описание спецификаций
+
+### 1. Backend 🖥️
+
+**1.1 Duty Lifecycle**  
+- **Что:** Жизненный цикл дежурства (Duty) в системе.  
+- **Включает:**  
+  - Состояния: `pending`, `done`, `skipped`, `reassigned`  
+  - Допустимые переходы между состояниями  
+  - Побочные эффекты (например, изменение веса пользователя)  
+- **Зачем:** Backend точно знает, что разрешено с дежурством, frontend только отображает.
+
+**1.2 Schedule Generation**  
+- **Что:** Правила и алгоритмы генерации расписания дежурств.  
+- **Включает:**  
+  - Алгоритмы: **Dynamic Weight** и **Static List**  
+  - Горизонт планирования (скользящее окно)  
+  - Атомарность и обработку ошибок  
+- **Зачем:** Гарантирует, что расписание корректно формируется и отображается.
+
+**1.3 Group Membership Policy**  
+- **Что:** Управление составом группы.  
+- **Включает:**  
+  - Добавление/удаление студентов  
+  - Смена ролей (Admin, Moder, User)  
+  - Деактивацию пользователей  
+- **Зачем:** Backend сохраняет целостность данных и корректность алгоритмов.
+
+**1.4 API Specification**  
+- **Что:** Описание всех API-эндпоинтов.  
+- **Включает:**  
+  - Формат запросов/ответов  
+  - Авторизация и коды ошибок  
+- **Зачем:** Фронтенд и бэкенд безопасно обмениваются данными.
+
+**1.5 Backend Specification**  
+- **Что:** Общая документация по backend.  
+- **Включает:**  
+  - Архитектуру, стек технологий, RBAC  
+  - Алгоритмы и бизнес-логику  
+- **Зачем:** Чтобы вся команда backend имела единое понимание проекта.
+
+**1.6 Database Schema**  
+- **Что:** Схема базы данных и связи таблиц.  
+- **Включает:**  
+  - Таблицы, поля, индексы, триггеры  
+- **Зачем:** Backend корректно работает с данными, frontend получает актуальные значения.
+
+---
+
+### 2. Frontend ⚡
+
+**2.1 Frontend State Contract**  
+- **Что:** Контракт frontend ↔ backend.  
+- **Включает:**  
+  - Какие данные приходят  
+  - Как их отображать  
+  - Какие действия разрешены  
+- **Зачем:** Frontend не изменяет бизнес-логику, только отображает состояние.
+
+**2.2 Telegram UI Integration**  
+- **Что:** Интеграция с Telegram Mini App.  
+- **Включает:**  
+  - MainButton, Haptic Feedback  
+  - Адаптацию к теме: `light/dark`  
+- **Зачем:** UI нативен для Telegram и UX правильный.
+
+**2.3 User Experience (UX) Specification**  
+- **Что:** Полный путь пользователя.  
+- **Включает:**  
+  - Onboarding, ежедневное использование  
+  - Механика обмена дежурствами  
+  - Отображение посещаемости  
+- **Зачем:** Обеспечить интуитивное и прозрачное взаимодействие.
+
+**2.4 Frontend Technical Specification**  
+- **Что:** Инструкции по фронтенду.  
+- **Включает:**  
+  - Компоненты React  
+  - Подключение Telegram SDK  
+  - Tailwind CSS для стилизации  
+- **Зачем:** Удобная и поддерживаемая архитектура фронтенда.
+
+---
+
+### 3. Designer 🎨
+
+**3.1 User Experience (UX) Specification**  
+- **Что:** То же, что и для фронтенда.  
+- **Зачем:** Дизайнер понимает поведение пользователей.
+
+**3.2 UI/UX Design Specification**  
+- **Что:** Макеты экранов, кнопки, цвета, использование Telegram UI Kit.  
+- **Зачем:** Дизайн выглядит профессионально, соответствует платформе и UX.
+
+**3.3 Frontend Technical Specification**  
+- **Что:** Ограничения дизайна с учетом фронтенда.  
+- **Включает:** размеры компонентов, адаптивность, цвета, темы Telegram.  
+- **Зачем:** Макеты легко реализуемы фронтендом.
+
+---
+
+## 4. Рекомендации по использованию
 
 - Открывать файлы напрямую по ссылкам на GitHub.  
-- Начинать изучение с UX и жизненного цикла Duty.  
-- Backend и Frontend разработчики должны сверяться с API и DB Schema.  
-- Дизайнер должен учитывать ограничения фронтенда и правила Telegram Mini App.  
+- Начинать изучение с UX и Duty Lifecycle.  
+- Backend и Frontend сверяются с API и DB Schema.  
+- Дизайнер учитывает ограничения фронтенда и правила Telegram Mini App.  
 
-> Этот файл является **центральной точкой навигации** для всей команды. Все изменения в спецификациях должны отражаться здесь.
+> Этот файл является **центральной точкой навигации** для всей команды.  
+> Все изменения в спецификациях должны отражаться здесь.
+> Если возникают какие-то вопросы, идеи, предложения, обращаться к Lead Developer
