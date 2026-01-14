@@ -25,7 +25,7 @@
 | 2.4 | **Frontend** ⚡  | Frontend Technical Specification   | [frontend-spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/frontend-spec.md)                               |
 | 3.1 | **Designer** 🎨 | User Experience (UX) Specification | [user-experience-spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/user-experience-spec.md)                 |
 | 3.2 | **Designer** 🎨 | UI/UX Design Specification         | [designer_spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/designer_spec.md)                               |
-| 3.3 | **Designer** 🎨 | Frontend Technical Specification   | [frontend-spec.md](https://github.com/Fantom1901/college-flow/blob/main/docs/frontend-spec.md)                               |
+
 
 ---
 
