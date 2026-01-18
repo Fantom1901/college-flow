@@ -2,6 +2,7 @@ import uuid
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.invite import InviteLink
+from app.models.user import User
 
 async def create_invite(
   session: AsyncSession,
@@ -31,6 +32,19 @@ async def create_invite(
   session.add(invite)
   await session.commit()
   return new_code
+
+async def use_invite(session: AsyncSession, invite: InviteLink, tg_id: int, username: str):
+  new_user = User(
+    tg_id=tg_id,
+    username=username,
+    role_id=invite.role_id,
+  )
+  session.add(new_user)
+
+  invite.is_used = True
+
+  await session.commit()
+  return new_user
 
 async def get_invite_data(session: AsyncSession, code: str):
   """
