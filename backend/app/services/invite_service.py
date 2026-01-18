@@ -1,0 +1,45 @@
+import uuid
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.models.invite import InviteLink
+
+async def create_invite(
+  session: AsyncSession,
+  creator_id: int,
+  role_id: int,
+  group_id: int = None,
+) -> str:
+  """
+  Создаёт инвайт-код в базе и возвращает его.
+  :param session:
+  :param creator_id:
+  :param role_id:
+  :param group_id:
+  :return:
+  """
+
+  new_code = str(uuid.uuid4())
+
+  invite = InviteLink(
+    code = new_code,
+    role_id = role_id,
+    group_id = group_id,
+    created_by=creator_id,
+    is_used=False
+  )
+
+  session.add(invite)
+  await session.commit()
+  return new_code
+
+async def get_invite_data(session: AsyncSession, code: str):
+  """
+  Проверяет код и возвращает данные инвайта, если он виден
+  :param session:
+  :param code:
+  :return:
+  """
+
+  stmt = select(InviteLink).where(InviteLink.code == code, InviteLink.is_used == False)
+  result = await session.execute(stmt)
+  return result.scalar_one_or_none()
