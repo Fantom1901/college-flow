@@ -11,6 +11,8 @@ class InviteLink(Base):
 
   role_id: Mapped[int] = mapped_column(ForeignKey('role.id'), nullable=False)
   group_id:  Mapped[int | None] = mapped_column(ForeignKey('groups.id'), nullable=True)
+  student_id: Mapped[int] = mapped_column(ForeignKey('students.id'), nullable=True)
+  student: Mapped["Student"] = relationship("Student")
 
   is_used: Mapped[bool] = mapped_column(Boolean, default=False)
   created_by: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=True)
