@@ -1,15 +1,16 @@
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.core.database import Base
+from sqlalchemy import String
 
 class Student(Base):
   __tablename__ = 'students'
-
   id: Mapped[int] = mapped_column(primary_key=True)
 
-  user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), unique=True, nullable=False)
-
+  user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), unique=True, nullable=True)
   group_id: Mapped[int] = mapped_column(ForeignKey('groups.id'), nullable=False)
+
+  full_name: Mapped[str] = mapped_column(String(255), nullable=False)
 
   user: Mapped["User"] = relationship("User", back_populates="student_profile")
   group: Mapped["Group"] = relationship("Group", back_populates="students")
