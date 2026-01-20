@@ -36,7 +36,10 @@ async def cmd_start(message: types.Message, command: CommandObject, session):
         username=message.from_user.full_name or "Unknown"
     )
 
+    role_name = "Студент" if invite.role_id == 2 else "Пользователь"
+    group_name = invite.group.name if invite.group else "Неизвестная группа"
     await message.answer(
-        f"Регистрация успешна! Привет, {new_user.username}.\n"
-        f"Твоя роль: {invite.role_id} (id группы: {invite.group_id})"
+      f"Регистрация успешна! Привет, {new_user.username}.\n"
+      f"Вы привязаны к профилю студента в группе: {group_name}.\n"
+      f"Ваша роль: {role_name}"
     )

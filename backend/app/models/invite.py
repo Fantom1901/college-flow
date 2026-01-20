@@ -2,6 +2,7 @@ import uuid
 from sqlalchemy import String, ForeignKey, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.core.database import Base
+from app.models.group import Group
 
 class InviteLink(Base):
   __tablename__ = 'invite_links'
@@ -11,6 +12,7 @@ class InviteLink(Base):
 
   role_id: Mapped[int] = mapped_column(ForeignKey('role.id'), nullable=False)
   group_id:  Mapped[int | None] = mapped_column(ForeignKey('groups.id'), nullable=True)
+  group: Mapped["Group"] = relationship("Group")
   student_id: Mapped[int] = mapped_column(ForeignKey('students.id'), nullable=True)
   student: Mapped["Student"] = relationship("Student")
 

@@ -2,19 +2,22 @@ from pydantic import BaseModel
 from typing import List, Optional
 
 class UserShort(BaseModel):
-    username: Optional[str] = None
-    tg_id: int
+  id: int
+  username: Optional[str] = None
+  tg_id: Optional[int] = None
 
-    class Config:
-        from_attributes = True
+  class Config:
+    from_attributes = True
+
 
 class StudentInGroup(BaseModel):
-    id: int
-    user_id: int
-    user: UserShort
+  id: int
+  full_name: str
+  user_id: Optional[int] = None
+  user: Optional[UserShort] = None
 
-    class Config:
-        from_attributes = True
+  class Config:
+    from_attributes = True
 
 class GroupRead(BaseModel):
     id: int
