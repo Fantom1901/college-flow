@@ -6,6 +6,7 @@ from typing import Optional
 class User(Base):
   __tablename__ = "users"
 
+  full_name: Mapped[Optional[str]] = mapped_column(String(100))
   id: Mapped[int] = mapped_column(primary_key=True)
   tg_id: Mapped[int] = mapped_column(BigInteger, unique=True, index=True)
   username: Mapped[str | None] = mapped_column(String(32))
