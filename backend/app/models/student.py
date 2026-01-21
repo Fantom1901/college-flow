@@ -1,4 +1,6 @@
 from sqlalchemy import ForeignKey
+from enum import Enum as PyEnum
+from sqlalchemy import Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.core.database import Base
 from sqlalchemy import String
@@ -14,6 +16,8 @@ class Student(Base):
 
   user: Mapped["User"] = relationship("User", back_populates="student_profile")
   group: Mapped["Group"] = relationship("Group", back_populates="students")
+
+  weight: Mapped[int] =  mapped_column(default=0)
 
   def __repr__(self):
     return f"<Student user_id={self.user_id}, group_id={self.group_id}>"

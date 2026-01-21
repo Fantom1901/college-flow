@@ -1,6 +1,7 @@
 import uuid
-from sqlalchemy import String, ForeignKey, Boolean
+from sqlalchemy import String, ForeignKey, Boolean, Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from app.models.role import UserRole
 from app.core.database import Base
 from app.models.group import Group
 
@@ -10,7 +11,12 @@ class InviteLink(Base):
   id: Mapped[int] = mapped_column(primary_key=True)
   code: Mapped[str] = mapped_column(String(36), default=lambda: str(uuid.uuid4()), unique=True)
 
-  role_id: Mapped[int] = mapped_column(ForeignKey('role.id'), nullable=False)
+  role: Mapped[UserRole] = mapped_column(
+    Enum(UserRole),
+    default=UserRole.STUDENT,
+    nullable=False
+  )
+
   group_id:  Mapped[int | None] = mapped_column(ForeignKey('groups.id'), nullable=True)
   group: Mapped["Group"] = relationship("Group")
   student_id: Mapped[int] = mapped_column(ForeignKey('students.id'), nullable=True)

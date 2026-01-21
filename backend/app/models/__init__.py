@@ -1,8 +1,8 @@
-from .role import Role
 from .user import User
 from .group import Group
 from .student import Student
 from .invite import InviteLink
+from .role import UserRole
+from .duty import *
 
-# Это нужно, чтобы можно было удобно импортировать всё одной кучей
-__all__ = ["Role", "User", "Group", "Student", "InviteLink"]
+__all__ = ["User", "Group", "Student", "InviteLink", "UserRole", "DutySetting", DutyMechanism]

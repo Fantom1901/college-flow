@@ -1,0 +1,1194 @@
+--------------------------------------------------
+Файл: ./alembic/env.py
+--------------------------------------------------
+from logging.config import fileConfig
+
+from sqlalchemy import engine_from_config
+from sqlalchemy import pool
+
+from alembic import context
+
+from app.core.database import Base
+from app.models import __all__
+
+# this is the Alembic Config object, which provides
+# access to the values within the .ini file in use.
+config = context.config
+
+# Interpret the config file for Python logging.
+# This line sets up loggers basically.
+if config.config_file_name is not None:
+    fileConfig(config.config_file_name)
+
+# add your model's MetaData object here
+# for 'autogenerate' support
+# from myapp import mymodel
+# target_metadata = mymodel.Base.metadata
+target_metadata = Base.metadata
+
+# other values from the config, defined by the needs of env.py,
+# can be acquired:
+# my_important_option = config.get_main_option("my_important_option")
+# ... etc.
+
+
+def run_migrations_offline() -> None:
+    """Run migrations in 'offline' mode.
+
+    This configures the context with just a URL
+    and not an Engine, though an Engine is acceptable
+    here as well.  By skipping the Engine creation
+    we don't even need a DBAPI to be available.
+
+    Calls to context.execute() here emit the given string to the
+    script output.
+
+    """
+    url = config.get_main_option("sqlalchemy.url")
+    context.configure(
+        url=url,
+        target_metadata=target_metadata,
+        literal_binds=True,
+        dialect_opts={"paramstyle": "named"},
+    )
+
+    with context.begin_transaction():
+        context.run_migrations()
+
+
+def run_migrations_online() -> None:
+    """Run migrations in 'online' mode.
+
+    In this scenario we need to create an Engine
+    and associate a connection with the context.
+
+    """
+    connectable = engine_from_config(
+        config.get_section(config.config_ini_section, {}),
+        prefix="sqlalchemy.",
+        poolclass=pool.NullPool,
+    )
+
+    with connectable.connect() as connection:
+        context.configure(
+            connection=connection, target_metadata=target_metadata
+        )
+
+        with context.begin_transaction():
+            context.run_migrations()
+
+
+if context.is_offline_mode():
+    run_migrations_offline()
+else:
+    run_migrations_online()
+
+
+
+--------------------------------------------------
+Файл: ./alembic.ini
+--------------------------------------------------
+# A generic, single database configuration.
+
+[alembic]
+# path to migration scripts.
+# this is typically a path given in POSIX (e.g. forward slashes)
+# format, relative to the token %(here)s which refers to the location of this
+# ini file
+script_location = %(here)s/alembic
+
+# template used to generate migration file names; The default value is %%(rev)s_%%(slug)s
+# Uncomment the line below if you want the files to be prepended with date and time
+# see https://alembic.sqlalchemy.org/en/latest/tutorial.html#editing-the-ini-file
+# for all available tokens
+# file_template = %%(year)d_%%(month).2d_%%(day).2d_%%(hour).2d%%(minute).2d-%%(rev)s_%%(slug)s
+# Or organize into date-based subdirectories (requires recursive_version_locations = true)
+# file_template = %%(year)d/%%(month).2d/%%(day).2d_%%(hour).2d%%(minute).2d_%%(second).2d_%%(rev)s_%%(slug)s
+
+# sys.path path, will be prepended to sys.path if present.
+# defaults to the current working directory.  for multiple paths, the path separator
+# is defined by "path_separator" below.
+prepend_sys_path = .
+
+
+# timezone to use when rendering the date within the migration file
+# as well as the filename.
+# If specified, requires the tzdata library which can be installed by adding
+# `alembic[tz]` to the pip requirements.
+# string value is passed to ZoneInfo()
+# leave blank for localtime
+# timezone =
+
+# max length of characters to apply to the "slug" field
+# truncate_slug_length = 40
+
+# set to 'true' to run the environment during
+# the 'revision' command, regardless of autogenerate
+# revision_environment = false
+
+# set to 'true' to allow .pyc and .pyo files without
+# a source .py file to be detected as revisions in the
+# versions/ directory
+# sourceless = false
+
+# version location specification; This defaults
+# to <script_location>/versions.  When using multiple version
+# directories, initial revisions must be specified with --version-path.
+# The path separator used here should be the separator specified by "path_separator"
+# below.
+# version_locations = %(here)s/bar:%(here)s/bat:%(here)s/alembic/versions
+
+# path_separator; This indicates what character is used to split lists of file
+# paths, including version_locations and prepend_sys_path within configparser
+# files such as alembic.ini.
+# The default rendered in new alembic.ini files is "os", which uses os.pathsep
+# to provide os-dependent path splitting.
+#
+# Note that in order to support legacy alembic.ini files, this default does NOT
+# take place if path_separator is not present in alembic.ini.  If this
+# option is omitted entirely, fallback logic is as follows:
+#
+# 1. Parsing of the version_locations option falls back to using the legacy
+#    "version_path_separator" key, which if absent then falls back to the legacy
+#    behavior of splitting on spaces and/or commas.
+# 2. Parsing of the prepend_sys_path option falls back to the legacy
+#    behavior of splitting on spaces, commas, or colons.
+#
+# Valid values for path_separator are:
+#
+# path_separator = :
+# path_separator = ;
+# path_separator = space
+# path_separator = newline
+#
+# Use os.pathsep. Default configuration used for new projects.
+path_separator = os
+
+# set to 'true' to search source files recursively
+# in each "version_locations" directory
+# new in Alembic version 1.10
+# recursive_version_locations = false
+
+# the output encoding used when revision files
+# are written from script.py.mako
+# output_encoding = utf-8
+
+# database URL.  This is consumed by the user-maintained env.py script only.
+# other means of configuring database URLs may be customized within the env.py
+# file.
+sqlalchemy.url = sqlite:///./college_flow.db
+
+
+[post_write_hooks]
+# post_write_hooks defines scripts or Python functions that are run
+# on newly generated revision scripts.  See the documentation for further
+# detail and examples
+
+# format using "black" - use the console_scripts runner, against the "black" entrypoint
+# hooks = black
+# black.type = console_scripts
+# black.entrypoint = black
+# black.options = -l 79 REVISION_SCRIPT_FILENAME
+
+# lint with attempts to fix using "ruff" - use the module runner, against the "ruff" module
+# hooks = ruff
+# ruff.type = module
+# ruff.module = ruff
+# ruff.options = check --fix REVISION_SCRIPT_FILENAME
+
+# Alternatively, use the exec runner to execute a binary found on your PATH
+# hooks = ruff
+# ruff.type = exec
+# ruff.executable = ruff
+# ruff.options = check --fix REVISION_SCRIPT_FILENAME
+
+# Logging configuration.  This is also consumed by the user-maintained
+# env.py script only.
+[loggers]
+keys = root,sqlalchemy,alembic
+
+[handlers]
+keys = console
+
+[formatters]
+keys = generic
+
+[logger_root]
+level = WARNING
+handlers = console
+qualname =
+
+[logger_sqlalchemy]
+level = WARNING
+handlers =
+qualname = sqlalchemy.engine
+
+[logger_alembic]
+level = INFO
+handlers =
+qualname = alembic
+
+[handler_console]
+class = StreamHandler
+args = (sys.stderr,)
+level = NOTSET
+formatter = generic
+
+[formatter_generic]
+format = %(levelname)-5.5s [%(name)s] %(message)s
+datefmt = %H:%M:%S
+
+
+
+--------------------------------------------------
+Файл: ./alembic/README
+--------------------------------------------------
+Generic single-database configuration.
+
+
+--------------------------------------------------
+Файл: ./alembic/script.py.mako
+--------------------------------------------------
+"""${message}
+
+Revision ID: ${up_revision}
+Revises: ${down_revision | comma,n}
+Create Date: ${create_date}
+
+"""
+from typing import Sequence, Union
+
+from alembic import op
+import sqlalchemy as sa
+${imports if imports else ""}
+
+# revision identifiers, used by Alembic.
+revision: str = ${repr(up_revision)}
+down_revision: Union[str, Sequence[str], None] = ${repr(down_revision)}
+branch_labels: Union[str, Sequence[str], None] = ${repr(branch_labels)}
+depends_on: Union[str, Sequence[str], None] = ${repr(depends_on)}
+
+
+def upgrade() -> None:
+    """Upgrade schema."""
+    ${upgrades if upgrades else "pass"}
+
+
+def downgrade() -> None:
+    """Downgrade schema."""
+    ${downgrades if downgrades else "pass"}
+
+
+
+--------------------------------------------------
+Файл: ./alembic/versions/6672d7fe9e4f_initial_schema_with_proper_roles.py
+--------------------------------------------------
+"""initial_schema_with_proper_roles
+
+Revision ID: 6672d7fe9e4f
+Revises:
+Create Date: 2026-01-21 14:36:48.936909
+
+"""
+from typing import Sequence, Union
+
+from alembic import op
+import sqlalchemy as sa
+
+
+# revision identifiers, used by Alembic.
+revision: str = '6672d7fe9e4f'
+down_revision: Union[str, Sequence[str], None] = None
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
+
+
+def upgrade() -> None:
+    """Upgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.create_table('groups',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=20), nullable=False),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('name')
+    )
+    op.create_table('users',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('tg_id', sa.BigInteger(), nullable=False),
+    sa.Column('username', sa.String(length=32), nullable=True),
+    sa.Column('role', sa.Enum('ADMIN', 'CURATOR', 'LEADER', 'STUDENT', name='userrole'), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_users_tg_id'), 'users', ['tg_id'], unique=True)
+    op.create_table('duty_settings',
+    sa.Column('group_id', sa.Integer(), nullable=False),
+    sa.Column('mechanism', sa.Enum('ALPHABETICAL', 'WEIGHTED', name='dutymechanism'), nullable=False),
+    sa.Column('work_days', sa.JSON(), nullable=False),
+    sa.Column('excluded_dates', sa.JSON(), nullable=False),
+    sa.ForeignKeyConstraint(['group_id'], ['groups.id'], ),
+    sa.PrimaryKeyConstraint('group_id')
+    )
+    op.create_table('students',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.Column('group_id', sa.Integer(), nullable=False),
+    sa.Column('full_name', sa.String(length=255), nullable=False),
+    sa.Column('weight', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['group_id'], ['groups.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('user_id')
+    )
+    op.create_table('invite_links',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('code', sa.String(length=36), nullable=False),
+    sa.Column('role', sa.Enum('ADMIN', 'CURATOR', 'LEADER', 'STUDENT', name='userrole'), nullable=False),
+    sa.Column('group_id', sa.Integer(), nullable=True),
+    sa.Column('student_id', sa.Integer(), nullable=True),
+    sa.Column('is_used', sa.Boolean(), nullable=False),
+    sa.Column('created_by', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['created_by'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['group_id'], ['groups.id'], ),
+    sa.ForeignKeyConstraint(['student_id'], ['students.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('code')
+    )
+    # ### end Alembic commands ###
+
+
+def downgrade() -> None:
+    """Downgrade schema."""
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_table('invite_links')
+    op.drop_table('students')
+    op.drop_table('duty_settings')
+    op.drop_index(op.f('ix_users_tg_id'), table_name='users')
+    op.drop_table('users')
+    op.drop_table('groups')
+    # ### end Alembic commands ###
+
+
+
+--------------------------------------------------
+Файл: ./app/api/v1/api.py
+--------------------------------------------------
+from fastapi import APIRouter
+from app.api.v1.endpoints import users
+from app.api.v1.endpoints import groups
+from app.api.v1.endpoints import invite
+
+api_router = APIRouter()
+
+api_router.include_router(users.router, prefix="/users", tags=["users"])
+api_router.include_router(groups.router, prefix="/groups", tags=["groups"])
+api_router.include_router(invite.router, prefix="/invite", tags=["invite"])
+
+
+--------------------------------------------------
+Файл: ./app/api/v1/endpoints/groups.py
+--------------------------------------------------
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import joinedload
+from app.core.database import async_session
+from app.models.student import Student
+from app.models.group import Group
+from app.schemas.group import GroupRead
+from typing import List
+
+router = APIRouter()
+
+async def get_db():
+  async with async_session() as session:
+    yield session
+
+
+@router.get("/", response_model=List[GroupRead])
+async def get_groups(db: AsyncSession = Depends(get_db)):
+  stmt = (
+    select(Group)
+    .options(
+      joinedload(Group.students)
+      .joinedload(Student.user)
+    )
+  )
+  result = await db.execute(stmt)
+
+  return result.scalars().unique().all()
+
+
+--------------------------------------------------
+Файл: ./app/api/v1/endpoints/invite.py
+--------------------------------------------------
+import uuid
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.core.database import async_session
+from app.models.student import Student
+from app.models.invite import InviteLink
+from app.schemas.invite import BulkInviteCreate
+
+router = APIRouter()
+
+
+async def get_db():
+  async with async_session() as session:
+    yield session
+
+
+@router.post("/bulk-create")
+async def bulk_create_invites(
+  data: BulkInviteCreate,
+  db: AsyncSession = Depends(get_db)
+):
+  results = []
+
+  for name in data.names:
+    new_student = Student(
+      full_name=name,
+      group_id=data.group_id
+    )
+    db.add(new_student)
+    await db.flush()
+
+    invite_code = str(uuid.uuid4())
+    new_invite = InviteLink(
+      code=invite_code,
+      group_id=data.group_id,
+      student_id=new_student.id,
+      role_id=2,
+      created_by=1
+    )
+    db.add(new_invite)
+
+    results.append({
+      "full_name": name,
+      "link": f"https://t.me/duty_master_bot?start={invite_code}"
+    })
+
+  await db.commit()
+  return results
+
+
+--------------------------------------------------
+Файл: ./app/api/v1/endpoints/users.py
+--------------------------------------------------
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from app.core.database import async_session
+from app.models.user import User
+from app.schemas.user import UserRead
+
+router = APIRouter()
+
+async def get_db():
+  async with async_session() as session:
+    yield session
+
+@router.post("/me", response_model=UserRead)
+async def get_me(tg_id: int, db: AsyncSession = Depends(get_db)):
+  stmt = select(User).where(User.tg_id == tg_id)
+  result = await db.execute(stmt)
+  user = result.scalar_one_or_none()
+  if not user:
+    raise HTTPException(status_code=404, detail="User not found")
+  return user
+
+
+--------------------------------------------------
+Файл: ./app/core/config.py
+--------------------------------------------------
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+class Settings:
+  BOT_TOKEN: str = os.getenv("BOT_TOKEN")
+
+  DB_PATH = BASE_DIR / "college_flow.db"
+
+  DATABASE_URL: str = f"sqlite+aiosqlite:///{DB_PATH}"
+
+settings = Settings()
+
+
+--------------------------------------------------
+Файл: ./app/core/database.py
+--------------------------------------------------
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlalchemy.orm import DeclarativeBase
+from app.core.config import settings
+
+engine = create_async_engine(settings.DATABASE_URL, echo=True)
+
+async_session = async_sessionmaker(
+    engine,
+    expire_on_commit=False,
+    class_=AsyncSession
+)
+
+class Base(DeclarativeBase):
+    pass
+
+
+--------------------------------------------------
+Файл: ./app/core/middlewares.py
+--------------------------------------------------
+from typing import Any, Awaitable, Callable, Dict
+from aiogram import BaseMiddleware
+from aiogram.types import TelegramObject
+from app.core.database import async_session
+
+class DbSessionMiddleware(BaseMiddleware):
+  async def __call__(
+    self,
+    handler: Callable[[TelegramObject, Dict[str, Any]], Awaitable[Any]],
+    event: TelegramObject,
+    data: Dict[str, Any]
+  ) -> Any:
+    async with async_session() as session:
+      data["session"] = session
+      return await handler(event, data)
+
+
+
+--------------------------------------------------
+Файл: ./app/handlers/user.py
+--------------------------------------------------
+from aiogram import Router, types
+from aiogram.filters import CommandStart, CommandObject
+from fastapi import APIRouter
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload
+
+from app.models.user import User
+from app.services.invite_service import get_invite_data, use_invite
+
+user_router = Router()
+
+@user_router.message(CommandStart())
+async def cmd_start(message: types.Message, command: CommandObject, session):
+    args = command.args
+    tg_id = message.from_user.id
+
+    stmt = select(User).where(User.tg_id == tg_id).options(selectinload(User.role))
+    result = await session.execute(stmt)
+    user = result.scalar_one_or_none()
+
+    if user:
+        return await message.answer(f"Привет, {user.username}! Ты уже в системе как {user.role.name}.")
+
+    if not args:
+        return await message.answer("Для регистрации нужна ссылка-приглашение.")
+
+    invite = await get_invite_data(session, args)
+
+    if not invite:
+        return await message.answer("Инвайт-код недействителен или уже использован.")
+
+    new_user = await use_invite(
+        session=session,
+        invite=invite,
+        tg_id=tg_id,
+        username=message.from_user.full_name or "Unknown"
+    )
+
+    role_name = "Студент" if invite.role_id == 2 else "Пользователь"
+    group_name = invite.group.name if invite.group else "Неизвестная группа"
+    await message.answer(
+      f"Регистрация успешна! Привет, {new_user.username}.\n"
+      f"Вы привязаны к профилю студента в группе: {group_name}.\n"
+      f"Ваша роль: {role_name}"
+    )
+
+
+--------------------------------------------------
+Файл: ./app/models/duty.py
+--------------------------------------------------
+from sqlalchemy import ForeignKey, Enum, JSON
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from app.core.database import Base
+import enum
+
+class DutyMechanism(enum.Enum):
+  ALPHABETICAL = 'alphabetical'
+  WEIGHTED = 'weighted'
+
+class DutySetting(Base):
+  __tablename__ = 'duty_settings'
+
+  group_id: Mapped[int] = mapped_column(ForeignKey('groups.id'), primary_key=True)
+
+  mechanism: Mapped[DutyMechanism] = mapped_column(
+    Enum(DutyMechanism), default=DutyMechanism.WEIGHTED
+  )
+
+  work_days: Mapped[list[int]] = mapped_column(JSON, default=list(range(5)))
+
+  excluded_dates: Mapped[list[str]] = mapped_column(JSON, default=[])
+
+  group = relationship("Group", back_populates="duty_settings")
+
+
+--------------------------------------------------
+Файл: ./app/models/group.py
+--------------------------------------------------
+from sqlalchemy import String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from app.core.database import Base
+from app.models.duty import DutySetting
+
+
+class Group(Base):
+    __tablename__ = 'groups'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(20), unique=True, nullable=False)
+
+    students: Mapped[list["Student"]] = relationship("Student", back_populates="group")
+
+    duty_settings: Mapped["DutySetting"] = relationship(
+      "DutySetting", back_populates="group", uselist=False
+    )
+
+    def __repr__(self):
+      return f"<Group {self.name}>"
+
+
+--------------------------------------------------
+Файл: ./app/models/__init__.py
+--------------------------------------------------
+from .user import User
+from .group import Group
+from .student import Student
+from .invite import InviteLink
+from .role import UserRole
+from .duty import *
+
+__all__ = ["User", "Group", "Student", "InviteLink", "UserRole", "DutySetting", DutyMechanism]
+
+
+--------------------------------------------------
+Файл: ./app/models/invite.py
+--------------------------------------------------
+import uuid
+from sqlalchemy import String, ForeignKey, Boolean, Enum
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from app.models.role import UserRole
+from app.core.database import Base
+from app.models.group import Group
+
+class InviteLink(Base):
+  __tablename__ = 'invite_links'
+
+  id: Mapped[int] = mapped_column(primary_key=True)
+  code: Mapped[str] = mapped_column(String(36), default=lambda: str(uuid.uuid4()), unique=True)
+
+  role: Mapped[UserRole] = mapped_column(
+    Enum(UserRole),
+    default=UserRole.STUDENT,
+    nullable=False
+  )
+
+  group_id:  Mapped[int | None] = mapped_column(ForeignKey('groups.id'), nullable=True)
+  group: Mapped["Group"] = relationship("Group")
+  student_id: Mapped[int] = mapped_column(ForeignKey('students.id'), nullable=True)
+  student: Mapped["Student"] = relationship("Student")
+
+  is_used: Mapped[bool] = mapped_column(Boolean, default=False)
+  created_by: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=True)
+
+  def __repr__(self):
+    return f"<InviteLink code: {self.code} used={self.is_used}>"
+
+
+--------------------------------------------------
+Файл: ./app/models/role.py
+--------------------------------------------------
+import enum
+
+class UserRole(str, enum.Enum):
+  ADMIN = 'admin'
+  CURATOR = 'curator'
+  LEADER = 'leader'
+  STUDENT = 'student'
+
+
+--------------------------------------------------
+Файл: ./app/models/student.py
+--------------------------------------------------
+from sqlalchemy import ForeignKey
+from enum import Enum as PyEnum
+from sqlalchemy import Enum
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from app.core.database import Base
+from sqlalchemy import String
+
+class Student(Base):
+  __tablename__ = 'students'
+  id: Mapped[int] = mapped_column(primary_key=True)
+
+  user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), unique=True, nullable=True)
+  group_id: Mapped[int] = mapped_column(ForeignKey('groups.id'), nullable=False)
+
+  full_name: Mapped[str] = mapped_column(String(255), nullable=False)
+
+  user: Mapped["User"] = relationship("User", back_populates="student_profile")
+  group: Mapped["Group"] = relationship("Group", back_populates="students")
+
+  weight: Mapped[int] =  mapped_column(default=0)
+
+  def __repr__(self):
+    return f"<Student user_id={self.user_id}, group_id={self.group_id}>"
+
+
+--------------------------------------------------
+Файл: ./app/models/user.py
+--------------------------------------------------
+from sqlalchemy import BigInteger, String, Enum as SQLEnm
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from app.models.role import UserRole
+from app.core.database import Base
+from typing import Optional
+
+class User(Base):
+  __tablename__ = "users"
+
+  id: Mapped[int] = mapped_column(primary_key=True)
+  tg_id: Mapped[int] = mapped_column(BigInteger, unique=True, index=True)
+  username: Mapped[str | None] = mapped_column(String(32))
+
+  role: Mapped[UserRole] = mapped_column(
+    SQLEnm(UserRole),
+    default=UserRole.STUDENT,
+    nullable=False,
+  )
+
+  student_profile: Mapped[Optional["Student"]] = relationship("Student", back_populates="user", uselist=False)
+
+
+
+--------------------------------------------------
+Файл: ./app/schemas/group.py
+--------------------------------------------------
+from pydantic import BaseModel
+from typing import List, Optional
+
+class UserShort(BaseModel):
+  id: int
+  username: Optional[str] = None
+  tg_id: Optional[int] = None
+
+  class Config:
+    from_attributes = True
+
+
+class StudentInGroup(BaseModel):
+  id: int
+  full_name: str
+  user_id: Optional[int] = None
+  user: Optional[UserShort] = None
+
+  class Config:
+    from_attributes = True
+
+class GroupRead(BaseModel):
+    id: int
+    name: str
+    students: List[StudentInGroup] = []
+
+    @property
+    def student_count(self) -> int:
+        return len(self.students)
+
+    class Config:
+        from_attributes = True
+
+
+--------------------------------------------------
+Файл: ./app/schemas/invite.py
+--------------------------------------------------
+from pydantic import BaseModel
+from typing import List
+
+class BulkInviteCreate(BaseModel):
+    group_id: int
+    names: List[str]
+
+
+--------------------------------------------------
+Файл: ./app/schemas/student.py
+--------------------------------------------------
+from pydantic import BaseModel
+
+class StudentShort(BaseModel):
+  id: int
+  user_id: int
+
+  class Config:
+    from_attributes = True
+
+
+--------------------------------------------------
+Файл: ./app/schemas/user.py
+--------------------------------------------------
+from pydantic import BaseModel
+from typing import Optional
+
+class UserBase(BaseModel):
+  tg_id: int
+  username: Optional[str] = None
+
+class UserCreate(UserBase):
+  role_id: int
+
+class UserRead(UserBase):
+  id: int
+  role_id: int
+
+  class Config:
+    from_attributes = True
+
+
+--------------------------------------------------
+Файл: ./app/services/duty_service.py
+--------------------------------------------------
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload
+from app.models.duty import DutySetting, DutyMechanism
+from app.models.student import Student
+
+class DutyService:
+
+  @staticmethod
+  async def init_group_settings(session: AsyncSession, group_id: int):
+    new_setting = DutySetting(
+      group_id = group_id,
+      mechanism=DutyMechanism.WEIGHTED,
+      work_days=[0, 1, 2, 3, 4],
+      excluded_dates=[]
+    )
+    session.add(new_setting)
+    return new_setting
+
+  @staticmethod
+  async def get_or_create_settings(session: AsyncSession, group_id: int) -> DutySetting:
+    stmt = select(DutySetting).where(DutySetting.group_id == group_id)
+    result = await session.execute(stmt)
+    setting = result.scalar_one_or_none()
+
+    if not setting:
+      setting = DutySetting(
+        group_id = group_id,
+        mechanism=DutyMechanism.WEIGHTED,
+        work_days=[0, 1, 2, 3, 4]
+      )
+      session.add(setting)
+      await session.commit()
+      await session.refresh(setting)
+
+    return setting
+
+  @staticmethod
+  async def get_next_duty_student(session: AsyncSession, group_id: int):
+    settings = await DutyService.get_or_create_settings(session, group_id)
+
+    if settings.mechanism == DutyMechanism.WEIGHTED:
+      stmt = (
+        select(Student)
+        .where(Student.group_id == group_id)
+        .order_by(Student.weight.asc(), Student.full_name.asc())
+        .limit(1)
+      )
+    else:
+      stmt = select(Student).where(Student.group_id == group_id).order_by(Student.full_name.asc())
+
+    result = await session.execute(stmt)
+    return result.scalar_one_or_none()
+
+
+--------------------------------------------------
+Файл: ./app/services/invite_service.py
+--------------------------------------------------
+import uuid
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.models.invite import InviteLink
+from sqlalchemy.orm import selectinload
+from app.models.user import User
+
+async def create_invite(
+  session: AsyncSession,
+  creator_id: int,
+  role_id: int,
+  group_id: int = None,
+  student_id: int = None,
+) -> str:
+  """
+  Создаёт инвайт-код в базе и возвращает его.
+  :param session:
+  :param creator_id:
+  :param role_id:
+  :param group_id:
+  :param student_id:
+  :return:
+  """
+
+  new_code = str(uuid.uuid4())
+
+  invite = InviteLink(
+    code = new_code,
+    role_id = role_id,
+    group_id = group_id,
+    student_id=student_id,
+    created_by=creator_id,
+    is_used=False
+  )
+
+  session.add(invite)
+  await session.flush()
+  return new_code
+
+async def use_invite(session: AsyncSession, invite: InviteLink, tg_id: int, username: str):
+  new_user = User(
+    tg_id=tg_id,
+    username=username,
+    role_id=invite.role_id,
+  )
+  session.add(new_user)
+  await session.flush()
+
+  if invite.student_id:
+    from app.models.student import Student
+    stmt = select(Student).where(Student.id == invite.student_id)
+    result = await session.execute(stmt)
+    student = result.scalar_one()
+    student.user_id = new_user.id
+
+  invite.is_used = True
+  await session.commit()
+  return new_user
+
+async def get_invite_data(session: AsyncSession, code: str):
+  """
+  Проверяет код и возвращает данные инвайта, если он виден
+  :param session:
+  :param code:
+  :return:
+  """
+
+  stmt = (
+    select(InviteLink)
+    .where(InviteLink.code == code, InviteLink.is_used == False)
+    .options(selectinload(InviteLink.group))
+  )
+  result = await session.execute(stmt)
+  return result.scalar_one_or_none()
+
+
+--------------------------------------------------
+Файл: ./main.py
+--------------------------------------------------
+import sys
+import os
+sys.path.append(os.getcwd())
+
+import asyncio
+from fastapi import FastAPI
+from app.api.v1.api import api_router
+from aiogram import Bot, Dispatcher
+from app.core.config import settings
+from app.core.middlewares import DbSessionMiddleware
+from app.handlers.user import user_router
+from app.models import *
+
+bot_task = None
+
+async def lifespan(app: FastAPI):
+  bot = Bot(token=settings.BOT_TOKEN)
+  dp = Dispatcher()
+  dp.update.middleware(DbSessionMiddleware())
+  dp.include_router(user_router)
+
+  global bot_task
+  bot_task = asyncio.create_task(dp.start_polling(bot))
+  print("Bot and API started")
+
+  yield
+
+  if bot_task:
+    bot_task.cancel()
+    try:
+      await bot_task
+    except asyncio.CancelledError:
+      print("Bot stopped")
+
+app = FastAPI(
+  title="Nixa Duty API",
+  description="API для системы дежурств",
+  lifespan=lifespan,
+  version="1.0.0"
+)
+
+app.include_router(api_router, prefix="/api/v1")
+
+
+if __name__ == "__main__":
+  import uvicorn
+  uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+
+
+--------------------------------------------------
+Файл: ./requirements.txt
+--------------------------------------------------
+aiofiles==25.1.0
+aiogram==3.24.0
+aiohappyeyeballs==2.6.1
+aiohttp==3.13.3
+aiosignal==1.4.0
+aiosqlite==0.22.1
+alembic==1.18.1
+annotated-doc==0.0.4
+annotated-types==0.7.0
+anyio==4.12.1
+asyncpg==0.31.0
+attrs==25.4.0
+certifi==2026.1.4
+click==8.3.1
+fastapi==0.128.0
+frozenlist==1.8.0
+greenlet==3.3.0
+h11==0.16.0
+idna==3.11
+magic-filter==1.0.12
+Mako==1.3.10
+MarkupSafe==3.0.3
+multidict==6.7.0
+propcache==0.4.1
+pydantic==2.12.5
+pydantic-settings==2.12.0
+pydantic_core==2.41.5
+python-dotenv==1.2.1
+SQLAlchemy==2.0.45
+starlette==0.50.0
+typing-inspection==0.4.2
+typing_extensions==4.15.0
+uvicorn==0.40.0
+yarl==1.22.0
+
+
+
+--------------------------------------------------
+Файл: ./seed.py
+--------------------------------------------------
+import asyncio
+from sqlalchemy import select
+from app.core.database import async_session
+from app.models.role import Role
+from app.models.student import Student
+from app.models.user import User
+from app.models.group import Group
+
+async def seed_roles():
+  async with async_session() as session:
+    try:
+      res_role = await session.execute(select(Role))
+      roles = res_role.scalars().all()
+      if not roles:
+        print("База пуста. Добавляю новые роли...")
+        roles = [
+          Role(name="admin"),
+          Role(name="student"),
+          Role(name="teacher"),
+        ]
+        session.add_all(roles)
+        await session.flush()
+
+      group_name = "ИСИП 24-01-1"
+      res_group = await session.execute(select(Group).where(Group.name == group_name))
+      group = res_group.scalar_one_or_none()
+
+      if not group:
+        print(f"Создаю группу {group_name}...")
+        group = Group(name=group_name)
+        session.add(group)
+        await session.flush()
+
+      username = "Nixa"
+      res_user = await session.execute(select(User).where(User.username == username))
+      user = res_user.scalar_one_or_none()
+
+      if not user:
+        print(f"Создаю пользователя {username}...")
+        res_admin = await session.execute(select(Role).where(Role.name == "admin"))
+        admin_role = res_admin.scalar_one()
+        user = User(
+          tg_id=12345678,
+          username=username,
+          role_id=admin_role.id,
+        )
+        session.add(user)
+        await session.flush()
+
+        print(f"Привязываю Nixa к группе {group_name}...")
+        student_profile = Student(
+          user_id=user.id,
+          group_id=group.id,
+        )
+        session.add(student_profile)
+
+      await session.commit()
+      print("Данные успешно обновлены!")
+
+    except Exception as e:
+      await session.rollback()
+      print(f"ПРОИЗОЩЛА ОШИБКАЖ {e}")
+      raise e
+
+if __name__ == '__main__':
+  asyncio.run(seed_roles())
+
+
+--------------------------------------------------
+Файл: ./test_invite.py
+--------------------------------------------------
+import asyncio
+from app.core.database import async_session
+from app.services.invite_service import create_invite
+from app.models.role import Role
+from app.models.user import User
+from app.models.invite import InviteLink
+from app.models.student import Student
+from app.models.group import Group
+
+
+async def test():
+  async with async_session() as session:
+    try:
+
+      code = await create_invite(
+        session,
+        creator_id=1,
+        role_id=2,
+        group_id=1
+      )
+      print(f"✅ Инвайт успешно создан!")
+      print(f"Код: {code}")
+      print(f"Ссылка для бота: https://t.me/твой_бот?start={code}")
+
+    except Exception as e:
+      print(f"❌ Ошибка при создании инвайта: {e}")
+
+
+if __name__ == "__main__":
+  asyncio.run(test())
+
+

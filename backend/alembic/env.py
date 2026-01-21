@@ -6,11 +6,7 @@ from sqlalchemy import pool
 from alembic import context
 
 from app.core.database import Base
-from app.models.user import User
-from app.models.group import Group
-from app.models.student import Student
-from app.models.role import Role
-from app.models.invite import InviteLink
+from app.models import __all__
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
