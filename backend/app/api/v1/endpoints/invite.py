@@ -1,25 +1,50 @@
-import uuid
+from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.core.database import async_session
+from sqlalchemy import select
+import uuid
+
+from app.core.database import get_db
+from app.models.user import User
 from app.models.student import Student
+from app.models.role import UserRole
 from app.models.invite import InviteLink
-from app.schemas.invite import BulkInviteCreate
+from app.schemas.invite import CuratorInviteResponse, BulkInviteCreate, BulkInviteResponse
+from app.api.v1.dependencies import RoleChecker
 
 router = APIRouter()
 
+admin_only = RoleChecker(allowed_roles=[UserRole.ADMIN])
 
-async def get_db():
-  async with async_session() as session:
-    yield session
+staff_only = RoleChecker(allowed_roles=[UserRole.ADMIN, UserRole.LEADER, UserRole.CURATOR])
 
-
-@router.post("/bulk-create")
-async def bulk_create_invites(
-  data: BulkInviteCreate,
-  db: AsyncSession = Depends(get_db)
+@router.post("/create-curator-link", response_model=CuratorInviteResponse)
+async def create_curator_link(
+  db: AsyncSession = Depends(get_db),
+  current_user: User = Depends(admin_only),
 ):
-  results = []
+
+  new_invite = InviteLink(
+    role=UserRole.CURATOR,
+    created_by=current_user.id,
+    group_id=None,
+    student_id=None
+  )
+  db.add(new_invite)
+  await db.flush()
+
+  invite_link = f"https://t.me/duty_master_bot?start={new_invite.code}"
+  await db.commit()
+
+  return {"link": invite_link}
+
+@router.post("/bulk-create", response_model=List[BulkInviteResponse])
+async def create_bulk_invite(
+  data: BulkInviteCreate,
+  db: AsyncSession = Depends(get_db),
+  current_user: User = Depends(staff_only),
+):
+  result = []
 
   for name in data.names:
     new_student = Student(
@@ -33,16 +58,25 @@ async def bulk_create_invites(
     new_invite = InviteLink(
       code=invite_code,
       group_id=data.group_id,
-      student_id=new_student.id,
-      role_id=2,
-      created_by=1
+      role=UserRole.STUDENT,
+      created_by=current_user.id,
     )
     db.add(new_invite)
 
-    results.append({
+    result.append({
       "full_name": name,
-      "link": f"https://t.me/duty_master_bot?start={invite_code}"
+      "link": f"https://t.me/duty_master_bot?start={invite_code}",
     })
 
   await db.commit()
-  return results
+  return result
+
+
+
+
+
+
+
+
+
+

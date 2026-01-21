@@ -13,4 +13,6 @@ class Settings:
 
   DATABASE_URL: str = f"sqlite+aiosqlite:///{DB_PATH}"
 
+  DEV_MODE: bool = os.getenv("DEV_MODE", False).lower() == "true"
+
 settings = Settings()
