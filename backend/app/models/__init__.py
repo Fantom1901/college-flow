@@ -1,10 +1,12 @@
-from .user import User
-from .group import Group
-from .student import Student
-from .invite import InviteLink
 from .role import UserRole
-from .duty import DutySetting, DutyMechanism
+from .duty import DutyMechanism, DutySetting
+
+from .group import Group
+from .user import User
+
+from .student import Student
 from .curator import Curator
+from .invite import InviteLink
 
 __all__ = [
     "User",

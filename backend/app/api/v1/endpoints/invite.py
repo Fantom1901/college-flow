@@ -1,12 +1,11 @@
+import uuid
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-import uuid
-
+from app.services.invite_service import get_invite_data
+from app.services.student_service import StudentService
 from app.core.database import get_db
 from app.models.user import User
-from app.models.student import Student
 from app.models.role import UserRole
 from app.models.invite import InviteLink
 from app.schemas.invite import CuratorInviteResponse, BulkInviteCreate, BulkInviteResponse
@@ -47,31 +46,40 @@ async def create_bulk_invite(
   result = []
 
   for name in data.names:
-    new_student = Student(
-      full_name=name,
-      group_id=data.group_id
+    new_student = await StudentService.create_student(
+      session=db,
+      group_id=data.group_id,
+      full_name=name
     )
-    db.add(new_student)
-    await db.flush()
 
     invite_code = str(uuid.uuid4())
     new_invite = InviteLink(
       code=invite_code,
       group_id=data.group_id,
+      student_id=new_student.id,
       role=UserRole.STUDENT,
-      created_by=current_user.id,
+      created_by=current_user.id
     )
     db.add(new_invite)
 
     result.append({
       "full_name": name,
-      "link": f"https://t.me/duty_master_bot?start={invite_code}",
+      "link": f"https://t.me/duty_master_bot?start={invite_code}"
     })
 
   await db.commit()
   return result
 
-
+@router.get("/verify/{code}")
+async def verify_invite(code: str, db: AsyncSession = Depends(get_db)):
+  invite = await get_invite_data(db, code)
+  if not invite or invite.is_used:
+    raise HTTPException(status_code=404, detail="Invite not found or user")
+  return {
+    "role": invite.role,
+    "group_id": invite.group_id,
+    "is_valid": True
+  }
 
 
 

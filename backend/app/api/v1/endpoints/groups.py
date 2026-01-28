@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
-from app.core.database import async_session
+from app.core.database import get_db
 from app.models import UserRole
 from app.models.curator import Curator
 from app.models.student import Student
@@ -14,10 +14,6 @@ from app.schemas.init_group import GroupInitResponse, GroupInitRequest
 from typing import List
 
 router = APIRouter()
-
-async def get_db():
-  async with async_session() as session:
-    yield session
 
 
 @router.get("/", response_model=List[GroupRead])

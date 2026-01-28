@@ -17,7 +17,7 @@ class Student(Base):
   user: Mapped["User"] = relationship("User", back_populates="student_profile")
   group: Mapped["Group"] = relationship("Group", back_populates="students")
 
-  weight: Mapped[int] =  mapped_column(default=0)
+  weight: Mapped[int] =  mapped_column(nullable=False)
 
   def __repr__(self):
     return f"<Student user_id={self.user_id}, group_id={self.group_id}>"
