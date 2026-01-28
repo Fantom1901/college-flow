@@ -7,11 +7,13 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 class Settings:
-  BOT_TOKEN: str = os.getenv("BOT_TOKEN")
+  BOT_TOKEN = os.getenv("BOT_TOKEN")
 
-  DB_PATH = BASE_DIR / "college_flow.db"
-
-  DATABASE_URL: str = f"sqlite+aiosqlite:///{DB_PATH}"
+  _default_db_path = BASE_DIR / "college_flow.db"
+  DATABASE_URL: str = os.getenv(
+    "DATABASE_URL",
+    f"sqlite+aiosqlite:///{_default_db_path}"
+  )
 
   DEV_MODE: bool = os.getenv("DEV_MODE", False).lower() == "true"
 
