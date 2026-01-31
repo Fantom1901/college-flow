@@ -24,8 +24,13 @@ class UserRead(UserBase):
     class Config:
         from_attributes = True
 
+
 class UserUpdateSchema(BaseModel):
-    full_name: str
+  full_name: Optional[str] = None
+  username: Optional[str] = None
+
+  class Config:
+    from_attributes = True
 
 class StudentRegisterRequest(BaseModel):
     invite_code: str

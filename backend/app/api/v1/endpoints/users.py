@@ -22,19 +22,26 @@ async def update_me(
   db: AsyncSession = Depends(get_db),
   current_user: User = Depends(get_current_user)
 ):
-  if current_user.role == UserRole.STUDENT:
-    stmt = select(Student).where(Student.user_id == current_user.id)
-    res = await db.execute(stmt)
-    profile = res.scalar_one_or_none()
-    if profile:
-      profile.full_name = data.full_name
 
-  elif current_user.role == UserRole.CURATOR:
-    stmt = select(Curator).where(Curator.user_id  == current_user.id)
-    res = await db.execute(stmt)
-    profile = res.scalar_one_or_none()
-    if profile:
-      profile.full_name = data.full_name
+  update_data = data.model_dump(exclude_unset=True)
+
+  if "username" in update_data:
+    current_user.username = update_data["username"]
+
+  if "full_name" in update_data:
+    if current_user.role == UserRole.STUDENT:
+      stmt = select(Student).where(Student.user_id == current_user.id)
+      res = await db.execute(stmt)
+      profile = res.scalar_one_or_none()
+      if profile:
+        profile.full_name = update_data["full_name"]
+
+    elif current_user.role == UserRole.CURATOR:
+      stmt = select(Curator).where(Curator.user_id  == current_user.id)
+      res = await db.execute(stmt)
+      profile = res.scalar_one_or_none()
+      if profile:
+        profile.full_name = update_data["full_name"]
 
   await db.commit()
 
