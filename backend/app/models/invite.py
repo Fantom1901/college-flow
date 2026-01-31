@@ -1,6 +1,7 @@
 import uuid
-from sqlalchemy import String, ForeignKey, Boolean
+from sqlalchemy import String, ForeignKey, Boolean, Enum as SQLEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from app.models.role import UserRole
 from app.core.database import Base
 from typing import TYPE_CHECKING
 
@@ -15,7 +16,7 @@ class InviteLink(Base):
   id: Mapped[int] = mapped_column(primary_key=True)
   code: Mapped[str] = mapped_column(String(36), default=lambda: str(uuid.uuid4()), unique=True, index=True)
 
-  role_id: Mapped[int] = mapped_column(ForeignKey('role.id'), nullable=False)
+  role: Mapped[UserRole] = mapped_column(SQLEnum(UserRole), nullable=False)
 
   group_id: Mapped[int | None] = mapped_column(ForeignKey('groups.id', ondelete="CASCADE"), nullable=True)
   group: Mapped["Group"] = relationship("Group")

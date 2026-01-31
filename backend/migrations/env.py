@@ -13,7 +13,7 @@ from alembic import context
 from app.core.config import settings
 from app.core.database import Base
 from app.models.user import User
-from app.models.role import Role
+from app.models.role import UserRole
 from app.models.group import Group
 from app.models.student import Student
 from app.models.invite import InviteLink
