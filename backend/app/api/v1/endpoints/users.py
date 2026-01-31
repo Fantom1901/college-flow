@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
+from sqlalchemy.orm import selectinload
 from app.models import Curator, User, Student, InviteLink
 from app.models.role import UserRole
 from app.api.v1.dependencies import RoleChecker
@@ -36,8 +37,14 @@ async def update_me(
       profile.full_name = data.full_name
 
   await db.commit()
-  await db.refresh(current_user)
-  return current_user
+
+  stmt = select(User).where(User.id == current_user.id).options(
+    selectinload(User.student_profile),
+    selectinload(User.curator_profile),
+  )
+  res = await db.execute(stmt)
+  refreshed_user = res.scalar_one()
+  return refreshed_user
 
 @router.post("/register_student")
 async def register_student(

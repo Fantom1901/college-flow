@@ -1,72 +1,62 @@
 import asyncio
+import uuid
 from sqlalchemy import select
 from app.core.database import async_session
-from app.models.user import User, UserRole
-from app.models.group import Group
-from app.models.student import Student
-
+from app.models import User, Student, Group, Curator, InviteLink
+from app.models.role import UserRole
 
 async def seed_data():
-  async with async_session() as session:
-    try:
-      # 1. Твой профиль (Admin)
-      nixa_tg_id = 12345678  # Твой реальный ID
-      res_nixa = await session.execute(select(User).where(User.tg_id == nixa_tg_id))
-      nixa = res_nixa.scalar_one_or_none()
-
-      if not nixa:
-        print(f"Создаю SuperAdmin: Nixa...")
-        nixa = User(
-          tg_id=nixa_tg_id,
-          username="Nixa",
-          role=UserRole.ADMIN
-        )
-        session.add(nixa)
-      else:
-        nixa.role = UserRole.ADMIN  # На всякий случай обновляем роль
-        print("Админ Nixa уже существует.")
-
-      # 2. Тестовый Куратор (для проверки прав доступа)
-      curator_tg_id = 987654321  # Просто рандомный ID
-      res_curator = await session.execute(select(User).where(User.tg_id == curator_tg_id))
-      curator = res_curator.scalar_one_or_none()
-
-      if not curator:
-        print("Создаю тестового куратора...")
-        curator = User(
-          tg_id=curator_tg_id,
-          username="test_curator",
-          role=UserRole.CURATOR
-        )
-        session.add(curator)
-
-      # 3. Группа
-      group_name = "ИСИП 24-01-1"
-      res_group = await session.execute(select(Group).where(Group.name == group_name))
-      group = res_group.scalar_one_or_none()
-
-      if not group:
-        print(f"Создаю группу {group_name}...")
-        group = Group(name=group_name)
+    # Используем async_session() как контекст-менеджер
+    async with async_session() as session:
+        # 1. Группа
+        group = Group(name="ИСП-401")
         session.add(group)
-        await session.flush()  # Получаем ID группы для студента
+        await session.flush()
 
-        # Привязываем тебя как студента (чтобы у админа был профиль студента)
+        # 2. Куратор
+        curator_user = User(
+            tg_id=123456789,
+            username="cool_curator",
+            role=UserRole.CURATOR
+        )
+        session.add(curator_user)
+        await session.flush()
+
+        curator_profile = Curator(
+            user_id=curator_user.id,
+            full_name="Александр Сергеевич Пушкин"
+        )
+        session.add(curator_profile)
+
+        # 3. Студент
+        student_user = User(
+            tg_id=987654321,
+            username="student_hero",
+            role=UserRole.STUDENT
+        )
+        session.add(student_user)
+        await session.flush()
+
         student_profile = Student(
-          user_id=nixa.id if nixa.id else None,  # Если nixa уже был в базе, id есть
-          group_id=group.id,
-          full_name="Тимофей Никса"
+            user_id=student_user.id,
+            group_id=group.id,
+            full_name="Иван Иванович Иванов",
+            weight=1.0
         )
         session.add(student_profile)
+        await session.flush()
 
-      await session.commit()
-      print("✅ База успешно подготовлена!")
+        # 4. Инвайт
+        invite = InviteLink(
+            code=str(uuid.uuid4())[:8],
+            role=UserRole.STUDENT,
+            student_id=student_profile.id,
+            is_used=False
+        )
+        session.add(invite)
 
-    except Exception as e:
-      await session.rollback()
-      print(f"❌ ОШИБКА ПРИ СИДЕ: {e}")
-      raise e
+        await session.commit()
+        print("✅ Всё четко! База наполнена.")
 
-
-if __name__ == '__main__':
-  asyncio.run(seed_data())
+if __name__ == "__main__":
+    asyncio.run(seed_data())

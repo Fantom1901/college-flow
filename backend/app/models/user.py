@@ -14,8 +14,8 @@ class User(Base):
   role: Mapped[UserRole] = mapped_column(SQLEnum(UserRole), default=UserRole.STUDENT, nullable=False)
 
   student_profile: Mapped[Optional["Student"]] = relationship(
-    "Student", back_populates="user", uselist=False
+    "Student", back_populates="user", uselist=False, lazy="selectin"
   )
   curator_profile: Mapped[Optional["Curator"]] = relationship(
-    "Curator", back_populates="user", uselist=False
+    "Curator", back_populates="user", uselist=False, lazy="selectin"
   )
