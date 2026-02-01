@@ -12,7 +12,7 @@ class Curator(Base):
   id: Mapped[int] = mapped_column(primary_key=True)
   user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), unique=True, nullable=False)
   full_name: Mapped[str] = mapped_column(String(225), nullable=False )
-
+  group: Mapped["Group"] = relationship("Group", back_populates="curator", uselist=False)
   user: Mapped["User"] = relationship("User", back_populates="curator_profile")
 
   def __repr__(self):

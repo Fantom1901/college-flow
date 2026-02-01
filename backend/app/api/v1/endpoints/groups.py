@@ -29,63 +29,73 @@ async def get_groups(db: AsyncSession = Depends(get_db)):
 
   return result.scalars().unique().all()
 
+
 @router.post("/init", response_model=GroupInitResponse)
 async def init_group(
-    data: GroupInitRequest,
-    db: AsyncSession = Depends(get_db),
+  data: GroupInitRequest,
+  db: AsyncSession = Depends(get_db),
 ):
-    stmt = select(InviteLink).where(InviteLink.code == data.invite_code)
-    result = await db.execute(stmt)
-    invite = result.scalar_one_or_none()
+  stmt = select(InviteLink).where(InviteLink.code == data.invite_code)
+  result = await db.execute(stmt)
+  invite = result.scalar_one_or_none()
 
-    if not invite or invite.role != UserRole.CURATOR:
-        raise HTTPException(status_code=403, detail="Неверный код приглашения")
+  if not invite or invite.role != UserRole.CURATOR:
+    raise HTTPException(status_code=403, detail="Неверный код приглашения")
 
-    try:
-        stmt_user = select(User).where(User.tg_id == data.tg_id)
-        res_user = await db.execute(stmt_user)
-        user = res_user.scalar_one_or_none()
+  try:
+    stmt_user = select(User).where(User.tg_id == data.tg_id)
+    res_user = await db.execute(stmt_user)
+    user = res_user.scalar_one_or_none()
 
-        if not user:
-            user = User(
-                tg_id=data.tg_id,
-                username=data.username,
-                role=UserRole.CURATOR,
-            )
-            db.add(user)
-            await db.flush()
-        else:
-            user.username = data.username
-            user.role = UserRole.CURATOR
+    if not user:
+      user = User(
+        tg_id=data.tg_id,
+        username=data.username,
+        role=UserRole.CURATOR,
+      )
+      db.add(user)
+      await db.flush()
+    else:
+      user.username = data.username
+      user.role = UserRole.CURATOR
 
-        new_group = Group(name=data.group_name)
-        db.add(new_group)
-        await db.flush()
+    new_group = Group(name=data.group_name)
+    db.add(new_group)
+    await db.flush()
 
-        stmt_curator = select(Curator).where(Curator.user_id == user.id)
-        res_curator = await db.execute(stmt_curator)
-        curator_profile = res_curator.scalar_one_or_none()
+    stmt_curator = select(Curator).where(Curator.user_id == user.id)
+    res_curator = await db.execute(stmt_curator)
+    curator_profile = res_curator.scalar_one_or_none()
 
-        if not curator_profile:
-            curator_profile = Curator(
-                user_id=user.id,
-                full_name=data.full_name,
-            )
-            db.add(curator_profile)
-        else:
-            curator_profile.full_name = data.full_name
+    if not curator_profile:
+      curator_profile = Curator(
+        user_id=user.id,
+        full_name=data.full_name,
+      )
+      db.add(curator_profile)
+      await db.flush()
+    else:
+      curator_profile.full_name = data.full_name
+      await db.flush()
 
-        invite.is_used = True
-        invite.group_id = new_group.id
+    new_group = Group(
+      name=data.group_name,
+      curator_id=curator_profile.id,
+    )
+    db.add(new_group)
+    await db.flush()
 
-        await db.commit()
-        return {
-            "status": "success",
-            "group_id": new_group.id,
-            "group_name": new_group.name,
-        }
+    invite.is_used = True
+    invite.group_id = new_group.id
 
-    except Exception as e:
-        await db.rollback()
-        print(f"DEBUG: Ошибка в init_group: {e}")
-        raise HTTPException(status_code=500, detail=f"Ошибка базы: {str(e)}")
+    await db.commit()
+    return {
+      "status": "success",
+      "group_id": new_group.id,
+      "group_name": new_group.name,
+    }
+
+  except Exception as e:
+    await db.rollback()
+    print(f"DEBUG: Ошибка в init_group: {e}")
+    raise HTTPException(status_code=500, detail=f"Ошибка базы: {str(e)}")
