@@ -1,22 +1,13 @@
+from datetime import date, timedelta
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
 from sqlalchemy.orm import selectinload
-from app.models.duty import DutySetting, DutyMechanism
+
 from app.models.student import Student
+from app.models.duty import DutySchedule, DutyStatus, DutySetting, DutyMechanism
+
 
 class DutyService:
-
-  @staticmethod
-  async def init_group_settings(session: AsyncSession, group_id: int):
-    new_setting = DutySetting(
-      group_id = group_id,
-      mechanism=DutyMechanism.WEIGHTED,
-      work_days=[0, 1, 2, 3, 4],
-      excluded_dates=[]
-    )
-    session.add(new_setting)
-    return new_setting
-
   @staticmethod
   async def get_or_create_settings(session: AsyncSession, group_id: int) -> DutySetting:
     stmt = select(DutySetting).where(DutySetting.group_id == group_id)
@@ -24,30 +15,94 @@ class DutyService:
     setting = result.scalar_one_or_none()
 
     if not setting:
-      setting = DutySetting(
-        group_id = group_id,
-        mechanism=DutyMechanism.WEIGHTED,
-        work_days=[0, 1, 2, 3, 4]
-      )
+      setting = DutySetting(group_id=group_id)
       session.add(setting)
-      await session.commit()
-      await session.refresh(setting)
-
+      await session.flush()
     return setting
 
   @staticmethod
-  async def get_next_duty_student(session: AsyncSession, group_id: int):
+  async def generate_weekly_schedule(session: AsyncSession, group_id: int, start_from: date):
     settings = await DutyService.get_or_create_settings(session, group_id)
 
+    end_date = start_from + timedelta(days=7)
+    delete_stmt = delete(DutySchedule).where(
+      DutySchedule.group_id == group_id,
+      DutySchedule.date >= start_from,
+      DutySchedule.date < end_date,
+      DutySchedule.status == DutyStatus.PENDING
+    )
+    await session.execute(delete_stmt)
+
+    stmt = select(Student).where(
+      Student.group_id == group_id,
+      Student.is_active == True
+    )
+
     if settings.mechanism == DutyMechanism.WEIGHTED:
-      stmt = (
-        select(Student)
-        .where(Student.group_id == group_id)
-        .order_by(Student.weight.asc(), Student.full_name.asc())
-        .limit(1)
+      stmt = stmt.order_by(
+        Student.weight.asc(),
+        Student.last_duty_date.asc().nullsfirst(),
+        Student.full_name.asc()
       )
     else:
-      stmt = select(Student).where(Student.group_id == group_id).order_by(Student.full_name.asc())
+      stmt = stmt.order_by(
+        Student.last_duty_date.asc().nullsfirst(),
+        Student.full_name.asc()
+      )
 
     result = await session.execute(stmt)
-    return result.scalar_one_or_none()
+    candidates = result.scalars().all()
+
+    if not candidates:
+      return
+
+    current_date = start_from
+    candidate_idx = 0
+    num_candidates = len(candidates)
+
+    for _ in range(7):
+      if (current_date.weekday() in settings.work_days and
+        current_date.isoformat() not in settings.excluded_dates):
+
+        check_stmt = select(DutySchedule).where(
+          DutySchedule.group_id == group_id,
+          DutySchedule.date == current_date
+        )
+        exists = (await session.execute(check_stmt)).scalar()
+
+        if not exists:
+          student = candidates[candidate_idx % num_candidates]
+
+          new_duty = DutySchedule(
+            group_id=group_id,
+            student_id=student.id,
+            date=current_date,
+            status=DutyStatus.PENDING
+          )
+          session.add(new_duty)
+          candidate_idx += 1
+
+      current_date += timedelta(days=1)
+
+    settings.last_generated_until = current_date - timedelta(days=1)
+    await session.flush()
+
+  @staticmethod
+  async def set_duty_result(session: AsyncSession, duty_id: int, status: DutyStatus):
+    stmt = (
+      select(DutySchedule)
+      .where(DutySchedule.id == duty_id)
+      .options(selectinload(DutySchedule.student))
+    )
+    res = await session.execute(stmt)
+    duty = res.scalar_one_or_none()
+
+    if not duty:
+      return
+
+    if status == DutyStatus.DONE:
+      duty.student.weight += 1
+      duty.student.last_duty_date = duty.date
+
+    duty.status = status
+    await session.flush()

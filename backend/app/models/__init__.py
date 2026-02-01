@@ -1,5 +1,5 @@
 from .role import UserRole
-from .duty import DutyMechanism, DutySetting
+from .duty import DutyMechanism, DutySetting, DutyStatus, DutySchedule
 
 from .group import Group
 from .user import User
@@ -16,5 +16,7 @@ __all__ = [
     "UserRole",
     "DutySetting",
     "DutyMechanism",
+    "DutyStatus",
+    "DutySchedule",
     "Curator"
 ]

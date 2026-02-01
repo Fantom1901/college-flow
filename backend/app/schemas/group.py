@@ -1,10 +1,13 @@
 from pydantic import BaseModel
 from typing import List, Optional
+from app.models import UserRole
+
 
 class UserShort(BaseModel):
   id: int
   username: Optional[str] = None
   tg_id: Optional[int] = None
+  role: Optional[UserRole] = None
 
   class Config:
     from_attributes = True

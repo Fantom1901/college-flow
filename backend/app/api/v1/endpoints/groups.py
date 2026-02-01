@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, selectinload
+from app.api.v1.dependencies import RoleChecker
 from app.core.database import get_db
 from app.models import UserRole
 from app.models.curator import Curator
@@ -15,6 +16,54 @@ from typing import List
 
 router = APIRouter()
 
+get_current_user = RoleChecker(allowed_roles=list(UserRole))
+
+
+@router.get("/my", response_model=GroupRead)
+async def get_my_groups(
+  db: AsyncSession = Depends(get_db),
+  current_user: User = Depends(get_current_user)
+):
+  group_id = None
+
+  if current_user.role == UserRole.STUDENT and current_user.student_profile:
+    group_id = current_user.student_profile.group_id
+
+  elif current_user.role == UserRole.CURATOR and current_user.curator_profile:
+    stmt_group = select(Group).where(Group.curator_id == current_user.curator_profile.id)
+    group_res = await db.execute(stmt_group)
+    group_obj = group_res.scalar_one_or_none()
+
+    if group_obj:
+      group_id = group_obj.id
+
+  if not group_id:
+    raise HTTPException(
+      status_code=404,
+      detail="Вы не привязаны к группе. Обратитесь к куратору"
+    )
+
+  stmt = (
+    select(Group)
+    .where(Group.id == group_id)
+    .options(
+      selectinload(Group.students).joinedload(Student.user)
+    )
+  )
+
+  result = await db.execute(stmt)
+  group = result.scalars().unique().one_or_none()
+
+  if not group:
+    raise HTTPException(
+      status_code=404,
+      detail="Запись о группе не найдена"
+    )
+
+  if group and group.students:
+    group.students.sort(key=lambda x: x.full_name)
+
+  return group
 
 @router.get("/", response_model=List[GroupRead])
 async def get_groups(db: AsyncSession = Depends(get_db)):
