@@ -15,6 +15,6 @@ class Settings:
     f"sqlite+aiosqlite:///{_default_db_path}"
   )
 
-  DEV_MODE: bool = os.getenv("DEV_MODE", False).lower() == "true"
+  DEV_MODE: bool = str(os.getenv("DEV_MODE", False)).lower() == "true"
 
 settings = Settings()

@@ -7,7 +7,7 @@ class StudentService:
   async def get_average_weight(session: AsyncSession, group_id: int) -> int:
     stmt = select(func.avg(Student.weight)).where(Student.group_id == group_id)
     result = await session.execute(stmt)
-    avg_weight = result.scalars()
+    avg_weight = result.scalar()
 
     return int(avg_weight) if avg_weight is not None else 0
 
