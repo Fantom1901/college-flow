@@ -1,6 +1,7 @@
 from fastapi import Header, HTTPException, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from app.core.database import get_db
 from app.core.security import verify_telegram_data
@@ -26,7 +27,14 @@ class RoleChecker:
 
     tg_id = tg_user_data.get("id")
 
-    stmt =  select(User).where(User.tg_id == tg_id)
+    stmt = (
+      select(User)
+      .where(User.tg_id == tg_id)
+      .options(
+        selectinload(User.student_profile),
+        selectinload(User.curator_profile)
+      )
+    )
     result =  await db.execute(stmt)
     user = result.scalar_one_or_none()
 

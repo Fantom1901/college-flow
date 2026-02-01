@@ -10,7 +10,7 @@ from app.models.group import Group
 from app.models.user import User
 from app.models.invite import InviteLink
 from app.schemas.group import GroupRead
-from app.schemas.init_group import GroupInitResponse, GroupInitRequest
+from app.schemas.invite import GroupInitResponse, GroupInitRequest
 from typing import List
 
 router = APIRouter()

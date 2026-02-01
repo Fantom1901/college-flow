@@ -1,0 +1,18 @@
+# Окружение и секреты
+.env
+venv/
+.venv/
+env/
+
+# Кэш Python
+**/__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE
+.idea/
+.vscode/
+
+# База данных (если используешь SQLite локально)
+*.sqlite3
+db.sqlite3

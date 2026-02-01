@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
+
+from app.models import Curator
 from app.models.role import UserRole
 
 class UserBase(BaseModel):
@@ -16,10 +18,17 @@ class StudentShort(BaseModel):
     class Config:
         from_attributes = True
 
+class CuratorShort(BaseModel):
+    full_name: str
+
+    class Config:
+      from_attributes = True
+
 class UserRead(UserBase):
     id: int
     role: UserRole
     student_profile: Optional[StudentShort] = None
+    curator_profile: Optional[CuratorShort] = None
 
     class Config:
         from_attributes = True

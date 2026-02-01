@@ -70,16 +70,16 @@ async def create_bulk_invite(
   await db.commit()
   return result
 
-@router.get("/verify/{code}")
-async def verify_invite(code: str, db: AsyncSession = Depends(get_db)):
-  invite = await get_invite_data(db, code)
-  if not invite or invite.is_used:
-    raise HTTPException(status_code=404, detail="Invite not found or user")
-  return {
-    "role": invite.role,
-    "group_id": invite.group_id,
-    "is_valid": True
-  }
+# @router.get("/verify/{code}")
+# async def verify_invite(code: str, db: AsyncSession = Depends(get_db)):
+#   invite = await get_invite_data(db, code)
+#   if not invite or invite.is_used:
+#     raise HTTPException(status_code=404, detail="Invite not found or user")
+#   return {
+#     "role": invite.role,
+#     "group_id": invite.group_id,
+#     "is_valid": True
+#   }
 
 
 
