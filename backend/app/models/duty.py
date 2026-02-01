@@ -25,6 +25,7 @@ class DutySetting(Base):
     work_days: Mapped[list[int]] = mapped_column(JSON, default=lambda: [0, 1, 2, 3, 4])
     excluded_dates: Mapped[list[str]] = mapped_column(JSON, default=list)
     last_generated_until: Mapped[date | None] = mapped_column(Date, nullable=True)
+    person_per_day: Mapped[int] = mapped_column(default=2, server_default="2")
 
     group: Mapped["Group"] = relationship("Group", back_populates="duty_settings")
 

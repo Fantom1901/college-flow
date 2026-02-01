@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from datetime import date
 from typing import List, Optional
 from app.models.duty import DutyStatus, DutyMechanism
@@ -18,6 +18,7 @@ class DutySettingsUpdate(BaseModel):
   mechanism: Optional[DutyMechanism] = None
   work_days: Optional[List[int]] = None
   excluded_dates: Optional[List[str]] = None
+  person_per_day: Optional[int] = Field(None, ge=1, le=5)
 
   model_config = ConfigDict(from_attributes=True)
 

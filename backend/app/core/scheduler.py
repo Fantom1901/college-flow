@@ -33,11 +33,11 @@ def start_scheduler():
     id='weekly_duty_gen',
     replace_existing=True,
   )
-  scheduler.add_job(
-    auto_generate_all_groups,
-    trigger=IntervalTrigger(seconds=60),
-    id="test_duty_gen",
-    next_run_time=datetime.now(),
-    replace_existing=True
-  )
+  # scheduler.add_job(
+  #   auto_generate_all_groups,
+  #   trigger=IntervalTrigger(seconds=60),
+  #   id="test_duty_gen",
+  #   next_run_time=datetime.now(),
+  #   replace_existing=True
+  # )
   scheduler.start()

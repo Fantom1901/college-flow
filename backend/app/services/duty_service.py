@@ -22,7 +22,7 @@ class DutyService:
 
   @staticmethod
   async def generate_weekly_schedule(session: AsyncSession, group_id: int, start_from: date):
-    settings = await DutyService.get_or_create_settings(session, group_id)
+    settings: DutySetting = await DutyService.get_or_create_settings(session, group_id)
 
     end_date = start_from + timedelta(days=7)
     delete_stmt = delete(DutySchedule).where(
@@ -68,9 +68,10 @@ class DutyService:
           DutySchedule.group_id == group_id,
           DutySchedule.date == current_date
         )
-        exists = (await session.execute(check_stmt)).scalar()
+        res = await session.execute(check_stmt)
+        existing_count = len(res.scalars().all())
 
-        if not exists:
+        for _ in range(max(0, settings.person_per_day - existing_count)):
           student = candidates[candidate_idx % num_candidates]
 
           new_duty = DutySchedule(
@@ -80,6 +81,7 @@ class DutyService:
             status=DutyStatus.PENDING
           )
           session.add(new_duty)
+
           candidate_idx += 1
 
       current_date += timedelta(days=1)
