@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: college_db
+    restart: always
+    environment:
+      POSTGRES_USER: college_user
+      POSTGRES_PASSWORD: college_password
+      POSTGRES_DB: college_flow
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build: ./backend
+    container_name: college_api
+    restart: always
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://college_user:college_password@db:5432/college_flow
+    ports:
+      - "8000:8000"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+  bot:
+    build: ./backend
+    container_name: college_bot
+    restart: always
+    depends_on:
+      - api
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://college_user:college_password@db:5432/college_flow
+      - BOT_TOKEN=ТВОЙ_ТОКЕН_ТУТ
+      - API_URL=http://api:8000
+    command: python bot/main.py
+
+volumes:
+  postgres_data:
