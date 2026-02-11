@@ -65,5 +65,12 @@
       <jdbc-url>jdbc:postgresql://localhost:5432/college_flow</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="college_flow_web@localhost" uuid="65275ada-5627-4ca6-8f9f-20587dd87020">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5432/college_flow</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

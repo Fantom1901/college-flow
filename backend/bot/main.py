@@ -1,30 +1,40 @@
 import asyncio
-import logging
 from dotenv import load_dotenv
-
-load_dotenv()
+from loguru import logger
 from aiogram import Bot, Dispatcher
-from app.core.config import settings
-from bot.handlers import start
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
+from app.core.config import settings
+from app.core.logger import setup_app_logging as setup_logging
+from bot.handlers import start
 
-logging.basicConfig(level=logging.INFO)
-
+load_dotenv()
 
 async def main():
-  bot = Bot(token=settings.BOT_TOKEN, default_properties=DefaultBotProperties(parse_mode=ParseMode.HTML))
+  setup_logging("bot")
+
+  bot = Bot(
+    token=settings.BOT_TOKEN,
+    default_properties=DefaultBotProperties(parse_mode=ParseMode.HTML)
+  )
   dp = Dispatcher()
 
   dp.include_router(start.router)
 
-  logging.info("Starting bot...")
+  logger.info("🤖 Бот College Flow запускается...")
+
   try:
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
+  except Exception as e:
+    logger.critical(f"💥 Бот прекратил работу из-за ошибки: {e}")
   finally:
+    logger.warning("Shutting down bot...")
     await bot.session.close()
 
 
 if __name__ == "__main__":
-  asyncio.run(main())
+  try:
+    asyncio.run(main())
+  except (KeyboardInterrupt, SystemExit):
+    logger.info("Бот остановлен вручную")
