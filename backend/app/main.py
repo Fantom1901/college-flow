@@ -7,13 +7,15 @@ from app.core.logger import logger
 
 def get_system_status():
   return {
-    "cpu": psutil.cpu_percent(),
+    "cpu": psutil.cpu_percent(interval=0.1),
     "ram": psutil.virtual_memory().percent,
     "disk": psutil.disk_usage('/').percent
   }
 
 
 async def monitor_resources():
+  psutil.cpu_percent(interval=None)
+
   while True:
     stats = get_system_status()
     logger.info(f"📊 СТАТУС СИСТЕМЫ: CPU: {stats['cpu']}% | RAM: {stats['ram']}% | DISK: {stats['disk']}%")
