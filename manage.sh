@@ -10,7 +10,6 @@ MAGENTA='\033[0;95m'
 NC='\033[0m'
 
 check_running() {
-    # Ищем запущенные контейнеры по паттерну
     RUNNING_CONTAINERS=$(docker ps --filter "name=${PROJECT_PATTERN}" --format "{{.Names}}")
     if [ ! -z "$RUNNING_CONTAINERS" ]; then
         return 0
@@ -37,9 +36,16 @@ case $1 in
         ;;
 
     restart)
+        echo -e "${MAGENTA}>>> Пересборка и перезапуск...${NC}"
         $0 stop
         docker compose up -d --build
-        echo -e "${GREEN}🔄 Перезапущено!${NC}"
+        echo -e "${GREEN}🔄 Перезапущено с актуальным кодом!${NC}"
+        ;;
+
+    update)
+        echo -e "${MAGENTA}>>> Стягивание обновлений из Git...${NC}"
+        git pull origin develop
+        $0 restart
         ;;
 
     status)
@@ -48,7 +54,6 @@ case $1 in
             docker ps --filter "name=${PROJECT_PATTERN}" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
             echo -e "\n${CYAN}📊 ТЕКУЩЕЕ СОСТОЯНИЕ API:${NC}"
-            # Проверяем доступность через docs, так как корень может отдавать 404
             HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 2 http://localhost:8000/docs)
 
             if [ "$HTTP_STATUS" == "200" ]; then
@@ -67,7 +72,6 @@ case $1 in
             BOT_RAW=$(docker logs college_bot --tail 5 2>&1)
             echo -e "$BOT_RAW"
 
-            # Проверка Nginx, если он есть
             if docker ps --format '{{.Names}}' | grep -q "college_nginx"; then
                 echo -e "\n${YELLOW}--- NGINX ---${NC}"
                 docker logs college_nginx --tail 3 2>&1
@@ -78,7 +82,7 @@ case $1 in
         ;;
 
     *)
-        echo "Использование: ./manage.sh {start|stop|restart|status}"
+        echo -e "${YELLOW}Использование: $0 {start|stop|restart|status|update}${NC}"
         exit 1
         ;;
 esac
