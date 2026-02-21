@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@theme {
+  /* Акцентные цвета */
+  --color-accent-red: #FF453A;
+  --color-accent-orange: #FF9F0A;
+  --color-accent-yellow: #FFD60A;
+  --color-accent-green: #30D158;
+  --color-accent-mint: #63E6E2;
+  --color-accent-teal: #40CBE0;
+  --color-accent-cyan: #64D2FF;
+  --color-accent-blue: #0A84FF;
+  --color-accent-indigo: #5E5CE6;
+  --color-accent-purple: #BF5AF2;
+  --color-accent-pink: #FF375F;
+  --color-accent-brown: #AC8E68;
+
+  /* Фоны */
+  --color-back-primary: #000000;
+  --color-back-secondary: #1C1C1E;
+  --color-back-tertiary: #2C2C2E;
+
+  /* Текст / Label */
+  --color-label-primary: #FFFFFF;
+  --color-label-secondary: rgba(235, 235, 245, 0.6);
+  --color-label-tertiary: rgba(235, 235, 245, 0.3);
+  --color-label-quarternary: rgba(235, 235, 245, 0.18);
+
+  /* Заливка / Fill */
+  --color-fill-primary: rgba(120, 120, 128, 0.36);
+  --color-fill-secondary: rgba(120, 120, 128, 0.32);
+  --color-fill-tertiaty: rgba(118, 118, 128, 0.24);
+  --color-fill-quaternary: rgba(116, 116, 128, 0.18);
+
+  --color-separator-opaque: #38383A;
+  --color-separator-Non-opaque: rgba(84, 84, 88, 0.65);
+}
