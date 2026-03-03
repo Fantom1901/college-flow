@@ -9,7 +9,7 @@ const api = axios.create({
   // Используем относительный путь, если фронт и бэк на одном домене
   // Это исключит проблемы с CORS и лишними проверками
   baseURL: window.location.hostname === 'localhost'
-    ? 'https://dezhur-app.ru/api/v1'
+    ? 'https://dezhur-app.ru/api'
     : '/api/v1',
 });
 
