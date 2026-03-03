@@ -1,15 +1,25 @@
 import axios from 'axios';
 
+// Сообщаем Телеграму, что мы готовы, как можно раньше
+if (window.Telegram?.WebApp) {
+  window.Telegram.WebApp.ready();
+}
+
 const api = axios.create({
-  // Обязательно полный путь, так как фронт на другом хосте
-  baseURL: 'https://dezhur-app.ru/api',
+  // Используем относительный путь, если фронт и бэк на одном домене
+  // Это исключит проблемы с CORS и лишними проверками
+  baseURL: window.location.hostname === 'localhost'
+    ? 'https://dezhur-app.ru/api/v1'
+    : '/api/v1',
 });
 
 api.interceptors.request.use((config) => {
   const isDev = window.location.hostname === 'localhost';
-  const realTgData = window.Telegram?.WebApp?.initData;
 
-  // Теперь мы шлем ЛИБО данные ТГ, ЛИБО заглушку. Заголовок БУДЕТ ВСЕГДА.
+  // Попытка взять данные из WebApp или напрямую из хэша URL
+  const realTgData = window.Telegram?.WebApp?.initData ||
+    window.location.hash.split('tgWebAppData=')[1]?.split('&')[0];
+
   const authData = isDev ? '123456789' : (realTgData || 'NO_TG_DATA_FROM_FRONT');
 
   config.headers['X-TG-Data'] = authData;
