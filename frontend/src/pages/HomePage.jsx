@@ -1,31 +1,48 @@
-import { useEffect } from 'react';
-import { usersApi } from '../api/users';
+import {useQuery} from '@tanstack/react-query';
+import {usersApi} from '../api/users';
 import useAppStore from '../store/useAppStore';
-import Dockbar from '../components/Dockbar';
 
 const HomePage = () => {
-  const { setUser, user } = useAppStore();
+  const {setUser, activeTab} = useAppStore();
 
-  useEffect(() => {
-    // Получаем данные юзера (теперь CORS нам не мешает!)
-    usersApi.getMe()
-      .then(data => {
-        setUser(data);
-      })
-      .catch(err => console.error("Ошибка загрузки профиля:", err));
-  }, []);
+  const {data: user, isLoading, error} = useQuery({
+    queryKey: ['me'],
+    queryFn: async () => {
+      const data = await usersApi.getMe();
+      setUser(data);
+      return data;
+    },
+  });
+
+  if (isLoading) return <div className="p-6 text-label-secondary">Загрузка...</div>;
+  if (error) return <div className="p-6 text-accent-red">Ошибка: {error.message}</div>;
 
   return (
-    <div className="min-h-screen bg-[#1a0b2e] text-white p-6 pb-24">
-      {/* Контент страницы (Рейтинг и т.д.) */}
-      <div className="mt-10">
-        <h1 className="text-2xl font-bold opacity-50 mb-4">РЕЙТИНГ</h1>
-        {/* Тут позже отрендерим список из макета */}
-        <p>Привет, {user?.curator_profile?.full_name || 'Загрузка...'}</p>
-      </div>
+    <div className="p-6 pb-28 text-label-primary">
+      {activeTab === 'home' && (
+        <div className="animate-in fade-in duration-500">
+          <h1 className="text-2xl font-bold mb-4">Привет, {user?.name || 'Никса'}!</h1>
+          <p className="text-label-secondary">Тут будет список твоих дежурств.</p>
+          <div
+            className="w-full h-[1500px] border-2 border-dashed border-accent-purple/30 rounded-3xl flex items-end justify-center pb-10">
+            <span className="text-accent-purple font-mono animate-bounce">
+            Я в самом низу
+          </span>
+          </div>
+        </div>
+      )}
 
-      {/* Наш Докбар */}
-      <Dockbar />
+      {activeTab === 'exchange' && (
+        <div className="animate-in fade-in duration-500">
+          <h1 className="text-2xl font-bold mb-4">Обмен сменами</h1>
+        </div>
+      )}
+
+      {activeTab === 'settings' && (
+        <div className="animate-in fade-in duration-500">
+          <h1 className="text-2xl font-bold mb-4">Настройки</h1>
+        </div>
+      )}
     </div>
   );
 };

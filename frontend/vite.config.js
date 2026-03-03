@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite' // <--- ВОТ ЭТОГО НЕ ХВАТАЕТ
+import {defineConfig} from 'vite' // <--- ВОТ ЭТОГО НЕ ХВАТАЕТ
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
