@@ -10,7 +10,7 @@ const api = axios.create({
   // Это исключит проблемы с CORS и лишними проверками
   baseURL: window.location.hostname === 'localhost'
     ? 'https://dezhur-app.ru/api'
-    : '/api/v1',
+    : '/api',
 });
 
 api.interceptors.request.use((config) => {
