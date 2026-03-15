@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+#root, body, html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Чтобы не было двойных скроллов */
+  background-color: #1a1a1a; /* Цвет твоего хедера */
+}
+
+@theme {
+  /* Акцентные цвета */
+  --color-accent-red: #FF453A;
+  --color-accent-orange: #FF9F0A;
+  --color-accent-yellow: #FFD60A;
+  --color-accent-green: #30D158;
+  --color-accent-mint: #63E6E2;
+  --color-accent-teal: #40CBE0;
+  --color-accent-cyan: #64D2FF;
+  --color-accent-blue: #0A84FF;
+  --color-accent-indigo: #5E5CE6;
+  --color-accent-purple: #BF5AF2;
+  --color-accent-pink: #FF375F;
+  --color-accent-brown: #AC8E68;
+
+  /* Фоны */
+  --color-back-primary: #000000;
+  --color-back-secondary: #1C1C1E;
+  --color-back-tertiary: #2C2C2E;
+
+  /* Текст / Label */
+  --color-label-primary: #FFFFFF;
+  --color-label-secondary: rgba(235, 235, 245, 0.6);
+  --color-label-tertiary: rgba(235, 235, 245, 0.3);
+  --color-label-quarternary: rgba(235, 235, 245, 0.18);
+
+  /* Заливка / Fill */
+  --color-fill-primary: rgba(120, 120, 128, 0.36);
+  --color-fill-secondary: rgba(120, 120, 128, 0.32);
+  --color-fill-tertiaty: rgba(118, 118, 128, 0.24);
+  --color-fill-quaternary: rgba(116, 116, 128, 0.18);
+  --color-fill-TabBar: rgba(116, 116, 128, 0.1);
+
+  --color-separator-opaque: #38383A;
+  --color-separator-Non-opaque: rgba(84, 84, 88, 0.65);
+
+  --backdrop-blur-TabBar: 24px;
+  --shadow-TabBar-inner: inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+  --border-TabBar: 1px solid #38383a;
+
+
+  --color-duty: rgba(255, 255, 255, 0.15);
+  --shadow-duty: 0px 10px 30px 0px rgba(0, 0, 0, 0.4), inset 0px 1px 2px 0px rgba(255, 255, 255, 0.2);
+  --backdrop-blur-duty: 15px;
+
+  --color-active-point: rgba(191, 90, 242, 1);
+  --shadow-pint-active: 0px 0px 4px 1px rgba(191, 90, 242, 0.5);
+
+  --tracking-sf-tight: -0.24px;
+  --leading-20: 20px;
+  --font-size-xs-plus: 13px;
+}
