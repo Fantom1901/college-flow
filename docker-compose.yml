@@ -21,7 +21,8 @@ services:
     environment:
       - SERVICE_NAME=api
       - DATABASE_URL=postgresql+asyncpg://college_user:college_password@db:5432/college_flow
-      - BOT_TOKEN=8398930262:AAHbFgO_dKhNZCT85Uwc2Q8HKPExlN2xwzs
+      - BOT_TOKEN=8398930262:AAFH4EcmJLCLoVW2d8-fRjGKBN7HQ28xwsg
+      - DEV_MOD=True
     volumes:
       - ./logs:/app/logs
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
@@ -35,7 +36,7 @@ services:
     environment:
       - SERVICE_NAME=bot
       - DATABASE_URL=postgresql+asyncpg://college_user:college_password@db:5432/college_flow
-      - BOT_TOKEN=8398930262:AAHbFgO_dKhNZCT85Uwc2Q8HKPExlN2xwzs
+      - BOT_TOKEN=8398930262:AAFH4EcmJLCLoVW2d8-fRjGKBN7HQ28xwsg
       - API_URL=http://api:8000
     volumes:
       - ./logs:/app/logs
