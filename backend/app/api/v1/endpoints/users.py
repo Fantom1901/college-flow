@@ -18,8 +18,8 @@ async def get_me(
     db: AsyncSession = Depends(get_db)
 ):
     stmt = select(User).where(User.id == current_user.id).options(
-        selectinload(User.student_profile),
-        selectinload(User.curator_profile).selectinload(Curator.group)
+      selectinload(User.student_profile),
+      selectinload(User.curator_profile).selectinload(Curator.group)
     )
     res = await db.execute(stmt)
     user_obj = res.scalar_one()
