@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+#root, body, html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Чтобы не было двойных скроллов */
+  background-color: #1a1a1a; /* Цвет твоего хедера */
+}
+
 @theme {
   /* Акцентные цвета */
   --color-accent-red: #FF453A;

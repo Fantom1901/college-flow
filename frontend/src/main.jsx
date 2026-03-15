@@ -12,20 +12,27 @@ import Dockbar from './components/Dockbar.jsx';
 try {
   init();
 
+  if (window.Telegram?.WebApp) {
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+
+    if (tg.isVersionAtLeast('7.0')) {
+      tg.requestFullscreen();
+    }
+
+    tg.setHeaderColor('#1a1a1a');
+    tg.setBackgroundColor('#1a1a1a');
+  }
+
+  // Твой код с viewport (оставляем для совместимости)
   if (viewport.mount.isAvailable()) {
     viewport.mount().then(() => {
-      // 1. Раскрываем на максимум
       if (viewport.expand.isAvailable()) viewport.expand();
-
-      // 2. ВКЛЮЧАЕМ ПОЛНОЭКРАННЫЙ РЕЖИМ (Fullscreen)
-      // Это уберет статичную полосу и сделает кнопки плавающими
-      if (viewport.requestFullscreen.isAvailable()) {
-        viewport.requestFullscreen();
-      }
-    }).catch(err => console.error("Viewport mount error:", err));
+    });
   }
 } catch (e) {
-  console.warn('Запущено вне Telegram или ошибка SDK');
+  console.warn('Запущено вне Telegram');
 }
 
 const queryClient = new QueryClient({
