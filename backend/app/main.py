@@ -3,6 +3,7 @@ import asyncio
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+from app.core.scheduler import start_scheduler
 
 from app.core.logger import logger
 from app.api.v1.api import api_router
@@ -38,19 +39,29 @@ async def monitor_resources():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("🚀 API Nixa Duty запущено...")
+  logger.info("🚀 API Nixa Duty запущено...")
 
-    monitor_task = asyncio.create_task(monitor_resources())
+  try:
+    start_scheduler()
+  except Exception as e:
+    logger.error(f"🛠 Ошибка при запуске планировщика: {e}")
 
-    yield
+  monitor_task = asyncio.create_task(monitor_resources())
 
-    monitor_task.cancel()
-    try:
-        await monitor_task
-    except asyncio.CancelledError:
-        logger.info("📡 Фоновая задача мониторинга остановлена.")
+  yield
 
-    logger.info("🛑 API остановлено.")
+  # Логика при выключении
+  monitor_task.cancel()
+  # Если хочешь корректно останавливать планировщик:
+  # from app.services.scheduler import scheduler
+  # scheduler.shutdown()
+
+  try:
+    await monitor_task
+  except asyncio.CancelledError:
+    logger.info("📡 Фоновая задача мониторинга остановлена.")
+
+  logger.info("🛑 API остановлено.")
 
 
 app = FastAPI(
