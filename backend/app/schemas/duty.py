@@ -25,3 +25,12 @@ class DutySettingsUpdate(BaseModel):
 
 class DutySettingsRead(DutySettingsUpdate):
   group_id: int
+
+
+class StudentShort(BaseModel):
+    id: int
+    full_name: str
+    model_config = ConfigDict(from_attributes=True)
+
+class DutyScheduleWithStudent(DutyScheduleRead):
+    student: StudentShort

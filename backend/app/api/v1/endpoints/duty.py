@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from datetime import date
+from datetime import date, timedelta
 from typing import Optional, List
+from sqlalchemy.orm import selectinload
 
 from app.core.database import get_db
 from app.services.duty_service import DutyService
@@ -10,7 +11,8 @@ from app.models.duty import DutyStatus, DutyMechanism, DutySchedule
 from app.models.user import User
 from app.models.role import UserRole
 from app.api.v1.dependencies import RoleChecker
-from app.schemas.duty import DutySettingsUpdate, DutySettingsRead
+from app.schemas.duty import DutySettingsUpdate, DutySettingsRead, DutyScheduleWithStudent
+
 
 router = APIRouter()
 
@@ -110,3 +112,52 @@ async def get_duty_settings(
 ):
   await check_group_access(current_user, group_id)
   return await DutyService.get_or_create_settings(db, group_id)
+
+
+@router.get("/weekly/{group_id}", response_model=List[DutyScheduleWithStudent])
+async def get_weekly_duty(
+  group_id: int,
+  db: AsyncSession = Depends(get_db),
+  current_user: User = Depends(RoleChecker(list(UserRole))),  # Доступно всем ролям
+):
+  """Получить расписание на текущую неделю (с ПН по ВС)"""
+
+  # Вычисляем понедельник текущей недели
+  today = date.today()
+  start_of_week = today - timedelta(days=today.weekday())
+  end_of_week = start_of_week + timedelta(days=6)
+
+  stmt = (
+    select(DutySchedule)
+    .where(
+      DutySchedule.group_id == group_id,
+      DutySchedule.date >= start_of_week,
+      DutySchedule.date <= end_of_week
+    )
+    .options(selectinload(DutySchedule.student))  # Загружаем данные студента одним запросом
+    .order_by(DutySchedule.date.asc())
+  )
+
+  result = await db.execute(stmt)
+  duties = result.scalars().all()
+
+  return duties
+
+
+@router.get("/today/{group_id}", response_model=List[DutyScheduleWithStudent])
+async def get_today_duty(
+  group_id: int,
+  db: AsyncSession = Depends(get_db),
+  current_user: User = Depends(RoleChecker(list(UserRole))),
+):
+  """Получить дежурных только на сегодня"""
+  stmt = (
+    select(DutySchedule)
+    .where(
+      DutySchedule.group_id == group_id,
+      DutySchedule.date == date.today()
+    )
+    .options(selectinload(DutySchedule.student))
+  )
+  result = await db.execute(stmt)
+  return result.scalars().all()
