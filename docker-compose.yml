@@ -3,6 +3,8 @@ services:
     image: postgres:15-alpine
     container_name: college_db
     restart: always
+    ports:
+      - "5432:5432"  # Пробрасываем порт наружу
     environment:
       POSTGRES_USER: college_user
       POSTGRES_PASSWORD: college_password
