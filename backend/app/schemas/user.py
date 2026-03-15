@@ -23,12 +23,13 @@ class CuratorShort(BaseModel):
 
   @computed_field
   def group_id(self) -> Optional[int]:
-    group_obj = getattr(self, 'group', None)
-    return group_obj.id if group_obj else None
+    if hasattr(self, 'group') and self.group:
+      return self.group.id
+
+    return None
 
   class Config:
     from_attributes = True
-
 
 class UserRead(UserBase):
   id: int

@@ -18,12 +18,13 @@ async def get_me(
     db: AsyncSession = Depends(get_db)
 ):
     stmt = select(User).where(User.id == current_user.id).options(
-      selectinload(User.student_profile),
-      selectinload(User.curator_profile).selectinload(Curator.group)
+        selectinload(User.student_profile),
+        # Убедись, что тут ТОЧКА: .selectinload(Curator.group)
+        selectinload(User.curator_profile).selectinload(Curator.group)
     )
     res = await db.execute(stmt)
-    user_obj = res.scalar_one()
-    return user_obj
+    refreshed_user = res.scalar_one()
+    return refreshed_user
 
 @router.patch("/me", response_model=UserRead)
 async def update_me(
