@@ -48,8 +48,22 @@ const TelegramProvider = ({ children }) => {
   useEffect(() => {
     if (window.Telegram?.WebApp) {
       const tg = window.Telegram.WebApp;
-      tg.setHeaderColor('#1a1a1a');
-      tg.setBackgroundColor('#1a1a1a');
+      tg.ready();
+
+      tg.expand();
+
+      const timer = setTimeout(() => {
+        if (tg.isVersionAtLeast('7.0')) {
+          try {
+            tg.requestFullscreen();
+          } catch (e) {
+            console.error("Fullscreen failed:", e);
+          }
+        }
+        tg.setHeaderColor('#1a1a1a');
+      }, 150);
+
+      return () => clearTimeout(timer);
     }
   }, []);
 
