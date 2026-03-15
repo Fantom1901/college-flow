@@ -7,6 +7,7 @@ from app.models import Curator, User, Student, InviteLink
 from app.models.role import UserRole
 from app.api.v1.dependencies import RoleChecker
 from app.schemas.user import UserRead, UserUpdateSchema, StudentRegisterRequest
+from sqlalchemy.orm import selectinload, joinedload
 
 router = APIRouter()
 
@@ -17,10 +18,13 @@ async def get_me(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
-    stmt = select(User).where(User.id == current_user.id).options(
+    stmt = (
+      select(User)
+      .where(User.id == current_user.id)
+      .options(
         selectinload(User.student_profile),
-        # Убедись, что тут ТОЧКА: .selectinload(Curator.group)
-        selectinload(User.curator_profile).selectinload(Curator.group)
+        joinedload(User.curator_profile).joinedload(Curator.group)  # <--- ТУТ МЕНЯЕМ НА JOINEDLOAD
+      )
     )
     res = await db.execute(stmt)
     refreshed_user = res.scalar_one()
