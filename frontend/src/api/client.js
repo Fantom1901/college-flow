@@ -12,8 +12,16 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   const isDev = window.location.hostname === 'localhost';
-  const realTgData = window.Telegram?.WebApp?.initData ||
-    window.location.hash.split('tgWebAppData=')[1]?.split('&')[0];
+
+  let realTgData = window.Telegram?.WebApp?.initData;
+
+  if (!realTgData) {
+    const hashData = window.location.hash.split('tgWebAppData=')[1]?.split('&')[0];
+    if (hashData) {
+      realTgData = decodeURIComponent(hashData);
+    }
+  }
+
   const authData = isDev ? '123456789' : (realTgData || 'NO_TG_DATA_FROM_FRONT');
 
   config.headers['X-TG-Data'] = authData;
