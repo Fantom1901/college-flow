@@ -23,7 +23,7 @@ class CuratorShort(BaseModel):
 
   @computed_field
   def group_id(self) -> Optional[int]:
-    # Тянем ID из связи group, которую мы подгрузим в роутере
+    # Если в роутере сработал selectinload, тут будет объект group
     if hasattr(self, 'group') and self.group:
       return self.group.id
     return None

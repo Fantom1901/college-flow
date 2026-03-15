@@ -22,7 +22,8 @@ async def get_me(
         selectinload(User.curator_profile).selectinload(Curator.group)
     )
     res = await db.execute(stmt)
-    return res.scalar_one()
+    user_obj = res.scalar_one()
+    return user_obj
 
 @router.patch("/me", response_model=UserRead)
 async def update_me(
