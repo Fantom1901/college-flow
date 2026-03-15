@@ -36,8 +36,19 @@
   --color-separator-opaque: #38383A;
   --color-separator-Non-opaque: rgba(84, 84, 88, 0.65);
 
-  /* Параметры для эффекта стекла */
   --backdrop-blur-TabBar: 24px;
   --shadow-TabBar-inner: inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
   --border-TabBar: 1px solid #38383a;
+
+
+  --color-duty: rgba(255, 255, 255, 0.15);
+  --shadow-duty: 0px 10px 30px 0px rgba(0, 0, 0, 0.4), inset 0px 1px 2px 0px rgba(255, 255, 255, 0.2);
+  --backdrop-blur-duty: 15px;
+
+  --color-active-point: rgba(191, 90, 242, 1);
+  --shadow-pint-active: 0px 0px 4px 1px rgba(191, 90, 242, 0.5);
+
+  --tracking-sf-tight: -0.24px;
+  --leading-20: 20px;
+  --font-size-xs-plus: 13px;
 }
