@@ -16,7 +16,9 @@ class Group(Base):
   curator: Mapped[Optional["Curator"]] = relationship(
     "Curator",
     back_populates="group",
-    foreign_keys=[curator_id]  # Указываем, что эта связь идет через curator_id
+    foreign_keys=[curator_id],
+    # Добавляем это, чтобы указать, что связь "закрывается" на id куратора
+    remote_side="Curator.id"
   )
   duty_settings: Mapped["DutySetting"] = relationship(
     "DutySetting", back_populates="group", uselist=False

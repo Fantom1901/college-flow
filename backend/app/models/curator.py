@@ -23,6 +23,6 @@ class Curator(Base):
     back_populates="curator",
     uselist=False,
     lazy="selectin",
-    foreign_keys=[group_id]  # ВОТ ЭТО НУЖНО ДОБАВИТЬ
+    foreign_keys=[group_id]
   )
   user: Mapped["User"] = relationship("User", back_populates="curator_profile")
