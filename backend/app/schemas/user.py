@@ -23,7 +23,12 @@ class CuratorShort(BaseModel):
 
   @computed_field
   def group_id(self) -> Optional[int]:
-    return self.group.id if hasattr(self, 'group') and self.group else None
+    try:
+      if hasattr(self, 'group') and self.group:
+        return self.group.id
+    except Exception:
+      pass
+    return None
 
   class Config:
     from_attributes = True
