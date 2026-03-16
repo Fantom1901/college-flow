@@ -1,8 +1,8 @@
-"""add group relationship to curator
+"""add_group_id_column_to_curators
 
-Revision ID: 4cc248c35638
+Revision ID: 2c6644622249
 Revises: 9f8363b5fd3b
-Create Date: 2026-03-15 19:49:09.224975
+Create Date: 2026-03-16 11:24:03.333545
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '4cc248c35638'
+revision: str = '2c6644622249'
 down_revision: Union[str, Sequence[str], None] = '9f8363b5fd3b'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
