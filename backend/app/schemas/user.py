@@ -20,19 +20,10 @@ class StudentShort(BaseModel):
 
 class CuratorShort(BaseModel):
   full_name: str
-
-  @computed_field
-  def group_id(self) -> Optional[int]:
-    try:
-      if hasattr(self, 'group') and self.group:
-        return self.group.id
-    except Exception:
-      pass
-    return None
+  group_id: Optional[int] = None  # Теперь это просто поле, Pydantic возьмет его из модели
 
   class Config:
     from_attributes = True
-
 
 class UserRead(UserBase):
   id: int
