@@ -13,22 +13,24 @@ router = APIRouter()
 
 get_current_user = RoleChecker(allowed_roles=list(UserRole))
 
+
 @router.get("/me", response_model=UserRead)
 async def get_me(
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
+  current_user: User = Depends(get_current_user),
+  db: AsyncSession = Depends(get_db)
 ):
-    stmt = (
-      select(User)
-      .where(User.id == current_user.id)
-      .options(
-        selectinload(User.student_profile),
-        joinedload(User.curator_profile).joinedload(Curator.group)  # <--- ТУТ МЕНЯЕМ НА JOINEDLOAD
-      )
+  stmt = (
+    select(User)
+    .where(User.id == current_user.id)
+    .options(
+      selectinload(User.student_profile),
+      # Меняем joinedload на selectinload здесь:
+      selectinload(User.curator_profile).selectinload(Curator.group)
     )
-    res = await db.execute(stmt)
-    refreshed_user = res.scalar_one()
-    return refreshed_user
+  )
+  res = await db.execute(stmt)
+  refreshed_user = res.scalar_one()
+  return refreshed_user
 
 @router.patch("/me", response_model=UserRead)
 async def update_me(
