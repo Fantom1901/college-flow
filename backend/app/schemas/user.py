@@ -20,10 +20,11 @@ class StudentShort(BaseModel):
 
 class CuratorShort(BaseModel):
   full_name: str
-  group_id: Optional[int] = None  # Теперь Pydantic просто заберет значение из колонки
+  group_id: Optional[int] = None
 
   class Config:
     from_attributes = True
+    populate_by_name = True
 
 class UserRead(UserBase):
   id: int
