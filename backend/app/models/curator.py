@@ -18,5 +18,11 @@ class Curator(Base):
   group_id: Mapped[int | None] = mapped_column(ForeignKey("groups.id"), nullable=True)
 
   # Сама связь (relationship) остается
-  group: Mapped["Group"] = relationship("Group", back_populates="curator", uselist=False, lazy="selectin")
+  group: Mapped["Group"] = relationship(
+    "Group",
+    back_populates="curator",
+    uselist=False,
+    lazy="selectin",
+    foreign_keys=[group_id]  # ВОТ ЭТО НУЖНО ДОБАВИТЬ
+  )
   user: Mapped["User"] = relationship("User", back_populates="curator_profile")
