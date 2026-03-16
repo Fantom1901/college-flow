@@ -13,7 +13,11 @@ class Group(Base):
 
   students: Mapped[list["Student"]] = relationship("Student", back_populates="group")
   curator_id: Mapped[Optional[int]] = mapped_column(ForeignKey("curators.id", onupdate="SET NULL"))
-  curator: Mapped[Optional["Curator"]] = relationship("Curator", back_populates="group")
+  curator: Mapped[Optional["Curator"]] = relationship(
+    "Curator",
+    back_populates="group",
+    foreign_keys=[curator_id]  # Указываем, что эта связь идет через curator_id
+  )
   duty_settings: Mapped["DutySetting"] = relationship(
     "DutySetting", back_populates="group", uselist=False
   )
