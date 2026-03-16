@@ -23,22 +23,11 @@ class CuratorShort(BaseModel):
 
   @computed_field
   def group_id(self) -> Optional[int]:
-    print(f"DEBUG: Curator object attributes: {dir(self)}")
-
-    target = getattr(self, 'group', None)
-    if target:
-      return target.id
-
-    target_alt = getattr(self, 'groups', None)
-    if target_alt:
-      if isinstance(target_alt, list) and len(target_alt) > 0:
-        return target_alt[0].id
-      return getattr(target_alt, 'id', None)
-
-    return None
+    return self.group.id if hasattr(self, 'group') and self.group else None
 
   class Config:
     from_attributes = True
+
 
 class UserRead(UserBase):
   id: int
