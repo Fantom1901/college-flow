@@ -20,7 +20,7 @@ class StudentShort(BaseModel):
 
 class CuratorShort(BaseModel):
   full_name: str
-  group_id: Optional[int] = None  # Теперь это просто поле, Pydantic возьмет его из модели
+  group_id: Optional[int] = None  # Теперь Pydantic просто заберет значение из колонки
 
   class Config:
     from_attributes = True
