@@ -43,9 +43,38 @@ case $1 in
         ;;
 
     update)
-        echo -e "${MAGENTA}>>> Стягивание обновлений из Git...${NC}"
-        git pull origin develop
-        $0 restart
+        echo -e "${CYAN}>>> Синхронизация с GitHub...${NC}"
+        git fetch --all --prune > /dev/null
+
+        echo -e "${YELLOW}Доступные ветки в репозитории:${NC}"
+        # Выводим список веток без лишних пробелов и символов
+        git branch -r | grep "origin/" | sed 's/  origin\///' | grep -v "HEAD"
+
+        echo -ne "\n${MAGENTA}Какую ветку стянуть? (по умолчанию feature/frontend): ${NC}"
+        read BRANCH
+
+        if [ -z "$BRANCH" ]; then
+            BRANCH="feature/frontend"
+        fi
+
+        echo -e "${CYAN}>>> Переключение на $BRANCH и стягивание изменений...${NC}"
+
+        # Проверяем, существует ли ветка локально, если нет — создаем из origin
+        if git show-ref --verify --quiet "refs/heads/$BRANCH"; then
+            git checkout "$BRANCH"
+        else
+            git checkout -b "$BRANCH" "origin/$BRANCH"
+        fi
+
+        # Проверка, есть ли вообще новые коммиты
+        PULL_OUTPUT=$(git pull origin "$BRANCH")
+
+        if [[ "$PULL_OUTPUT" == *"Already up to date."* ]]; then
+            echo -e "${GREEN}✅ Код уже актуален. Перезапуск не требуется.${NC}"
+        else
+            echo -e "${GREEN}✅ Изменения получены. Обновляю контейнеры...${NC}"
+            $0 restart
+        fi
         ;;
 
     status)
@@ -54,7 +83,7 @@ case $1 in
             docker ps --filter "name=${PROJECT_PATTERN}" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
             echo -e "\n${CYAN}📊 ТЕКУЩЕЕ СОСТОЯНИЕ API:${NC}"
-            HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 2 http://localhost:8000/docs)
+            HTTP_STATUS=$(curl -sk -o /dev/null -w "%{http_code}" --max-time 2 -L http://localhost/docs)
 
             if [ "$HTTP_STATUS" == "200" ]; then
                 echo -e "${GREEN}✅ API запущено и отвечает (HTTP 200 на /docs)${NC}"
