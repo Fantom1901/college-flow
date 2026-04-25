@@ -1,13 +1,14 @@
-export const SettingsIcon = ({className}) => (
+export const SettingsIcon = ({ className, style }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
-    // viewBox оставляем 24x24, чтобы координаты не ломались
     viewBox="0 0 24 24"
-    strokeWidth={1.5}
+    // Немного увеличим толщину обводки, так как при scale 0.54 линии становятся слишком тонкими
+    strokeWidth={1.7}
     stroke="currentColor"
-    // ДОБАВЛЯЕМ scale-[0.8] в начало className
-    className={`scale-[0.54] ${className}`} // Классы из Докбара (relative z-10 и т.д.) придут в className
+    // Пробрасываем style и разрешаем выход свечения за границы
+    style={{ ...style, overflow: 'visible' }}
+    className={`scale-[0.54] ${className}`}
   >
     <path
       strokeLinecap="round"

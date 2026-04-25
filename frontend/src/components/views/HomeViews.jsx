@@ -1,29 +1,39 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query'; // Вот этого не хватало
 import { dutyApi } from '../../api/duty';
 import DutyStack from "../DutyStack.jsx";
+import { formatDutyDate } from '../../utils/dateFormatter';
 
-const HomeView = ({ user }) => {
-  const groupId = user?.student_profile?.group_id;
+const HomeView = ({ user, isLoadingUser }) => {
+  // Пытаемся вытащить группу
+  const groupId = user?.student_profile?.group_id || user?.group_id;
 
-  // Твои реальные данные из API (пока закомментим или используем моки)
-  const mockData = [
-    { id: 1, date: 'Сегодня 15 мая', users: ['Ветров Тимофей', 'Тюменцева Диана'] },
-    { id: 2, date: 'Завтра 16 мая', users: ['Иванов Иван', 'Петров Петр'] },
-    { id: 3, date: 'Послезавтра 17 мая', users: ['Сидоров Сидор', 'Алексеев Алексей'] },
-  ];
+  const { data: schedule, isLoading: isLoadingDuty } = useQuery({
+    queryKey: ['weekly-duty', groupId],
+    queryFn: () => dutyApi.getWeekly(groupId),
+    enabled: !!groupId,
+    select: (data) => data.map(item => ({
+      id: item.id,
+      date: formatDutyDate(item.date),
+      users: [item.student?.full_name || 'Имя'],
+      status: item.status
+    })).slice(0, 3)
+  });
 
   return (
-    <div className="flex flex-col items-center p-10 select-none">
-      <header className="w-full">
-        {/* Вызываем нашу анимированную колоду */}
-        <DutyStack initialItems={mockData} />
+    <div className="flex flex-col items-center w-full select-none">
+      <header className="w-full flex justify-center">
+        {/* Если группы нет, покажем пустой стек (скелетоны) */}
+        <DutyStack
+          items={schedule || []}
+          isLoading={isLoadingUser || (isLoadingDuty && !!groupId) || !groupId}
+        />
       </header>
 
-      <section className="mt-12 text-center">
-        <div className="text-label-tertiary text-[11px] uppercase tracking-widest">
-          Свайпни вверх или вниз
+      {!groupId && !isLoadingUser && (
+        <div className="mt-10 text-white/20 text-[10px] text-center px-10">
+          Твой аккаунт куратора не привязан к конкретной группе в базе данных.
         </div>
-      </section>
+      )}
     </div>
   );
 };

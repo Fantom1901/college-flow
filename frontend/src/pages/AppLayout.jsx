@@ -1,11 +1,13 @@
+import React, { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { usersApi } from '../api/users';
 import useAppStore from '../store/useAppStore.js';
-
-// Импортируй новые "виды" (Views)
 import HomeView from '../components/views/HomeViews.jsx';
 import ExchangeView from '../components/views/ExchangeView';
 import SettingsView from '../components/views/SettingsView';
+import Dockbar from "../components/Dockbar.jsx";
+import { IS_DEV, MOCK_USER } from '../config';
+
 
 const AppLayout = () => {
   const { setUser, activeTab } = useAppStore();
@@ -13,30 +15,44 @@ const AppLayout = () => {
   const { data: user, isLoading, error } = useQuery({
     queryKey: ['me'],
     queryFn: async () => {
+      // Если дев-режим, возвращаем заглушку сразу
+      if (IS_DEV) return MOCK_USER;
+
       const data = await usersApi.getMe();
-      setUser(data);
       return data;
     },
+    retry: IS_DEV ? false : 1,
   });
 
-  if (isLoading) return (
-    <div className="flex items-center justify-center h-screen text-label-secondary animate-pulse">
-      Загрузка профиля...
-    </div>
-  );
+  useEffect(() => {
+    if (user) {
+      setUser(user);
+    }
+  }, [user, setUser]);
 
-  if (error) return (
-    <div className="p-6 text-accent-red bg-accent-red/10 rounded-2xl m-4">
-      Ошибка: {error.message}
+  // В дев-режиме игнорируем ошибку, чтобы интерфейс не падал
+  if (error && !IS_DEV) return (
+    <div className="p-6 text-red-500 bg-white/20 main-glass rounded-3xl m-4">
+      Ошибка загрузки: {error.message}
     </div>
   );
 
   return (
-    <div>
-      <main className="px-9 py-33 pt-24">
-        {activeTab === 'home' && <HomeView user={user} />}
-        {activeTab === 'exchange' && <ExchangeView />}
-        {activeTab === 'settings' && <SettingsView />}
+    <div className="min-h-screen w-full p-2 flex items-center justify-center">
+      <main className="main-glass w-full max-w-md min-h-[91vh] rounded-[48px] overflow-hidden relative flex flex-col pt-12 pb-28 px-4 transition-all duration-1000">
+
+        {/*<div className="absolute top-4 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-black/10 rounded-full" />*/}
+
+        <div className="flex-1">
+          {activeTab === 'home' && (
+            <HomeView user={user} isLoadingUser={isLoading} />
+          )}
+          {activeTab === 'exchange' && <ExchangeView />}
+          {activeTab === 'settings' && <SettingsView />}
+        </div>
+
+        {/* Теперь он живет здесь */}
+        <Dockbar />
       </main>
     </div>
   );

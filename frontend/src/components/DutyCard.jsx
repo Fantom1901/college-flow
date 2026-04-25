@@ -1,8 +1,10 @@
 import React from 'react';
-import {motion} from "framer-motion";
+import { motion } from "framer-motion";
+import { IS_DEV, MOCK_DUTY } from '../config';
+console.log("DEBUG CONFIG:", { IS_DEV, MOCK_DUTY }); // ЧТО ТУТ?
 
 const getInitials = (name) => {
-  if (!name) return "??";
+  if (!name) return "";
   return name.split(' ').map(n => n[0]).join('').toUpperCase();
 };
 
@@ -12,56 +14,84 @@ function DutyCard({
                     height = '125px',
                     zIndex = 1,
                     activeIndex = 0,
-                    data // Добавляем проп data
+                    data,
+                    isLoading = false
                   }) {
-  const { date = "Загрузка...", users = [] } = data || {};
+
+  // 1. Определяем, есть ли у нас реальные данные
+  const hasRealData = data && Object.keys(data).length > 0 && data.date;
+
+  // 2. Выбираем, что отрисовать
+  let displayData = data;
+
+  if (IS_DEV && !hasRealData) {
+    displayData = MOCK_DUTY[activeIndex % MOCK_DUTY.length];
+  }
+  const date = displayData?.date || "Дата не указана";
+  const users = displayData?.users || [];
+
+  console.log("RENDER LOG:", {
+    source: hasRealData ? "SERVER/PROPS" : "MOCK",
+    date,
+    usersCount: users.length
+  });
+
+  if (isLoading) {
+    return (
+      <div style={{ width, height, zIndex }} className={`relative p-4 rounded-[28px] flex flex-row justify-between transition-all duration-500 shadow-xl
+      ${isActive ? 'bg-white/90 backdrop-blur-xl' : 'bg-white/40 backdrop-blur-md'} border border-white/40`}>
+        <div className="flex flex-col gap-[18px] w-full">
+          <div className="h-4 w-24 bg-black/5 rounded-md" />
+          <div className="flex flex-col gap-3">
+            <div className="flex gap-2 items-center">
+              <div className="w-6 h-6 rounded-full bg-black/5" />
+              <div className="h-5 w-32 bg-black/5 rounded-md" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
       style={{ width, height, zIndex }}
-      className="relative border border-duty shadow-duty backdrop-blur-duty bg-fill-secondary py-4 px-[14px] rounded-3xl flex flex-row justify-between transition-all duration-500"
+      className={`relative inner-glass p-4 rounded-[28px] flex flex-row justify-between transition-all duration-500 shadow-lg`}
     >
-      {isActive ? (
-        <>
-          <div className="flex flex-col gap-[18px]">
-            <div className="font-sans font-bold text-[13px] leading-[20px] tracking-[--tracking-sf-tight] text-label-secondary">
-              {date} {/* Теперь дата динамическая */}
-            </div>
+      <div className={`flex flex-col justify-between transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
+        <div className="text-slate-500 text-[10px] font-black uppercase italic tracking-wider">
+          {date}
+        </div>
 
-            <div className="flex flex-col gap-2 text-white font-sans">
-              {users.map((user, idx) => (
-                <div key={idx} className="flex gap-[10px] items-center">
-                  <div className="w-6 h-6 flex items-center justify-center rounded-full bg-active-point shrink-0">
-                    <b className="font-semibold text-[11px] leading-none">
-                      {getInitials(user)} {/* Инициалы считаются сами */}
-                    </b>
-                  </div>
-                  <div>
-                    <b className="font-bold text-[16px] leading-5 text-nowrap">
-                      {user} {/* Имя из массива */}
-                    </b>
-                  </div>
-                </div>
-              ))}
+        <div className="flex flex-col gap-2">
+          {users.map((user, idx) => (
+            <div key={idx} className="flex gap-[10px] items-center">
+              <div className="w-7 h-7 flex items-center justify-center rounded-xl bg-slate-900 shadow-lg shrink-0">
+                <b className="text-white text-[10px] italic">{getInitials(user)}</b>
+              </div>
+              <b className="font-extrabold text-[15px] text-slate-900 tracking-tight italic">
+                {user}
+              </b>
             </div>
-          </div>
+          ))}
+          {/* Если пользователей нет, покажем заглушку внутри карточки */}
+          {users.length === 0 && <b className="text-slate-400 text-[12px]">Свободно</b>}
+        </div>
+      </div>
 
-          <div className="flex flex-col justify-center items-center gap-[3px]">
-            {[0, 1, 2].map((dotIndex) => (
-              <motion.span
-                key={dotIndex}
-                layout // Добавляем layout самой точке
-                className={`
-                  w-[5px] h-[5px] rounded-full shrink-0 transition-all duration-300
-                  ${activeIndex === dotIndex
-                    ? 'bg-active-point shadow-active-point scale-110'
-                    : 'bg-label-quarternary'}
-                `}
-              />
-            ))}
-          </div>
-        </>
-      ) : null}
+      <div className="flex flex-col justify-center items-center gap-[4px]">
+        {[0, 1, 2].map((dotIndex) => (
+          <motion.span
+            key={dotIndex}
+            layout
+            className={`w-[6px] h-[6px] rounded-full shrink-0 transition-all duration-300 ${
+              activeIndex === dotIndex
+                ? 'bg-blue-600 shadow-[0_0_10px_rgba(37,99,235,0.5)] scale-125'
+                : 'bg-slate-300'
+            }`}
+          />
+        ))}
+      </div>
     </div>
   );
 }
