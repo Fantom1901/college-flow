@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from "framer-motion";
 import { IS_DEV, MOCK_DUTY } from '../config';
-console.log("DEBUG CONFIG:", { IS_DEV, MOCK_DUTY }); // ЧТО ТУТ?
 
 const getInitials = (name) => {
   if (!name) return "";
@@ -15,7 +14,8 @@ function DutyCard({
                     zIndex = 1,
                     activeIndex = 0,
                     data,
-                    isLoading = false
+                    isLoading = false,
+                    isPulling = false // Принимаем проп из Stack
                   }) {
 
   // 1. Определяем, есть ли у нас реальные данные
@@ -30,16 +30,18 @@ function DutyCard({
   const date = displayData?.date || "Дата не указана";
   const users = displayData?.users || [];
 
-  console.log("RENDER LOG:", {
-    source: hasRealData ? "SERVER/PROPS" : "MOCK",
-    date,
-    usersCount: users.length
-  });
+  const backgroundClass = !isActive
+    ? 'bg-white/60 backdrop-blur-md'
+    : isPulling
+      ? 'bg-white/90 backdrop-blur-xl'
+      : 'bg-white shadow-2xl';
 
   if (isLoading) {
     return (
-      <div style={{ width, height, zIndex }} className={`relative p-4 rounded-[28px] flex flex-row justify-between transition-all duration-500 shadow-xl
-      ${isActive ? 'bg-white/90 backdrop-blur-xl' : 'bg-white/40 backdrop-blur-md'} border border-white/40`}>
+      <div
+        style={{ width, height, zIndex }}
+        className={`relative p-4 rounded-[28px] flex flex-row justify-between transition-all duration-500 border border-white/40 bg-white/40 backdrop-blur-md shadow-xl`}
+      >
         <div className="flex flex-col gap-[18px] w-full">
           <div className="h-4 w-24 bg-black/5 rounded-md" />
           <div className="flex flex-col gap-3">
@@ -56,7 +58,7 @@ function DutyCard({
   return (
     <div
       style={{ width, height, zIndex }}
-      className={`relative inner-glass p-4 rounded-[28px] flex flex-row justify-between transition-all duration-500 shadow-lg`}
+      className={`relative ${backgroundClass} p-4 rounded-[28px] flex flex-row justify-between transition-all duration-500 border border-white/20`}
     >
       <div className={`flex flex-col justify-between transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
         <div className="text-slate-500 text-[10px] font-black uppercase italic tracking-wider">
@@ -74,7 +76,6 @@ function DutyCard({
               </b>
             </div>
           ))}
-          {/* Если пользователей нет, покажем заглушку внутри карточки */}
           {users.length === 0 && <b className="text-slate-400 text-[12px]">Свободно</b>}
         </div>
       </div>

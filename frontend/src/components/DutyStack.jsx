@@ -102,6 +102,7 @@ const DutyStack = ({ items = [], isLoading }) => {
               <DutyCard
                 isLoading={isLoading} // Передаем статус загрузки
                 isActive={isFront || ((isMiddle || isBack) && isPulling)}
+                isPulling={isPulling}
                 width={config.width}
                 zIndex={config.zIndex}
                 activeIndex={isFront ? step : isMiddle ? (step + 1) % 3 : (step - 1 + 3) % 3}

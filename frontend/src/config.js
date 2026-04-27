@@ -1,4 +1,4 @@
-export const IS_DEV = true;
+export const IS_DEV = false;
 
 export const MOCK_USER = {
   id: 1337,
