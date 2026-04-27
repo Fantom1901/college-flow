@@ -18,7 +18,7 @@ services:
       - db
     environment:
       - SERVICE_NAME=api
-      - DEV_MODE=true
+      - DEV_MODE=false
       - DATABASE_URL=postgresql+asyncpg://college_user:college_password@db:5432/college_flow
       - BOT_TOKEN=8398930262:AAFH4EcmJLCLoVW2d8-fRjGKBN7HQ28xwsg
     volumes:
