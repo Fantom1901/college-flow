@@ -1,6 +1,5 @@
-from pydantic import BaseModel
 from typing import Optional
-
+from pydantic import BaseModel, computed_field
 from app.models import Curator
 from app.models.role import UserRole
 
@@ -18,20 +17,23 @@ class StudentShort(BaseModel):
     class Config:
         from_attributes = True
 
-class CuratorShort(BaseModel):
-    full_name: str
 
-    class Config:
-      from_attributes = True
+class CuratorShort(BaseModel):
+  full_name: str
+  group_id: Optional[int] = None
+
+  class Config:
+    from_attributes = True
+    populate_by_name = True
 
 class UserRead(UserBase):
-    id: int
-    role: UserRole
-    student_profile: Optional[StudentShort] = None
-    curator_profile: Optional[CuratorShort] = None
+  id: int
+  role: UserRole
+  student_profile: Optional[StudentShort] = None
+  curator_profile: Optional[CuratorShort] = None
 
-    class Config:
-        from_attributes = True
+  class Config:
+    from_attributes = True
 
 
 class UserUpdateSchema(BaseModel):
