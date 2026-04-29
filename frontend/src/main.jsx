@@ -7,6 +7,7 @@ import { init, viewport, settingsButton, mainButton, backButton } from '@telegra
 import './index.css';
 import AppLayout from "./pages/AppLayout.jsx";
 import { BackgroundImage } from './components/BackgroundImage.jsx';
+import VantaBackground from "./components/VantaBackground.jsx";
 import Dockbar from './components/Dockbar.jsx';
 
 try {
@@ -75,12 +76,12 @@ createRoot(document.getElementById('root')).render(
     <QueryClientProvider client={queryClient}>
       <TelegramProvider>
         <BrowserRouter>
-          <BackgroundImage />
+          <VantaBackground />
           <div style={{ paddingTop: 'var(--tg-safe-area-inset-top, 0px)' }}>
             <Routes>
               <Route path="/" element={<AppLayout />} />
             </Routes>
-            <Dockbar />
+            {/*<Dockbar />*/}
           </div>
         </BrowserRouter>
       </TelegramProvider>

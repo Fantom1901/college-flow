@@ -1,7 +1,7 @@
 import hmac
 import hashlib
 import json
-from urllib.parse import parse_qsl
+from urllib.parse import parse_qsl, unquote
 from app.core.config import settings
 
 def verify_telegram_data(init_data: str) -> dict | None:
@@ -24,6 +24,9 @@ def verify_telegram_data(init_data: str) -> dict | None:
     return None
 
   try:
+    if "%22" in init_data or "%7B" in init_data:
+      init_data = unquote(init_data)
+
     vals = dict(parse_qsl(init_data))
 
     hash_to_check = vals.pop("hash", None)

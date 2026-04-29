@@ -43,9 +43,51 @@ case $1 in
         ;;
 
     update)
-        echo -e "${MAGENTA}>>> Стягивание обновлений из Git...${NC}"
-        git pull origin develop
-        $0 restart
+        echo -e "${CYAN}>>> Синхронизация с GitHub...${NC}"
+
+        # Берем ветку из аргумента $2 (от вебхука) или спрашиваем
+        BRANCH=$2
+
+        if [ -z "$BRANCH" ]; then
+            echo -e "${YELLOW}Доступные ветки в репозитории:${NC}"
+            git fetch --all --prune > /dev/null
+            git branch -r | grep "origin/" | sed 's/  origin\///' | grep -v "HEAD"
+
+            echo -ne "\n${MAGENTA}Какую ветку стянуть? (по умолчанию feature/frontend): ${NC}"
+            read BRANCH
+            [ -z "$BRANCH" ] && BRANCH="feature/frontend"
+        else
+            # Если ветка пришла извне, убираем префикс refs/heads/, если он вдруг остался
+            BRANCH=${BRANCH#refs/heads/}
+            echo -e "${GREEN}>>> Автоматическое обновление ветки: $BRANCH${NC}"
+        fi
+
+        echo -e "${CYAN}>>> Переключение на $BRANCH и стягивание изменений...${NC}"
+
+        # Синхронизация
+        git fetch origin "$BRANCH"
+
+        # Проверка локальной ветки
+        if git show-ref --verify --quiet "refs/heads/$BRANCH"; then
+            git checkout "$BRANCH"
+        else
+            git checkout -b "$BRANCH" "origin/$BRANCH"
+        fi
+
+        # Пытаемся стянуть
+        PULL_OUTPUT=$(git pull origin "$BRANCH" 2>&1)
+
+        if [[ "$PULL_OUTPUT" == *"Already up to date."* ]]; then
+            echo -e "${GREEN}✅ Код уже актуален. Перезапуск не требуется.${NC}"
+        elif [[ "$PULL_OUTPUT" == *"error"* || "$PULL_OUTPUT" == *"fatal"* ]]; then
+            echo -e "${RED}❌ ОШИБКА при git pull:${NC}"
+            echo "$PULL_OUTPUT"
+            exit 1
+        else
+            echo -e "${GREEN}✅ Изменения получены. Обновляю контейнеры...${NC}"
+            # Вызываем restart напрямую через скрипт
+            $0 restart
+        fi
         ;;
 
     status)
@@ -54,7 +96,7 @@ case $1 in
             docker ps --filter "name=${PROJECT_PATTERN}" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
             echo -e "\n${CYAN}📊 ТЕКУЩЕЕ СОСТОЯНИЕ API:${NC}"
-            HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 2 http://localhost:8000/docs)
+            HTTP_STATUS=$(curl -sk -o /dev/null -w "%{http_code}" --max-time 2 -L http://localhost/docs)
 
             if [ "$HTTP_STATUS" == "200" ]; then
                 echo -e "${GREEN}✅ API запущено и отвечает (HTTP 200 на /docs)${NC}"

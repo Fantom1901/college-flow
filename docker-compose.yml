@@ -20,9 +20,9 @@ services:
       - db
     environment:
       - SERVICE_NAME=api
+      - DEV_MODE=false
       - DATABASE_URL=postgresql+asyncpg://college_user:college_password@db:5432/college_flow
       - BOT_TOKEN=8398930262:AAFH4EcmJLCLoVW2d8-fRjGKBN7HQ28xwsg
-      - DEV_MOD=True
     volumes:
       - ./logs:/app/logs
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
@@ -52,8 +52,6 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
-      # УДАЛИ ЭТУ СТРОКУ (или закомментируй):
-      # - ./frontend/dist:/usr/share/nginx/html:ro
     depends_on:
       - api
 volumes:
