@@ -6,7 +6,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from app.core.config import settings
 from app.core.logger import setup_app_logging as setup_logging
-from bot.handlers import start
+from bot.handlers import start, exchange
 
 load_dotenv()
 
@@ -18,9 +18,8 @@ async def main():
     default_properties=DefaultBotProperties(parse_mode=ParseMode.HTML)
   )
   dp = Dispatcher()
-
   dp.include_router(start.router)
-
+  dp.include_router(exchange.router)
   logger.info("🤖 Бот College Flow запускается...")
 
   try:

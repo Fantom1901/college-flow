@@ -29,3 +29,11 @@ class ExchangeResponse(BaseModel):
     suggested_duty: DutyScheduleRead
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class ExchangeListResponse(BaseModel):
+  incoming: list[ExchangeResponse]  # Активные заявки текущему юзеру (PENDING)
+  outgoing: list[ExchangeResponse]  # Активные заявки от текущего юзера (PENDING)
+  history: list[ExchangeResponse]  # Все завершенные обмены (ACCEPTED, REJECTED, CANCELLED)
+
+  model_config = ConfigDict(from_attributes=True)

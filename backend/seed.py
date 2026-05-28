@@ -38,3 +38,11 @@ async def seed_data(session):
 
     await session.commit()
     print("✅ База наполнена для теста обмена!")
+
+    # ВОЗВРАЩАЕМ РЕАЛЬНЫЕ ID ИЗ БАЗЫ
+    return {
+      "init_student_id": student1.id,
+      "sugg_student_id": student2.id,
+      "init_duty_id": duty1.id,
+      "sugg_duty_id": duty2.id
+    }
