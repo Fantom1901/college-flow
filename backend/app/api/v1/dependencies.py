@@ -1,4 +1,4 @@
-from fastapi import Header, HTTPException, Depends
+from fastapi import Header, HTTPException, Depends, logger
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
@@ -50,9 +50,9 @@ class RoleChecker:
         allowed_roles_normalized = [str(r.value).lower() for r in self.allowed_roles]
 
         if user_role_normalized not in allowed_roles_normalized:
-            raise HTTPException(
-                status_code=403,
-                detail=f"You don't have permission to perform this action. Required: {allowed_roles_normalized}, got: {user_role_normalized}"
-            )
+          logger.error(f"ACCESS DENIED: User {user.username} (role: {user_role_normalized}) "
+                       f"tried to access, but allowed are: {allowed_roles_normalized}")
+          raise HTTPException(status_code=403,
+                              detail=f"Role mismatch: {user_role_normalized} not in {allowed_roles_normalized}")
 
         return user
