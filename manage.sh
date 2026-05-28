@@ -9,31 +9,28 @@ CYAN='\033[0;36m'
 MAGENTA='\033[0;95m'
 NC='\033[0m'
 
-# --- Хелперы ---
+# --- Функции ---
 show_help() {
-    echo -e "${CYAN}Использование:${NC} ./manage.sh [команда] [аргументы]"
+    echo -e "${CYAN}Использование:${NC} ./manage.sh [команда]"
     echo -e "\n${YELLOW}Команды:${NC}"
-    echo -e "  start              Запустить проект в Docker"
+    echo -e "  start              Запуск в Prod-режиме"
     echo -e "  dev                Запуск локально (FastAPI + БД)"
     echo -e "  test [-v]          Запуск тестов"
-    echo -e "  stop               Остановить проект"
-    echo -e "  restart            Пересобрать и перезапустить"
-    echo -e "  update [branch]    Обновить код из Git"
-    echo -e "  status             Показать состояние"
+    echo -e "  stop               Остановка проекта"
+    echo -e "  restart            Пересборка и перезапуск"
+    echo -e "  update [branch]    Обновление из Git и перезапуск"
+    echo -e "  status             Показать детальное состояние и логи"
 }
 
 check_running() {
     docker ps --filter "name=${PROJECT_PATTERN}" --format "{{.Names}}" | grep -q "${PROJECT_PATTERN}"
 }
 
-find_python_exec() {
-    for path in "backend/.venv/bin/python" "backend/venv/bin/python" ".venv/bin/python"; do
-        if [ -f "$path" ]; then echo "$path"; return; fi
-    done
-    echo "python3" # Fallback
+get_python() {
+    [ -f "backend/.venv/bin/python" ] && echo "backend/.venv/bin/python" || echo "python3"
 }
 
-# --- Логика команд ---
+# --- Логика ---
 case "$1" in
     start)
         if check_running; then echo -e "${RED}❌ Проект уже запущен!${NC}"; exit 1; fi
@@ -42,45 +39,54 @@ case "$1" in
         ;;
 
     stop)
-        echo -e "${YELLOW}>>> Остановка проекта...${NC}"
+        echo -e "${YELLOW}>>> Останавливаю проект...${NC}"
         docker compose down
-        echo -e "${GREEN}🛑 Остановлено.${NC}"
+        echo -e "${GREEN}🛑 Все службы остановлены.${NC}"
         ;;
 
     restart)
-        $0 stop && docker compose up -d --build
-        echo -e "${GREEN}🔄 Перезапущено!${NC}"
+        echo -e "${MAGENTA}>>> Пересборка и перезапуск...${NC}"
+        $0 stop
+        docker compose up -d --build
+        echo -e "${GREEN}🔄 Перезапущено с актуальным кодом!${NC}"
+        ;;
+
+    update)
+        BRANCH=${2:-"develop"}
+        echo -e "${MAGENTA}>>> Стягивание обновлений ($BRANCH)...${NC}"
+        git pull origin "$BRANCH"
+        $0 restart
         ;;
 
     dev)
         echo -e "${CYAN}>>> Запуск в DEV-РЕЖИМЕ...${NC}"
         docker compose up -d db
-        PY=$(find_python_exec)
-        UVICORN=${PY%python}uvicorn
-        cd backend && ../$UVICORN app.main:app --host 0.0.0.0 --port 8000 --reload
+        PY=$(get_python)
+        cd backend && ../${PY%python}uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
         ;;
 
     test)
         export PYTHONPATH=$PYTHONPATH:$(pwd)/backend
-        PY=$(find_python_exec)
-        $PY tests/test_runner.py ${2:-}
-        ;;
-
-    update)
-        BRANCH=${2:-"develop"}
-        echo -e "${MAGENTA}>>> Обновление ветки ${BRANCH}...${NC}"
-        git pull origin "$BRANCH" && $0 restart
+        $($(get_python)) tests/test_runner.py ${2:-}
         ;;
 
     status)
         if check_running; then
             echo -e "${GREEN}● ПРОЕКТ АКТИВЕН${NC}"
             docker ps --filter "name=${PROJECT_PATTERN}" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
-            # Проверка API
-            if curl -s -o /dev/null -w "%{http_code}" --max-time 2 http://localhost:8000/docs | grep -q "200"; then
-                echo -e "${GREEN}✅ API отвечает (200)${NC}"
-            else
-                echo -e "${RED}⚠️ API недоступен${NC}"
+
+            echo -e "\n${CYAN}📊 ТЕКУЩЕЕ СОСТОЯНИЕ API:${NC}"
+            HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 2 http://localhost:8000/docs)
+            [ "$HTTP_STATUS" == "200" ] && echo -e "${GREEN}✅ API запущено (HTTP 200)${NC}" || echo -e "${RED}⚠️ API не отвечает (Код: $HTTP_STATUS)${NC}"
+
+            echo -e "\n${CYAN}Последние записи логов (LIVE):${NC}"
+            echo -e "${YELLOW}--- API ---${NC}"
+            docker logs college_api --tail 10 2>&1 | grep -v "/status"
+            echo -e "\n${YELLOW}--- BOT ---${NC}"
+            docker logs college_bot --tail 5 2>&1
+            if docker ps --format '{{.Names}}' | grep -q "college_nginx"; then
+                echo -e "\n${YELLOW}--- NGINX ---${NC}"
+                docker logs college_nginx --tail 3 2>&1
             fi
         else
             echo -e "${RED}○ ПРОЕКТ ОСТАНОВЛЕН${NC}"
