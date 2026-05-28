@@ -1,7 +1,8 @@
-from fastapi import Header, HTTPException, Depends, logger
+from fastapi import Header, HTTPException, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
+from loguru import logger
 
 from app.core.database import get_db
 from app.core.security import verify_telegram_data
@@ -44,15 +45,15 @@ class RoleChecker:
                 detail="User not found"
             )
 
-        # Приводим всё к нижнему регистру для безопасного сравнения,
-        # так как в БД роль может быть в верхнем, а в коде в нижнем
-        user_role_normalized = str(user.role).lower()
-        allowed_roles_normalized = [str(r.value).lower() for r in self.allowed_roles]
+        # Приводим к нижнему регистру для сравнения, игнорируя то, что в базе
+        user_role_str = str(user.role).lower()
+        allowed_roles_str = [str(r.value).lower() for r in self.allowed_roles]
 
-        if user_role_normalized not in allowed_roles_normalized:
-          logger.error(f"ACCESS DENIED: User {user.username} (role: {user_role_normalized}) "
-                       f"tried to access, but allowed are: {allowed_roles_normalized}")
-          raise HTTPException(status_code=403,
-                              detail=f"Role mismatch: {user_role_normalized} not in {allowed_roles_normalized}")
+        if user_role_str not in allowed_roles_str:
+            logger.error(f"Access denied for user {user.username}. Role: {user_role_str}, Expected: {allowed_roles_str}")
+            raise HTTPException(
+                status_code=403,
+                detail=f"You don't have permission. Your role: {user_role_str}"
+            )
 
         return user
