@@ -35,41 +35,58 @@ const AppLayout = () => {
 
   return (
     <div className="min-h-screen w-full p-2 flex items-start justify-center">
-      <main className="main-glass w-full max-w-md min-h-[91vh] rounded-[48px] overflow-hidden relative flex flex-col pt-6 pb-28 px-4 transition-all duration-1000">
-        <div className="flex-1 w-full relative"> {/* Добавили relative, чтобы абсолютные слои не расползались */}
+      {/* Основной контейнер с фиксированной высотой */}
+      <main className="main-glass w-full max-w-md h-[91vh] rounded-[48px] overflow-hidden relative flex flex-col pt-6 px-4">
 
-          {/* Вкладка HOME
-          Вместо hidden используем opacity и pointer-events.
-          Компонент сохраняет свои физические размеры, поэтому стек карточек и анимации не багаются.
-        */}
+        {/* Контейнер для вкладок: flex-1 заставляет его занимать всё место ДО докбара */}
+        <div className="flex-1 w-full relative overflow-hidden">
+
+          {/* HOME */}
           <div
-            className={`w-full h-full flex flex-col transition-opacity duration-300 ${
-              activeTab === 'home' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none absolute inset-0'
+            className={`absolute inset-0 w-full h-full flex flex-col overflow-y-auto ${
+              activeTab === 'home'
+                ? 'opacity-100 z-10'
+                : 'opacity-0 z-0 pointer-events-none'
             }`}
           >
-            <HomeView user={user} isLoadingUser={isLoading} />
+            <div className="flex-1 pb-4"> {/* pb-4 дает небольшой отступ, чтобы контент не прилипал к краю */}
+              <HomeView user={user} isLoadingUser={isLoading} />
+            </div>
           </div>
 
-          {/* Вкладка EXCHANGE */}
+          {/* EXCHANGE */}
           <div
-            className={`w-full h-full flex flex-col transition-opacity duration-300 ${
-              activeTab === 'exchange' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none absolute inset-0'
+            className={`absolute inset-0 w-full h-full flex flex-col overflow-y-auto ${
+              activeTab === 'exchange'
+                ? 'opacity-100 z-10'
+                : 'opacity-0 z-0 pointer-events-none'
             }`}
           >
-            <ExchangeView />
+            <div className="flex-1 pb-4">
+              <ExchangeView />
+            </div>
           </div>
 
-          {/* Вкладка SETTINGS */}
+          {/* SETTINGS */}
           <div
-            className={`w-full h-full flex flex-col transition-opacity duration-300 ${
-              activeTab === 'settings' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none absolute inset-0'
+            className={`absolute inset-0 w-full h-full flex flex-col overflow-y-auto ${
+              activeTab === 'settings'
+                ? 'opacity-100 z-10'
+                : 'opacity-0 z-0 pointer-events-none'
             }`}
           >
-            <SettingsView />
+            <div className="flex-1 pb-4">
+              <SettingsView />
+            </div>
           </div>
 
         </div>
-        <Dockbar />
+
+        {/* Докбар: flex-shrink-0 запрещает ему сжиматься, он всегда будет виден */}
+        <div className="flex-shrink-0 pb-6 pt-2">
+          <Dockbar />
+        </div>
+
       </main>
     </div>
   );

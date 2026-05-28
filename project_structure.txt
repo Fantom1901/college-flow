@@ -1,144 +1,1355 @@
-.
-├── backend
-│   ├── alembic.ini
-│   ├── app
-│   │   ├── api
-│   │   │   └── v1
-│   │   │       ├── api.py
-│   │   │       ├── dependencies.py
-│   │   │       └── endpoints
-│   │   │           ├── auth.py
-│   │   │           ├── duty.py
-│   │   │           ├── groups.py
-│   │   │           ├── invite.py
-│   │   │           └── users.py
-│   │   ├── core
-│   │   │   ├── config.py
-│   │   │   ├── database.py
-│   │   │   ├── __init__.py
-│   │   │   ├── logger.py
-│   │   │   ├── middleware.py
-│   │   │   ├── scheduler.py
-│   │   │   └── security.py
-│   │   ├── handlers
-│   │   │   └── user.py
-│   │   ├── __init__.py
-│   │   ├── main.py
-│   │   ├── models
-│   │   │   ├── curator.py
-│   │   │   ├── duty.py
-│   │   │   ├── group.py
-│   │   │   ├── __init__.py
-│   │   │   ├── invite.py
-│   │   │   ├── role.py
-│   │   │   ├── student.py
-│   │   │   └── user.py
-│   │   ├── schemas
-│   │   │   ├── duty.py
-│   │   │   ├── group.py
-│   │   │   ├── invite.py
-│   │   │   ├── student.py
-│   │   │   └── user.py
-│   │   └── services
-│   │       ├── duty_service.py
-│   │       ├── invite_service.py
-│   │       └── student_service.py
-│   ├── bot
-│   │   ├── handlers
-│   │   │   ├── __init__.py
-│   │   │   ├── start.py
-│   │   │   └── user.py
-│   │   ├── __init__.py
-│   │   ├── keyboards
-│   │   │   └── __init__.py
-│   │   ├── main.py
-│   │   └── middlewares
-│   │       └── __init__.py
-│   ├── Dockerfile
-│   ├── entrypoint.sh
-│   ├── __init__.py
-│   ├── migrations
-│   │   ├── env.py
-│   │   ├── README
-│   │   ├── script.py.mako
-│   │   └── versions
-│   │       ├── 068c4c77e779_add_duty_tables_and_student_fields.py
-│   │       ├── 2cf136b666b0_initial_migration.py
-│   │       ├── 42b9d32fac64_add_curator_id_to_groups.py
-│   │       ├── 9f8363b5fd3b_.py
-│   │       └── dfae6d2e1f8c_fix_missing_duty_table.py
-│   └── requirements.txt
-├── docker-compose.yml
-├── docs
-│   ├── api_spec.md
-│   ├── backend-spec.md
-│   ├── db-schema-spec.md
-│   ├── designer_spec.md
-│   ├── duty-lifecycle-spec.md
-│   ├── frontend-guide.md
-│   ├── frontend-spec.md
-│   ├── frontend-state-contract.md
-│   ├── git-guide.md
-│   ├── group-membership-policy.md
-│   ├── main-spec.md
-│   ├── schedule-generation-spec.md
-│   ├── telegram-ui-integration-spec.md
-│   └── user-experience-spec.md
-├── frontend
-│   ├── dist
-│   │   ├── assets
-│   │   │   ├── bg_full-Dv4jgoF_.jpg
-│   │   │   ├── index-DYv0A-Ma.css
-│   │   │   └── index-YYBt00Rp.js
-│   │   └── index.html
-│   ├── Dockerfile
-│   ├── eslint.config.js
-│   ├── index.html
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── public
-│   │   └── bg_full.jpg
-│   ├── README.md
-│   ├── src
-│   │   ├── api
-│   │   │   ├── client.js
-│   │   │   ├── duty.js
-│   │   │   ├── groups.js
-│   │   │   ├── invite.js
-│   │   │   └── users.js
-│   │   ├── assets
-│   │   │   └── bg_full.png
-│   │   ├── components
-│   │   │   ├── BackgroundImage.jsx
-│   │   │   ├── Dockbar.jsx
-│   │   │   ├── DutyCard.jsx
-│   │   │   ├── DutyStack.jsx
-│   │   │   ├── icons
-│   │   │   │   ├── ExchangeIcon.jsx
-│   │   │   │   ├── HomeIcon.jsx
-│   │   │   │   └── SetingsIcon.jsx
-│   │   │   ├── VantaBackground.jsx
-│   │   │   └── views
-│   │   │       ├── ExchangeView.jsx
-│   │   │       ├── HomeViews.jsx
-│   │   │       └── SettingsView.jsx
-│   │   ├── config.js
-│   │   ├── index.css
-│   │   ├── main.jsx
-│   │   ├── pages
-│   │   │   └── AppLayout.jsx
-│   │   ├── store
-│   │   │   └── useAppStore.js
-│   │   └── utils
-│   │       └── dateFormatter.js
-│   └── vite.config.js
-├── git_history.txt
-├── manage.sh
-├── nginx.conf
-├── project_structure.txt
-├── README.md
-├── requirements.txt
-└── scripts
-    └── logs_pretty.py
+=== PROJECT STRUCTURE ===
+./frontend/src
+├── api
+│   ├── client.js
+│   ├── duty.js
+│   ├── groups.js
+│   ├── invite.js
+│   └── users.js
+├── assets
+│   └── bg_full.png
+├── components
+│   ├── BackgroundImage.jsx
+│   ├── Dockbar.jsx
+│   ├── DutyCard.jsx
+│   ├── DutyStack.jsx
+│   ├── GroupHeader.jsx
+│   ├── icons
+│   │   ├── ExchangeIcon.jsx
+│   │   ├── HomeIcon.jsx
+│   │   └── SetingsIcon.jsx
+│   ├── Leaderboard.jsx
+│   ├── settings
+│   │   ├── GroupSettingsForm.jsx
+│   │   ├── GroupSettingsInfo.jsx
+│   │   └── PersonalSettings.jsx
+│   ├── VantaBackground.jsx
+│   └── views
+│       ├── ExchangeView.jsx
+│       ├── HomeViews.jsx
+│       └── SettingsView.jsx
+├── config.js
+├── index.css
+├── main.jsx
+├── pages
+│   └── AppLayout.jsx
+├── store
+│   ├── useAppStore.js
+│   └── useGroupStore.js
+└── utils
+    ├── avatar.js
+    └── dateFormatter.js
 
-32 directories, 110 files
+10 directories, 30 files
+
+=== SOURCE CODE ===
+
+FILE: ./frontend/src/components/Leaderboard.jsx
+```
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { groupsApi } from '../api/groups';
+import { getInitials } from '../utils/avatar';
+import { IS_DEV, MOCK_LEADERBOARD } from '../config';
+function Leaderboard({ groupId }) {
+  const { data: leaderboard, isLoading } = useQuery({
+    queryKey: ['leaderboard', groupId],
+    queryFn: () => groupsApi.getLeaderboard(groupId),
+    enabled: !!groupId && !IS_DEV,
+  });
+  // Обрезаем массив до топ-5 через .slice(0, 5)
+  const displayData = IS_DEV
+    ? MOCK_LEADERBOARD.slice(0, 5)
+    : (leaderboard || []).slice(0, 5);
+  if (isLoading && !IS_DEV) {
+    return (
+      <div className="w-full flex-1 flex flex-col gap-3 px-2 animate-pulse mt-2">
+        <div className="h-full w-full bg-white/30 backdrop-blur-2xl rounded-[32px]" />
+      </div>
+    );
+  }
+  return (
+    <div className="w-full flex-1 flex flex-col min-h-0 mt-2 mb-2">
+      {/* Заголовок секции */}
+      <div className="text-[10px] font-black uppercase italic tracking-wider text-white/50 mb-2 pl-4">
+        Рейтинг группы по баллам
+      </div>
+      {/*
+        Повторяем тени докбара. Добавили кастомный инлайн-стиль для
+        неонового фиолетового свечения, зашитого в твой UI-кит
+      */}
+      <div
+        className="w-full flex-1 bg-white/30 backdrop-blur-2xl border border-white/40 rounded-[32px] p-4 flex flex-col min-h-0"
+        style={{
+          filter: 'drop-shadow(0px 10px 25px rgba(0, 0, 0, 0.15)) drop-shadow(0px 0px 15px rgba(191, 90, 242, 0.15))'
+        }}
+      >
+        {/* Внутренний контейнер списка */}
+        <div className="w-full flex-1 overflow-y-auto pr-1 flex flex-col gap-2 scrollbar-none">
+          {displayData.map((student, index) => {
+            const place = index + 1;
+            const placeColor =
+              place === 1 ? 'text-amber-500 font-black' :
+                place === 2 ? 'text-slate-400 font-black' :
+                  place === 3 ? 'text-amber-700 font-black' : 'text-slate-400 font-bold';
+            return (
+              <div
+                key={student.id}
+                className="w-full flex items-center justify-between py-2.5 px-3 rounded-2xl bg-white shadow-md border border-white/20 transition-all duration-200"
+              >
+                {/* Левая часть: Место + Аватарка + Имя */}
+                <div className="flex items-center gap-3">
+                  <span className={`text-[13px] italic w-4 text-center ${placeColor}`}>
+                    {place}
+                  </span>
+                  {/* Тёмная аватарка */}
+                  <div className="w-8 h-8 flex items-center justify-center rounded-xl bg-slate-900 shadow-sm shrink-0">
+                    <b className="text-white text-[11px] italic">
+                      {getInitials(student.full_name)}
+                    </b>
+                  </div>
+                  {/* Имя студента */}
+                  <b className="font-extrabold text-[14px] text-slate-900 tracking-tight italic">
+                    {student.full_name}
+                  </b>
+                </div>
+                {/* Правая часть: Баллы */}
+                <div className="flex items-center gap-1">
+                  <span className="font-black text-[15px] text-slate-900 italic tracking-tight">
+                    {student.points}
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-400 italic uppercase">
+                    б
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+          {displayData.length === 0 && (
+            <div className="text-center my-auto text-slate-500 text-xs italic py-8">
+              Список студентов пуст
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+export default Leaderboard;```
+
+
+FILE: ./frontend/src/components/views/SettingsView.jsx
+```
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { dutyApi } from '../../api/duty';
+import { IS_DEV } from '../../config';
+import useAppStore from "../../store/useAppStore.js";
+import GroupSettingsForm from '../settings/GroupSettingsForm';
+import GroupSettingsInfo from '../settings/GroupSettingsInfo';
+import PersonalSettings from '../settings/PersonalSettings';
+// Моковые дефолтные настройки для Dev Mode
+const MOCK_SETTINGS = {
+  mechanism: 'alphabetical',
+  work_days: [1, 3, 5],
+  person_per_day: 2,
+  group_id: 1
+};
+function SettingsView() {
+  const { user } = useAppStore();
+  const groupId = user?.student_profile?.group_id || user?.curator_profile?.group_id || user?.group_id;
+  // Тянем настройки группы с бэка
+  const { data: settings, isLoading } = useQuery({
+    queryKey: ['duty-settings', groupId],
+    queryFn: () => dutyApi.getSettings(groupId),
+    enabled: !!groupId && !IS_DEV,
+  });
+  const displaySettings = IS_DEV ? MOCK_SETTINGS : settings;
+  // Определяем права: староста (leader), куратор (curator) или админ системы имеют доступ к форме
+  const isGroupAdmin = user?.role === 'leader' || user?.role === 'curator' || user?.role === 'admin';
+  if (isLoading && !IS_DEV) {
+    return (
+      <div className="w-full flex-1 flex flex-col gap-3 px-2 animate-pulse mt-4">
+        <div className="h-48 w-full bg-white/10 rounded-[32px]" />
+      </div>
+    );
+  }
+  return (
+    <div className="w-full flex-1 flex flex-col min-h-0 px-2 gap-4">
+      {/* 1. Блок настроек группы: Либо форма для лидера, либо инфо-карточка для студента */}
+      {isGroupAdmin ? (
+        <GroupSettingsForm groupId={groupId} initialSettings={displaySettings} />
+      ) : (
+        <GroupSettingsInfo settings={displaySettings} />
+      )}
+      {/* 2. Блок общих личных настроек, доступный всем ролям */}
+      <PersonalSettings />
+    </div>
+  );
+}
+export default SettingsView;```
+
+
+FILE: ./frontend/src/components/views/ExchangeView.jsx
+```
+import React from 'react';
+function ExchangeView() {
+  const content = (
+    <>
+    </>
+  )
+  return (content)
+}
+export default ExchangeView;```
+
+
+FILE: ./frontend/src/components/views/HomeViews.jsx
+```
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { dutyApi } from '../../api/duty';
+import DutyStack from "../DutyStack.jsx";
+import GroupHeader from "../GroupHeader.jsx";
+import Leaderboard from "../Leaderboard.jsx"; // Импортируем наш топ
+import { formatDutyDate } from '../../utils/dateFormatter';
+const HomeView = ({ user, isLoadingUser }) => {
+  const groupId = user?.student_profile?.group_id || user?.curator_profile?.group_id || user?.group_id;
+  const { data: schedule, isLoading: isLoadingDuty } = useQuery({
+    queryKey: ['weekly-duty', groupId],
+    queryFn: () => dutyApi.getWeekly ? dutyApi.getWeekly(groupId) : dutyApi.getToday(groupId),
+    enabled: !!groupId,
+    select: (data) => data.map(item => ({
+      id: item.id,
+      date: formatDutyDate(item.date),
+      users: [item.student?.full_name || 'Имя'],
+      status: item.status
+    })).slice(0, 3)
+  });
+  return (
+    // Добавили h-full и распределили элементы: шапка, стек, и на весь остаток — топ
+    <div className="flex flex-col items-center justify-start w-full h-full gap-5 select-none">
+      <GroupHeader groupId={groupId} isLoadingUser={isLoadingUser} />
+      <div className="w-full flex justify-center">
+        <DutyStack
+          items={schedule || []}
+          isLoading={isLoadingUser || (isLoadingDuty && !!groupId) || !groupId}
+        />
+      </div>
+      {/* Компонент Топа забирает все оставшееся место на экране */}
+      <Leaderboard groupId={groupId} />
+      {!groupId && !isLoadingUser && (
+        <div className="mt-4 text-white/20 text-[10px] text-center px-10">
+          Твой аккаунт не привязан к конкретной группе в базе данных.
+        </div>
+      )}
+    </div>
+  );
+};
+export default HomeView;```
+
+
+FILE: ./frontend/src/components/DutyStack.jsx
+```
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import DutyCard from "./DutyCard.jsx";
+const DutyStack = ({ items = [], isLoading }) => {
+  const [stack, setStack] = useState(
+    isLoading ? [{ id: 's1' }, { id: 's2' }, { id: 's3' }] : items
+  );
+  const [step, setStep] = useState(0);
+  const [isPulling, setIsPulling] = useState(false);
+  useEffect(() => {
+    if (!isLoading && items && items.length > 0) {
+      setStack(items);
+    }
+  }, [items, isLoading]);
+  const rotateCards = (direction) => {
+    if (isLoading || stack.length < 2) return;
+    setStack((prev) => {
+      const newItems = [...prev];
+      if (direction === 'next') {
+        const first = newItems.shift();
+        newItems.push(first);
+      } else {
+        const last = newItems.pop();
+        newItems.unshift(last);
+      }
+      return newItems;
+    });
+    setStep((prev) => {
+      const itemsCount = stack.length || 3;
+      if (direction === 'next') return (prev + 1) % itemsCount;
+      return (prev - 1 + itemsCount) % itemsCount;
+    });
+    setIsPulling(false);
+  };
+  return (
+    <div className="relative w-full h-[160px] flex justify-center items-center">
+      <AnimatePresence mode="popLayout">
+        {stack.map((item, index) => {
+          // Индексы для позиционирования (только первые 3 видимы)
+          const isFront = index === 0;
+          const isMiddle = index === 1;
+          const isBack = index === 2;
+          // Ограничиваем рендер только тремя карточками для производительности
+          if (index > 2) return null;
+          const config = {
+            zIndex: isFront ? 3 : isMiddle ? 2 : 1,
+            width: isFront ? '228px' : isMiddle ? '212px' : '196px',
+            y: isFront ? 0 : isMiddle ? 15 : -10,
+            scale: isBack && !isPulling ? 0.95 : 1,
+            opacity: isBack && !isPulling ? 0.6 : 1
+          };
+          return (
+            <motion.div
+              key={item.id || index}
+              layout
+              drag={isFront && !isLoading ? "y" : false}
+              dragSnapToOrigin={true}
+              dragConstraints={{ top: -40, bottom: 40 }}
+              dragElastic={0.05}
+              onDrag={(_, info) => {
+                if (isFront && !isLoading) {
+                  if (Math.abs(info.offset.y) > 5) {
+                    if (!isPulling) setIsPulling(true);
+                  } else {
+                    if (isPulling) setIsPulling(false);
+                  }
+                }
+              }}
+              onDragEnd={(_, info) => {
+                if (isFront && !isLoading) {
+                  if (info.offset.y > 60) {
+                    rotateCards('next');
+                  } else if (info.offset.y < -60) {
+                    rotateCards('prev');
+                  } else {
+                    setIsPulling(false);
+                  }
+                }
+              }}
+              animate={{
+                ...config,
+                y: isFront ? 0 : config.y
+              }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{
+                type: "spring",
+                stiffness: 500,
+                damping: 70
+              }}
+              className="absolute cursor-grab active:cursor-grabbing"
+            >
+              <DutyCard
+                isLoading={isLoading} // Передаем статус загрузки
+                isActive={isFront || ((isMiddle || isBack) && isPulling)}
+                isPulling={isPulling}
+                width={config.width}
+                zIndex={config.zIndex}
+                activeIndex={isFront ? step : isMiddle ? (step + 1) % 3 : (step - 1 + 3) % 3}
+                data={item} // Если тут придет пустой объект, деструктуризация внутри DutyCard сработает
+              />
+            </motion.div>
+          );
+        })}
+      </AnimatePresence>
+    </div>
+  );
+};
+export default DutyStack;```
+
+
+FILE: ./frontend/src/components/settings/GroupSettingsInfo.jsx
+```
+import React from 'react';
+const DAY_LABELS = { 1: 'ПН', 2: 'ВТ', 3: 'СР', 4: 'ЧТ', 5: 'ПТ', 6: 'СБ', 7: 'ВС' };
+function GroupSettingsInfo({ settings }) {
+  const mechanismText = settings?.mechanism === 'alphabetical'
+    ? 'Строго по алфавиту (очередь)'
+    : 'Взвешенный (у кого меньше баллов)';
+  const activeDays = settings?.work_days?.map(d => DAY_LABELS[d]).join(', ') || 'Не установлены';
+  return (
+    <div
+      className="w-full bg-white/30 backdrop-blur-2xl border border-white/40 rounded-[32px] p-5 flex flex-col gap-4"
+      style={{ filter: 'drop-shadow(0px 10px 25px rgba(0, 0, 0, 0.15)) drop-shadow(0px 0px 15px rgba(191, 90, 242, 0.15))' }}
+    >
+      <div className="text-[10px] font-black uppercase italic tracking-wider text-white/60 pl-1 mb-1">
+        Текущие правила вашей группы
+      </div>
+      {/* Карточка: Алгоритм */}
+      <div className="w-full bg-white p-3.5 rounded-2xl shadow-md border border-white/20">
+        <div className="text-[9px] font-bold uppercase text-slate-400 italic mb-0.5">Алгоритм распределения</div>
+        <div className="font-extrabold text-[14px] text-slate-900 italic tracking-tight">{mechanismText}</div>
+      </div>
+      {/* Карточка: Дни */}
+      <div className="w-full bg-white p-3.5 rounded-2xl shadow-md border border-white/20">
+        <div className="text-[9px] font-bold uppercase text-slate-400 italic mb-0.5">Дни дежурств на неделе</div>
+        <div className="font-extrabold text-[14px] text-slate-900 italic tracking-tight text-accent-purple">{activeDays}</div>
+      </div>
+      {/* Карточка: Количество */}
+      <div className="w-full bg-white p-3.5 rounded-2xl shadow-md border border-white/20 flex justify-between items-center">
+        <div>
+          <div className="text-[9px] font-bold uppercase text-slate-400 italic mb-0.5">Плотность смены</div>
+          <div className="font-extrabold text-[14px] text-slate-900 italic tracking-tight">Количество человек</div>
+        </div>
+        <span className="font-black text-lg text-slate-900 italic bg-slate-100 px-3 py-1 rounded-xl">
+          {settings?.person_per_day || 2}
+        </span>
+      </div>
+    </div>
+  );
+}
+export default GroupSettingsInfo;```
+
+
+FILE: ./frontend/src/components/settings/GroupSettingsForm.jsx
+```
+import React, { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { motion, AnimatePresence } from 'framer-motion'; // Добавили AnimatePresence для цифр
+import { dutyApi } from '../../api/duty';
+const DAYS_OF_WEEK = [
+  { id: 1, label: 'ПН' },
+  { id: 2, label: 'ВТ' },
+  { id: 3, label: 'СР' },
+  { id: 4, label: 'ЧТ' },
+  { id: 5, label: 'ПТ' },
+  { id: 6, label: 'СБ' },
+];
+function GroupSettingsForm({ groupId, initialSettings }) {
+  const queryClient = useQueryClient();
+  const [mechanism, setMechanism] = useState(initialSettings?.mechanism || 'alphabetical');
+  const [workDays, setWorkDays] = useState(initialSettings?.work_days || [1, 2, 3, 4, 5]);
+  const [personPerDay, setPersonPerDay] = useState(initialSettings?.person_per_day || 2);
+  const mutation = useMutation({
+    mutationFn: (data) => dutyApi.updateSettings(groupId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['duty-settings', groupId] });
+    },
+  });
+  const handleDayToggle = (dayId) => {
+    setWorkDays(prev =>
+      prev.includes(dayId) ? prev.filter(id => id !== dayId) : [...prev, dayId].sort()
+    );
+  };
+  return (
+    <div
+      className="w-full bg-white/30 backdrop-blur-2xl border border-white/40 rounded-[32px] p-5 flex flex-col gap-5"
+      style={{ filter: 'drop-shadow(0px 10px 25px rgba(0, 0, 0, 0.15)) drop-shadow(0px 0px 15px rgba(191, 90, 242, 0.15))' }}
+    >
+      {/* 1. Выбор механизма (Уже с пилюлей) */}
+      <div className="flex flex-col gap-2">
+        <label className="text-[10px] font-black uppercase italic tracking-wider text-white/60 pl-1">
+          Алгоритм распределения
+        </label>
+        <div className="flex relative bg-slate-950/20 p-1 rounded-2xl border border-white/10 overflow-hidden">
+          <button
+            onClick={() => setMechanism('alphabetical')}
+            className={`flex-1 py-2 text-xs font-extrabold italic rounded-xl relative outline-none transition-colors duration-300 ${
+              mechanism === 'alphabetical' ? 'text-slate-950' : 'text-white/60'
+            }`}
+          >
+            {mechanism === 'alphabetical' && (
+              <motion.div
+                layoutId="active-mechanism-pill"
+                className="absolute inset-0 bg-white rounded-xl shadow-md"
+                transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              />
+            )}
+            <span className="relative z-10">По алфавиту</span>
+          </button>
+          <button
+            onClick={() => setMechanism('weighted')}
+            className={`flex-1 py-2 text-xs font-extrabold italic rounded-xl relative outline-none transition-colors duration-300 ${
+              mechanism === 'weighted' ? 'text-slate-950' : 'text-white/60'
+            }`}
+          >
+            {mechanism === 'weighted' && (
+              <motion.div
+                layoutId="active-mechanism-pill"
+                className="absolute inset-0 bg-white rounded-xl shadow-md"
+                transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              />
+            )}
+            <span className="relative z-10">По баллам</span>
+          </button>
+        </div>
+      </div>
+      {/* 2. Дни дежурств */}
+      <div className="flex flex-col gap-2">
+        <label className="text-[10px] font-black uppercase italic tracking-wider text-white/60 pl-1">
+          Дни дежурств
+        </label>
+        <div className="grid grid-cols-6 gap-1.5 bg-slate-950/20 p-1.5 rounded-2xl border border-white/10 relative overflow-hidden">
+          {DAYS_OF_WEEK.map((day) => {
+            const isActive = workDays.includes(day.id);
+            return (
+              <button
+                key={day.id}
+                onClick={() => handleDayToggle(day.id)}
+                className={`h-10 text-xs font-black italic rounded-xl relative outline-none transition-colors duration-300 ${
+                  isActive ? 'text-slate-950' : 'text-white/40'
+                }`}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId={`active-day-pill-${day.id}`} // уникальный ID для каждого дня
+                    className="absolute inset-0 bg-white rounded-xl shadow-md"
+                    transition={{
+                      type: "spring",
+                      stiffness: 450,
+                      damping: 25,
+                    }}
+                  />
+                )}
+                {/* Текст поверх пилюли */}
+                <motion.span
+                  className="relative z-10 block"
+                  whileTap={{ scale: 0.85 }}
+                >
+                  {day.label}
+                </motion.span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      {/* 3. Количество человек (С вылетающей вверх/вниз цифрой при изменении) */}
+      <div className="flex flex-col gap-2">
+        <label className="text-[10px] font-black uppercase italic tracking-wider text-white/60 pl-1">
+          Студентов на день
+        </label>
+        <div className="flex items-center justify-between bg-white p-2.5 rounded-2xl shadow-lg border border-white/20">
+          <motion.button
+            whileTap={{ scale: 0.85 }}
+            disabled={personPerDay <= 1}
+            onClick={() => setPersonPerDay(p => p - 1)}
+            className="w-9 h-9 rounded-xl bg-slate-100 font-black text-slate-900 flex items-center justify-center disabled:opacity-20 outline-none"
+          >
+            -
+          </motion.button>
+          {/* Анимация прокрутки цифры */}
+          <div className="h-6 overflow-hidden relative w-20 flex justify-center items-center">
+            <AnimatePresence mode="popLayout">
+              <motion.span
+                key={personPerDay}
+                initial={{ y: 15, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -15, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className="font-black text-slate-900 italic text-base absolute"
+              >
+                {personPerDay} чел.
+              </motion.span>
+            </AnimatePresence>
+          </div>
+          <motion.button
+            whileTap={{ scale: 0.85 }}
+            disabled={personPerDay >= 5}
+            onClick={() => setPersonPerDay(p => p + 1)}
+            className="w-9 h-9 rounded-xl bg-slate-100 font-black text-slate-900 flex items-center justify-center disabled:opacity-20 outline-none"
+          >
+            +
+          </motion.button>
+        </div>
+      </div>
+      {/* Кнопка сохранения с эффектом нажатия */}
+      <motion.button
+        whileTap={{ scale: 0.98 }}
+        onClick={() => mutation.mutate({ mechanism, work_days: workDays, person_per_day: personPerDay })}
+        disabled={mutation.isPending}
+        className="w-full mt-2 py-3.5 bg-slate-950 text-white font-black italic tracking-wide rounded-2xl shadow-lg border border-white/10 outline-none"
+      >
+        {mutation.isPending ? 'СОХРАНЕНИЕ...' : 'СОХРАНИТЬ НАСТРОЙКИ'}
+      </motion.button>
+    </div>
+  );
+}
+export default GroupSettingsForm;```
+
+
+FILE: ./frontend/src/components/settings/PersonalSettings.jsx
+```
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+function PersonalSettings() {
+  const [notify, setNotify] = useState(true);
+  return (
+    <div className="w-full flex flex-col gap-2 mt-2">
+      <div className="text-[10px] font-black uppercase italic tracking-wider text-white/50 pl-4">
+        Личные настройки
+      </div>
+      <div className="w-full bg-white shadow-md border border-white/20 rounded-2xl py-3 px-4 flex items-center justify-between">
+        <b className="font-extrabold text-[14px] text-slate-900 tracking-tight italic">
+          Напоминания в Telegram
+        </b>
+        {/* Основа тумблера */}
+        <button
+          onClick={() => setNotify(!notify)}
+          className={`w-12 h-6 rounded-full p-0.5 outline-none transition-colors duration-300 flex ${
+            notify ? 'bg-slate-950 justify-end' : 'bg-slate-200 justify-start'
+          }`}
+        >
+          {/* Кругляшок с layout-анимацией */}
+          <motion.div
+            layout
+            transition={{
+              type: "spring",
+              stiffness: 500,
+              damping: 30
+            }}
+            className="bg-white w-5 h-5 rounded-full shadow-md"
+          />
+        </button>
+      </div>
+    </div>
+  );
+}
+export default PersonalSettings;```
+
+
+FILE: ./frontend/src/components/icons/HomeIcon.jsx
+```
+export const HomeIcon = ({className}) => (
+  <svg
+    width="22"
+    height="21"
+    viewBox="-2 -2 26 25"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className} // Позволяет прокидывать стили Tailwind
+  >
+    <path
+      d="M6.38461 15.7332H15M9.63444 1.49715L2.33042 6.77227C1.84218 7.1249 1.59806 7.30122 1.42219 7.52202C1.2664 7.7176 1.15034 7.93793 1.07972 8.1722C1 8.43667 1 8.72385 1 9.29825V16.5332C1 17.6533 1 18.2133 1.23476 18.6412C1.44125 19.0175 1.77074 19.3235 2.17602 19.5152C2.63675 19.7332 3.23988 19.7332 4.44615 19.7332H16.9385C18.1447 19.7332 18.7479 19.7332 19.2086 19.5152C19.6139 19.3235 19.9434 19.0175 20.1498 18.6412C20.3846 18.2133 20.3846 17.6533 20.3846 16.5332V9.29825C20.3846 8.72385 20.3846 8.43667 20.3049 8.1722C20.2343 7.93793 20.1182 7.7176 19.9625 7.52202C19.7866 7.30122 19.5425 7.12491 19.0542 6.77229L11.7502 1.49715C11.3718 1.2239 11.1826 1.08727 10.9737 1.03475C10.7894 0.988415 10.5952 0.988415 10.4109 1.03475C10.202 1.08727 10.0128 1.2239 9.63444 1.49715Z"
+      stroke="currentColor" // ГЛАВНОЕ ИЗМЕНЕНИЕ ТУТ
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);```
+
+
+FILE: ./frontend/src/components/icons/ExchangeIcon.jsx
+```
+export const ExchangeIcon = ({ className, style }) => (
+  <svg
+    width="20" // Немного увеличим визуальный размер, чтобы совпадало с Lucide
+    height="20"
+    viewBox="0 0 15 20"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    style={{ ...style, overflow: 'visible' }} // КРИТИЧНО: позволяем неону выходить за границы
+  >
+    <path
+      d="M5.25 18.75L0.75 14.25M0.75 14.25L5.25 9.75M0.75 14.25H14.25M9.25 0.75L14.25 5.25M14.25 5.25L9.25 9.75M14.25 5.25H0.75"
+      stroke="currentColor"
+      strokeWidth="2" // Сделаем линию чуть толще, чтобы неон ложился лучше
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);```
+
+
+FILE: ./frontend/src/components/icons/SetingsIcon.jsx
+```
+export const SettingsIcon = ({ className, style }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    // Немного увеличим толщину обводки, так как при scale 0.54 линии становятся слишком тонкими
+    strokeWidth={1.7}
+    stroke="currentColor"
+    // Пробрасываем style и разрешаем выход свечения за границы
+    style={{ ...style, overflow: 'visible' }}
+    className={`scale-[0.54] ${className}`}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M4.5 12a7.5 7.5 0 0 0 15 0m-15 0a7.5 7.5 0 1 1 15 0m-15 0H3m16.5 0H21m-1.5 0H12m-8.457 3.077 1.41-.513m14.095-5.13 1.41-.513M5.106 17.785l1.15-.964m11.49-9.642 1.149-.964M7.501 19.795l.75-1.3m7.5-12.99.75-1.3m-6.063 16.658.26-1.477m2.605-14.772.26-1.477m0 17.726-.26-1.477M10.698 4.614l-.26-1.477M16.5 19.794l-.75-1.299M7.5 4.205 12 12m6.894 5.785-1.149-.964M6.256 7.178l-1.15-.964m15.352 8.864-1.41-.513M4.954 9.435l-1.41-.514M12.002 12l-3.75 6.495"
+    />
+  </svg>
+);```
+
+
+FILE: ./frontend/src/components/BackgroundImage.jsx
+```
+export const BackgroundImage = () => {
+  return (
+    <div
+      className="fixed inset-0 z-[-1] bg-black overflow-hidden pointer-events-none"
+      style={{
+        // Используем CSS переменные для гибкости
+        backgroundImage: "url('/bg_full.jpg')",
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+        transform: 'scale(1.05)',
+        filter: 'brightness(0.9)' // Немного приглушим, чтобы контент читался лучше
+      }}
+    />
+  );
+};```
+
+
+FILE: ./frontend/src/components/DutyCard.jsx
+```
+import React from 'react';
+import { motion } from "framer-motion";
+import { IS_DEV, MOCK_DUTY } from '../config';
+const getInitials = (name) => {
+  if (!name) return "";
+  return name.split(' ').map(n => n[0]).join('').toUpperCase();
+};
+function DutyCard({
+                    isActive = true,
+                    width = '228px',
+                    height = '125px',
+                    zIndex = 1,
+                    activeIndex = 0,
+                    data,
+                    isLoading = false,
+                    isPulling = false // Принимаем проп из Stack
+                  }) {
+  // 1. Определяем, есть ли у нас реальные данные
+  const hasRealData = data && Object.keys(data).length > 0 && data.date;
+  // 2. Выбираем, что отрисовать
+  let displayData = data;
+  if (IS_DEV && !hasRealData) {
+    displayData = MOCK_DUTY[activeIndex % MOCK_DUTY.length];
+  }
+  const date = displayData?.date || "Дата не указана";
+  const users = displayData?.users || [];
+  const backgroundClass = !isActive
+    ? 'bg-white/60 backdrop-blur-md'
+    : isPulling
+      ? 'bg-white/90 backdrop-blur-xl'
+      : 'bg-white shadow-2xl';
+  if (isLoading) {
+    return (
+      <div
+        style={{ width, height, zIndex }}
+        className={`relative p-4 rounded-[28px] flex flex-row justify-between transition-all duration-500 border border-white/40 bg-white/40 backdrop-blur-md shadow-xl`}
+      >
+        <div className="flex flex-col gap-[18px] w-full">
+          <div className="h-4 w-24 bg-black/5 rounded-md" />
+          <div className="flex flex-col gap-3">
+            <div className="flex gap-2 items-center">
+              <div className="w-6 h-6 rounded-full bg-black/5" />
+              <div className="h-5 w-32 bg-black/5 rounded-md" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div
+      style={{ width, height, zIndex }}
+      className={`relative ${backgroundClass} p-4 rounded-[28px] flex flex-row justify-between transition-all duration-500 border border-white/20`}
+    >
+      <div className={`flex flex-col justify-between transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
+        <div className="text-slate-500 text-[10px] font-black uppercase italic tracking-wider">
+          {date}
+        </div>
+        <div className="flex flex-col gap-2">
+          {users.map((user, idx) => (
+            <div key={idx} className="flex gap-[10px] items-center">
+              <div className="w-7 h-7 flex items-center justify-center rounded-xl bg-slate-900 shadow-lg shrink-0">
+                <b className="text-white text-[10px] italic">{getInitials(user)}</b>
+              </div>
+              <b className="font-extrabold text-[15px] text-slate-900 tracking-tight italic">
+                {user}
+              </b>
+            </div>
+          ))}
+          {users.length === 0 && <b className="text-slate-400 text-[12px]">Свободно</b>}
+        </div>
+      </div>
+      <div className="flex flex-col justify-center items-center gap-[4px]">
+        {[0, 1, 2].map((dotIndex) => (
+          <motion.span
+            key={dotIndex}
+            layout
+            className={`w-[6px] h-[6px] rounded-full shrink-0 transition-all duration-300 ${
+              activeIndex === dotIndex
+                ? 'bg-blue-600 shadow-[0_0_10px_rgba(37,99,235,0.5)] scale-125'
+                : 'bg-slate-300'
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+export default DutyCard;```
+
+
+FILE: ./frontend/src/components/Dockbar.jsx
+```
+import { Home } from 'lucide-react';
+import { motion } from 'framer-motion';
+import useAppStore from '../store/useAppStore';
+import { ExchangeIcon } from './icons/ExchangeIcon';
+import { SettingsIcon } from './icons/SetingsIcon.jsx';
+const Dockbar = () => {
+  const { activeTab, setActiveTab } = useAppStore();
+  const menuItems = [
+    { id: 'home', icon: Home },
+    { id: 'exchange', icon: ExchangeIcon },
+    { id: 'settings', icon: SettingsIcon },
+  ];
+  return (
+    // Оставляем absolute, так как он внутри AppLayout
+    <div className="absolute bottom-6 left-0 right-0 flex justify-center z-50">
+      <div
+        className="flex items-center justify-between bg-white/30 backdrop-blur-2xl border border-white/40 rounded-full p-[8px] relative w-[218px] h-[56px] shadow-2xl"
+      >
+        {menuItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = activeTab === item.id;
+          const neonStyle = item.id === 'settings'
+            ? { filter: 'drop-shadow(0px 0px 12px rgba(191, 90, 242, 0.45))' }
+            : { filter: 'drop-shadow(0px 0px 6px rgba(191, 90, 242, 0.8)) drop-shadow(0px 0px 15px rgba(191, 90, 242, 0.4))' };
+          return (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              className="relative w-[60px] h-[40px] flex items-center justify-center rounded-full outline-none"
+            >
+              {isActive && (
+                <motion.div
+                  layoutId="active-pill"
+                  // Делаем пилюлю темной и глубокой, чтобы она "вырезалась" на стекле
+                  className="absolute inset-0 bg-white rounded-full shadow-lg"
+                  transition={{
+                    type: "spring",
+                    stiffness: 400,
+                    damping: 30,
+                  }}
+                />
+              )}
+              <Icon
+                size={22}
+                className={`relative z-10 transition-all duration-300 ${
+                  isActive ? 'text-accent-purple' : 'text-slate-400'
+                }`}
+                style={isActive ? neonStyle : {}}
+              />
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+export default Dockbar;```
+
+
+FILE: ./frontend/src/components/GroupHeader.jsx
+```
+import React, { useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { groupsApi } from '../api/groups';
+import useGroupStore from '../store/useGroupStore';
+function GroupHeader({ groupId, isLoadingUser }) {
+  const setGroup = useGroupStore((state) => state.setGroup);
+  const { data: groupData, isLoading: isLoadingGroup } = useQuery({
+    queryKey: ['myGroup', groupId],
+    queryFn: groupsApi.getMy,
+    enabled: !!groupId, // Запрос пойдет только если у юзера есть группа
+  });
+  // Закидываем группу в Zustand, чтобы докбар и другие модули её видели
+  useEffect(() => {
+    if (groupData) {
+      setGroup(groupData);
+    }
+  }, [groupData, setGroup]);
+  if (isLoadingUser || isLoadingGroup) {
+    return (
+      <div className="w-full flex flex-col items-center gap-1.5 py-4 animate-pulse">
+        <div className="h-7 w-36 bg-white/10 rounded-lg" />
+        <div className="h-3 w-20 bg-white/5 rounded-md" />
+      </div>
+    );
+  }
+  return (
+    <div className="w-full flex flex-col items-center text-center py-1 select-none">
+      <h1 className="font-extrabold text-[24px] text-white tracking-tight italic drop-shadow-md">
+        {groupData?.name || "Без группы"}
+      </h1>
+      <span className="text-[11px] font-black uppercase tracking-widest text-white/50 italic mt-0.5">
+        Моя группа
+      </span>
+    </div>
+  );
+}
+export default GroupHeader;```
+
+
+FILE: ./frontend/src/components/VantaBackground.jsx
+```
+import React, { useState, useEffect, useRef } from "react";
+import FOG from 'vanta/dist/vanta.fog.min.js'
+import * as THREE from 'three';
+const VantaBackground = () => {
+  const vantaRef = useRef(null);
+  const [vantaEffect, setVantaEffect] = useState(null);
+  useEffect(() => {
+    if (!vantaEffect && vantaRef.current) {
+      setVantaEffect(
+        FOG({
+          el: vantaRef.current,
+          THREE: THREE,
+          mouseControls: false,
+          touchControls: false,
+          gyroControls: false,
+          minHeight: 200.0,
+          minWidth: 200.0,
+          highlightColor: 0x60a5fa,
+          midtoneColor: 0xc084fc,
+          lowlightColor: 0x34d399,
+          baseColor: 0xf8fafc,
+          blurFactor: 1.35,
+          speed: 1.5,
+          zoom: 1.8
+        })
+      )
+    }
+    return () => {
+      if (vantaEffect) vantaEffect.destroy();
+    }
+  }, [vantaEffect]);
+  return (
+    <div
+    ref={vantaRef}
+    className="fixed inset-0 z-[-1] w-full h-full"
+    >
+      <div className="absolute inset-0 bg-[('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.15] mix-blend-overlay pointer-events-none"></div>
+    </div>
+  )
+}
+export default VantaBackground;```
+
+
+FILE: ./frontend/src/main.jsx
+```
+import React, { StrictMode, useEffect } from 'react';
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { init, viewport, settingsButton, mainButton, backButton } from '@telegram-apps/sdk-react';
+import './index.css';
+import AppLayout from "./pages/AppLayout.jsx";
+import { BackgroundImage } from './components/BackgroundImage.jsx';
+import VantaBackground from "./components/VantaBackground.jsx";
+import Dockbar from './components/Dockbar.jsx';
+try {
+  init();
+  if (window.Telegram?.WebApp) {
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+    if (tg.isVersionAtLeast('7.0')) {
+      tg.requestFullscreen();
+    }
+    tg.setHeaderColor('#1a1a1a');
+    tg.setBackgroundColor('#1a1a1a');
+  }
+  // Твой код с viewport (оставляем для совместимости)
+  if (viewport.mount.isAvailable()) {
+    viewport.mount().then(() => {
+      if (viewport.expand.isAvailable()) viewport.expand();
+    });
+  }
+} catch (e) {
+  console.warn('Запущено вне Telegram');
+}
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+      // Вот это решает проблему: 5 минут данные не будут дёргать бэк при переключении вкладок
+      staleTime: 1000 * 60 * 5,
+      // Время жизни кэша в памяти (сделай чуть больше, например 10 минут)
+      gcTime: 1000 * 60 * 10,
+    },
+  },
+});
+const TelegramProvider = ({ children }) => {
+  useEffect(() => {
+    if (window.Telegram?.WebApp) {
+      const tg = window.Telegram.WebApp;
+      tg.ready();
+      tg.expand();
+      const timer = setTimeout(() => {
+        if (tg.isVersionAtLeast('7.0')) {
+          try {
+            tg.requestFullscreen();
+          } catch (e) {
+            console.error("Fullscreen failed:", e);
+          }
+        }
+        tg.setHeaderColor('#1a1a1a');
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+  return children;
+};
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <TelegramProvider>
+        <BrowserRouter>
+          <VantaBackground />
+          <div style={{ paddingTop: 'var(--tg-safe-area-inset-top, 0px)' }}>
+            <Routes>
+              <Route path="/" element={<AppLayout />} />
+            </Routes>
+            {/*<Dockbar />*/}
+          </div>
+        </BrowserRouter>
+      </TelegramProvider>
+    </QueryClientProvider>
+  </StrictMode>
+);```
+
+
+FILE: ./frontend/src/api/users.js
+```
+import api from './client.js'
+export const usersApi = {
+  getMe: () => api.get('v1/users/me').then(res => res.data),
+  registerStudent: (data) => api.post('v1/users/register_student', data),
+  updateMe: (data) => api.patch('v1/users/me', data).then(res => res.data),
+}```
+
+
+FILE: ./frontend/src/api/duty.js
+```
+import api from './client.js'
+export const dutyApi = {
+  // GET /api/v1/duty/today/{group_id}
+  getToday: (groupId) =>
+    api.get(`v1/duty/today/${groupId}`).then(res => res.data),
+  // PATCH /api/v1/duty/{duty_id}/status
+  updateStatus: (dutyId, newStatus) =>
+    api.patch(`v1/duty/${dutyId}/status`, null, { params: { new_status: newStatus } }),
+  // GET /api/v1/duty/settings/{group_id}
+  getSettings: (groupId) =>
+    api.get(`v1/duty/settings/${groupId}`).then(res => res.data),
+  // PATCH /api/v1/duty/settings/{group_id}
+  updateSettings: (groupId, data) =>
+    api.patch(`v1/duty/settings/${groupId}`, data).then(res => res.data),
+  // POST /api/v1/duty/generate/{group_id}
+  generate: (groupId, startDate) =>
+    api.post(`v1/duty/generate/${groupId}`, null, { params: { start_date: startDate } }),
+  // GET /api/v1/duty/weekly/{group_id}
+  getWeekly: (groupId) =>
+    api.get(`v1/duty/weekly/${groupId}`).then(res => res.data),
+}```
+
+
+FILE: ./frontend/src/api/invite.js
+```
+import api from './client.js'
+export const inviteApi = {
+  createCuratorLink: () =>
+    api.post('v1/invite/create-curator-link').then(res => res.data),
+  bulkCreate: (groupId, names) =>
+    api.post('v1/invite/bulk-create', { group_id: groupId, names }).then(res => res.data),
+}```
+
+
+FILE: ./frontend/src/api/groups.js
+```
+import api from "./client.js";
+export const groupsApi = {
+  // Добавил слеш в конце, как в схеме
+  getAll: () => api.get('v1/groups/').then(res => res.data),
+  getMy: () => api.get('v1/groups/my').then(res => res.data),
+  initGroup: (data) => api.post('v1/groups/init', data).then(res => res.data),
+}```
+
+
+FILE: ./frontend/src/api/client.js
+```
+import axios from 'axios';
+if (window.Telegram?.WebApp) {
+  window.Telegram.WebApp.ready();
+}
+const api = axios.create({
+  baseURL: window.location.hostname === 'localhost'
+    ? 'https://dezhur-app.ru/api'
+    : '/api',
+});
+api.interceptors.request.use((config) => {
+  const isDev = window.location.hostname === 'localhost';
+  let realTgData = window.Telegram?.WebApp?.initData;
+  if (!realTgData) {
+    const hashData = window.location.hash.split('tgWebAppData=')[1]?.split('&')[0];
+    if (hashData) {
+      realTgData = decodeURIComponent(hashData);
+    }
+  }
+  const authData = isDev ? '123456789' : (realTgData || 'NO_TG_DATA_FROM_FRONT');
+  config.headers['X-TG-Data'] = authData;
+  return config;
+});
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const message = error.response?.data?.detail || error.message || 'Произошла неизвестная ошибка';
+    const status = error.response?.status;
+    console.error(`[API Error] Status: ${status}, Message: ${message}`);
+    if (window.Telegram?.WebApp?.showAlert) {
+      window.Telegram.WebApp.showAlert(`Ошибка: ${message}`);
+    } else {
+      alert(`Ошибка API: ${message}`);
+    }
+    return Promise.reject(error);
+  }
+);
+export default api;```
+
+
+FILE: ./frontend/src/index.css
+```
+@import "tailwindcss";
+#root, body, html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: transparent
+}
+@theme {
+  /* Переменные стекла */
+  --color-glass-bg: rgba(255, 255, 255, 0.45);
+  --glass-blur: blur(40px) saturate(180%);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.4);
+  --glass-shadow: 0 40px 100px rgba(0, 0, 0, 0.2);
+  /* Акцентные цвета */
+  --color-accent-red: #FF453A;
+  --color-accent-orange: #FF9F0A;
+  --color-accent-yellow: #FFD60A;
+  --color-accent-green: #30D158;
+  --color-accent-mint: #63E6E2;
+  --color-accent-teal: #40CBE0;
+  --color-accent-cyan: #64D2FF;
+  --color-accent-blue: #0A84FF;
+  --color-accent-indigo: #5E5CE6;
+  --color-accent-purple: #BF5AF2;
+  --color-accent-pink: #FF375F;
+  --color-accent-brown: #AC8E68;
+  /* Фоны */
+  --color-back-primary: #000000;
+  --color-back-secondary: #1C1C1E;
+  --color-back-tertiary: #2C2C2E;
+  /* Текст / Label */
+  --color-label-primary: #FFFFFF;
+  --color-label-secondary: rgba(235, 235, 245, 0.6);
+  --color-label-tertiary: rgba(235, 235, 245, 0.3);
+  --color-label-quarternary: rgba(235, 235, 245, 0.18);
+  /* Заливка / Fill */
+  --color-fill-primary: rgba(120, 120, 128, 0.36);
+  --color-fill-secondary: rgba(120, 120, 128, 0.32);
+  --color-fill-tertiaty: rgba(118, 118, 128, 0.24);
+  --color-fill-quaternary: rgba(116, 116, 128, 0.18);
+  --color-fill-TabBar: rgba(116, 116, 128, 0.1);
+  --color-separator-opaque: #38383A;
+  --color-separator-Non-opaque: rgba(84, 84, 88, 0.65);
+  --backdrop-blur-TabBar: 24px;
+  --shadow-TabBar-inner: inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+  --border-TabBar: 1px solid #38383a;
+  --color-duty: rgba(255, 255, 255, 0.15);
+  --shadow-duty: 0px 10px 30px 0px rgba(0, 0, 0, 0.4), inset 0px 1px 2px 0px rgba(255, 255, 255, 0.2);
+  --backdrop-blur-duty: 15px;
+  --color-active-point: rgba(191, 90, 242, 1);
+  --shadow-pint-active: 0px 0px 4px 1px rgba(191, 90, 242, 0.5);
+  --tracking-sf-tight: -0.24px;
+  --leading-20: 20px;
+  --font-size-xs-plus: 13px;
+}
+@utility main-glass {
+  background: var(--color-glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+@utility inner-glass {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}```
+
+
+FILE: ./frontend/src/pages/AppLayout.jsx
+```
+import React, { useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { usersApi } from '../api/users';
+import useAppStore from '../store/useAppStore.js';
+import HomeView from '../components/views/HomeViews.jsx';
+import ExchangeView from '../components/views/ExchangeView';
+import SettingsView from '../components/views/SettingsView';
+import Dockbar from "../components/Dockbar.jsx";
+import { IS_DEV, MOCK_USER } from '../config';
+const AppLayout = () => {
+  const { setUser, activeTab } = useAppStore();
+  const { data: user, isLoading, error } = useQuery({
+    queryKey: ['me'],
+    queryFn: async () => {
+      if (IS_DEV) return MOCK_USER;
+      const data = await usersApi.getMe();
+      return data;
+    },
+    retry: IS_DEV ? false : 1,
+  });
+  useEffect(() => {
+    if (user) {
+      setUser(user);
+    }
+  }, [user, setUser]);
+  if (error && !IS_DEV) return (
+    <div className="p-6 text-red-500 bg-white/20 main-glass rounded-3xl m-4">
+      Ошибка загрузки: {error.message}
+    </div>
+  );
+  return (
+    <div className="min-h-screen w-full p-2 flex items-start justify-center">
+      <main className="main-glass w-full max-w-md min-h-[91vh] rounded-[48px] overflow-hidden relative flex flex-col pt-6 pb-28 px-4 transition-all duration-1000">
+        <div className="flex-1 w-full relative"> {/* Добавили relative, чтобы абсолютные слои не расползались */}
+          {/* Вкладка HOME
+          Вместо hidden используем opacity и pointer-events.
+          Компонент сохраняет свои физические размеры, поэтому стек карточек и анимации не багаются.
+        */}
+          <div
+            className={`w-full h-full flex flex-col transition-opacity duration-300 ${
+              activeTab === 'home' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none absolute inset-0'
+            }`}
+          >
+            <HomeView user={user} isLoadingUser={isLoading} />
+          </div>
+          {/* Вкладка EXCHANGE */}
+          <div
+            className={`w-full h-full flex flex-col transition-opacity duration-300 ${
+              activeTab === 'exchange' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none absolute inset-0'
+            }`}
+          >
+            <ExchangeView />
+          </div>
+          {/* Вкладка SETTINGS */}
+          <div
+            className={`w-full h-full flex flex-col transition-opacity duration-300 ${
+              activeTab === 'settings' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none absolute inset-0'
+            }`}
+          >
+            <SettingsView />
+          </div>
+        </div>
+        <Dockbar />
+      </main>
+    </div>
+  );
+};
+export default AppLayout;```
+
+
+FILE: ./frontend/src/config.js
+```
+export const IS_DEV = true;
+export const MOCK_USER = {
+  id: 1337,
+  username: 'fantom',
+  first_name: 'Тимофей',
+  last_name: '',
+  role: 'admin',
+  group_id: 1,
+  student_profile: {
+    group_id: 1
+  }
+};
+export const MOCK_DUTY = [
+  { id: 1, date: 'Сегодня, 12 сентября', users: ['Ветров Тимофей', "Ветров Тимофей"], status: 'active' },
+  { id: 2, date: 'Завтра, 13 сентября', users: ['Тюменцева А.', 'Тюменцева А.'], status: 'active' },
+  { id: 3, date: '14 сентября', users: ['Боровской Д.', 'Боровской Д.'], status: 'active' },
+];
+// Добавляем фейковый топ студентов для Dev Mode
+export const MOCK_LEADERBOARD = [
+  { id: 1, full_name: 'Ветров Тимофей', points: 150 },
+  { id: 2, full_name: 'Тюменцева А.', points: 125 },
+  { id: 3, full_name: 'Боровской Д.', points: 90 },
+  { id: 4, full_name: 'Иванов А.', points: 75 },
+  { id: 5, full_name: 'Сидоров К.', points: 40 },
+  { id: 6, full_name: 'Петров В.', points: 15 },
+];
+```
+
+
+FILE: ./frontend/src/store/useGroupStore.js
+```
+import { create } from 'zustand';
+const useGroupStore = create((set) => ({
+  group: null, // Сюда прилетит объект группы (id, name, students)
+  setGroup: (group) => set({ group }),
+}));
+export default useGroupStore;```
+
+
+FILE: ./frontend/src/store/useAppStore.js
+```
+import {create} from 'zustand';
+const useAppStore = create((set) => ({
+  user: null, // Здесь будет лежать наш "cool_curator"
+  serverStatus: 'offline',
+  activeTab: 'home', // Для переключения в Dockbar
+  setUser: (userData) => set({user: userData}),
+  setServerStatus: (status) => set({serverStatus: status}),
+  setActiveTab: (tab) => set({activeTab: tab}),
+}));
+export default useAppStore;```
+
+
+FILE: ./frontend/src/utils/avatar.js
+```
+export const getInitials = (name) => {
+  if (!name || typeof name !== 'string') return "";
+  return name
+    .trim()
+    .split(/\s+/)
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2); // Максимум 2 буквы, чтобы не ломать верстку в мелких блоках
+};```
+
+
+FILE: ./frontend/src/utils/dateFormatter.js
+```
+export const formatDutyDate = (dateStr) => {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const tomorrow = new Date();
+  tomorrow.setDate(now.getDate() + 1);
+  const isToday = date.toDateString() === now.toDateString();
+  const isTomorrow = date.toDateString() === tomorrow.toDateString();
+  const options = { day: 'numeric', month: 'long' };
+  const formatted = date.toLocaleDateString('ru-RU', options);
+  if (isToday) return `Сегодня, ${formatted}`;
+  if (isTomorrow) return `Завтра, ${formatted}`;
+  return formatted;
+};```
+
+

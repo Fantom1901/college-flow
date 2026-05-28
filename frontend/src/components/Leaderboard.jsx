@@ -25,24 +25,22 @@ function Leaderboard({ groupId }) {
   }
 
   return (
-    <div className="w-full flex-1 flex flex-col min-h-0 mt-2 mb-2">
-
+    <div className="w-full flex-1 flex flex-col min-h-0 mt-2">
       {/* Заголовок секции */}
       <div className="text-[10px] font-black uppercase italic tracking-wider text-white/50 mb-2 pl-4">
         Рейтинг группы по баллам
       </div>
 
       {/*
-        Повторяем тени докбара. Добавили кастомный инлайн-стиль для
-        неонового фиолетового свечения, зашитого в твой UI-кит
+        Убрали flex-1 и mb-2, чтобы блок не пытался растянуться под докбар.
+        Задали max-h-[50vh] (или сколько нужно), чтобы скролл срабатывал до того, как блок дойдет до низа.
       */}
       <div
-        className="w-full flex-1 bg-white/30 backdrop-blur-2xl border border-white/40 rounded-[32px] p-4 flex flex-col min-h-0"
+        className="w-full max-h-[60vh] bg-white/30 backdrop-blur-2xl border border-white/40 rounded-[32px] p-4 flex flex-col min-h-0"
         style={{
           filter: 'drop-shadow(0px 10px 25px rgba(0, 0, 0, 0.15)) drop-shadow(0px 0px 15px rgba(191, 90, 242, 0.15))'
         }}
       >
-
         {/* Внутренний контейнер списка */}
         <div className="w-full flex-1 overflow-y-auto pr-1 flex flex-col gap-2 scrollbar-none">
           {displayData.map((student, index) => {
