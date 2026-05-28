@@ -45,15 +45,15 @@ class RoleChecker:
                 detail="User not found"
             )
 
-        # Приводим к нижнему регистру для сравнения, игнорируя то, что в базе
-        user_role_str = str(user.role).lower()
-        allowed_roles_str = [str(r.value).lower() for r in self.allowed_roles]
+        # Берем .value у Enum, чтобы получить чистую строку типа 'curator', а не 'userrole.curator'
+        user_role_normalized = (user.role.value if hasattr(user.role, 'value') else str(user.role)).lower()
+        allowed_roles_normalized = [str(r.value).lower() for r in self.allowed_roles]
 
-        if user_role_str not in allowed_roles_str:
-            logger.error(f"Access denied for user {user.username}. Role: {user_role_str}, Expected: {allowed_roles_str}")
+        if user_role_normalized not in allowed_roles_normalized:
+            logger.error(f"ACCESS DENIED: User {user.username} has role '{user_role_normalized}', allowed: {allowed_roles_normalized}")
             raise HTTPException(
                 status_code=403,
-                detail=f"You don't have permission. Your role: {user_role_str}"
+                detail=f"You don't have permission. Your role: {user_role_normalized}"
             )
 
         return user
