@@ -25,13 +25,10 @@ async def get_exchange_requests(
     current_user=Depends(get_current_student)
 ):
     """
-    Получить списки входящих, исходящих заявок и историю обменов для текущего студента
+    Получить списки заявок. Если профиля студента нет, возвращаем пустые списки.
     """
     if not current_user.student_profile:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="У текущего пользователя отсутствует профиль студента."
-        )
+        return ExchangeListResponse(incoming=[], outgoing=[], history=[])
 
     student_id = current_user.student_profile.id
 
