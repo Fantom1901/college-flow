@@ -9,16 +9,39 @@ CYAN='\033[0;36m'
 MAGENTA='\033[0;95m'
 NC='\033[0m'
 
-check_running() {
-    RUNNING_CONTAINERS=$(docker ps --filter "name=${PROJECT_PATTERN}" --format "{{.Names}}")
-    if [ ! -z "$RUNNING_CONTAINERS" ]; then
-        return 0
-    else
-        return 1
+show_help() {
+    echo -e "${CYAN}Использование:${NC} ./manage.sh [команда] [аргументы]"
+    echo -e "\n${YELLOW}Команды:${NC}"
+    echo -e "  start              Запустить проект в Docker (Prod-режим)"
+    echo -e "  dev                Запустить локально (FastAPI + БД)"
+    echo -e "  test [-v]          Запустить тесты (опционально: -v для полной инфы)"
+    echo -e "  stop               Остановить все контейнеры"
+    echo -e "  restart            Пересобрать и перезапустить контейнеры"
+    echo -e "  update [branch]    Обновить код из Git"
+    echo -e "  status             Показать состояние проекта"
+    echo -e "\n${YELLOW}Опции:${NC}"
+    echo -e "  -h, --help         Показать эту справку"
+}
+
+activate_venv() {
+    if [ -d "backend/.venv" ]; then
+        source backend/.venv/bin/activate
+    elif [ -d "backend/venv" ]; then
+        source backend/venv/bin/activate
     fi
 }
 
+check_running() {
+    RUNNING_CONTAINERS=$(docker ps --filter "name=${PROJECT_PATTERN}" --format "{{.Names}}")
+    [ ! -z "$RUNNING_CONTAINERS" ]
+}
+
 case $1 in
+    -h|--help)
+        show_help
+        exit 0
+        ;;
+
     start)
         echo -e "${YELLOW}>>> Проверка безопасности...${NC}"
         if check_running; then
@@ -30,21 +53,27 @@ case $1 in
         ;;
 
     dev)
-        echo -e "${CYAN}>>> Запуск в DEV-РЕЖИМЕ (Локально + Hot Reload)...${NC}"
-
-        # 1. Поднимаем только базу данных из docker-compose, чтобы бэк мог к ней зацепиться
-        echo -e "${YELLOW}➔ Запускаю базу данных в Docker...${NC}"
+        echo -e "${CYAN}>>> Запуск в DEV-РЕЖИМЕ...${NC}"
         docker compose up -d db postgres 2>/dev/null || docker compose up -d
-
-        # 2. Активируем виртуальное окружение и запускаем FastAPI через uvicorn локально
-        if [ -d "backend/.venv" ]; then
-            source backend/.venv/bin/activate
-        elif [ -d "backend/venv" ]; then
-            source backend/venv/bin/activate
-        fi
-
-        echo -e "${GREEN}🚀 Стартую FastAPI локально на порту 8000 с авто-перезапуском...${NC}"
+        activate_venv
         cd backend && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+        ;;
+
+    test)
+        shift
+        PYTHON_EXEC="./.venv/bin/python"
+        if [ ! -f "$PYTHON_EXEC" ]; then
+            echo -e "${RED}❌ Интерпретатор не найден. Проверь .venv${NC}"
+            exit 1
+        fi
+        echo -e "${CYAN}>>> Запуск набора тестов...${NC}"
+        $PYTHON_EXEC tests/test_runner.py "$@"
+        if [ $? -eq 0 ]; then
+            echo -e "\n${GREEN}✅ Все тесты пройдены!${NC}"
+        else
+            echo -e "\n${RED}❌ Ошибки в тестах!${NC}"
+            exit 1
+        fi
         ;;
 
     stop)
@@ -57,53 +86,18 @@ case $1 in
         echo -e "${MAGENTA}>>> Пересборка и перезапуск...${NC}"
         $0 stop
         docker compose up -d --build
-        echo -e "${GREEN}🔄 Перезапущено с актуальным кодом!${NC}"
+        echo -e "${GREEN}🔄 Перезапущено!${NC}"
         ;;
 
     update)
         echo -e "${CYAN}>>> Синхронизация с GitHub...${NC}"
-
-        # Берем ветку из аргумента $2 (от вебхука) или спрашиваем
         BRANCH=$2
-
-        if [ -z "$BRANCH" ]; then
-            echo -e "${YELLOW}Доступные ветки в репозитории:${NC}"
-            git fetch --all --prune > /dev/null
-            git branch -r | grep "origin/" | sed 's/  origin\///' | grep -v "HEAD"
-
-            echo -ne "\n${MAGENTA}Какую ветку стянуть? (по умолчанию feature/frontend): ${NC}"
-            read BRANCH
-            [ -z "$BRANCH" ] && BRANCH="feature/frontend"
-        else
-            # Если ветка пришла извне, убираем префикс refs/heads/, если он вдруг остался
-            BRANCH=${BRANCH#refs/heads/}
-            echo -e "${GREEN}>>> Автоматическое обновление ветки: $BRANCH${NC}"
-        fi
-
-        echo -e "${CYAN}>>> Переключение на $BRANCH и стягивание изменений...${NC}"
-
-        # Синхронизация
+        [ -z "$BRANCH" ] && { echo -ne "${MAGENTA}Ветка: ${NC}"; read BRANCH; [ -z "$BRANCH" ] && BRANCH="feature/frontend"; }
         git fetch origin "$BRANCH"
-
-        # Проверка локальной ветки
-        if git show-ref --verify --quiet "refs/heads/$BRANCH"; then
-            git checkout "$BRANCH"
+        git checkout "$BRANCH" 2>/dev/null || git checkout -b "$BRANCH" "origin/$BRANCH"
+        if [[ "$(git pull origin "$BRANCH")" == *"Already up to date."* ]]; then
+            echo -e "${GREEN}✅ Код актуален.${NC}"
         else
-            git checkout -b "$BRANCH" "origin/$BRANCH"
-        fi
-
-        # Пытаемся стянуть
-        PULL_OUTPUT=$(git pull origin "$BRANCH" 2>&1)
-
-        if [[ "$PULL_OUTPUT" == *"Already up to date."* ]]; then
-            echo -e "${GREEN}✅ Код уже актуален. Перезапуск не требуется.${NC}"
-        elif [[ "$PULL_OUTPUT" == *"error"* || "$PULL_OUTPUT" == *"fatal"* ]]; then
-            echo -e "${RED}❌ ОШИБКА при git pull:${NC}"
-            echo "$PULL_OUTPUT"
-            exit 1
-        else
-            echo -e "${GREEN}✅ Изменения получены. Обновляю контейнеры...${NC}"
-            # Вызываем restart напрямую через скрипт
             $0 restart
         fi
         ;;
@@ -111,23 +105,15 @@ case $1 in
     status)
         if check_running || lsof -i :8000 >/dev/null; then
             echo -e "${GREEN}● ПРОЕКТ АКТИВЕН${NC}"
-            [ ! -z "$RUNNING_CONTAINERS" ] && docker ps --filter "name=${PROJECT_PATTERN}" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
-
-            echo -e "\n${CYAN}📊 ТЕКУЩЕЕ СОСТОЯНИЕ API:${NC}"
-            HTTP_STATUS=$(curl -sk -o /dev/null -w "%{http_code}" --max-time 2 -L http://localhost/docs)
-
-            if [ "$HTTP_STATUS" == "200" ]; then
-                echo -e "${GREEN}✅ API запущено локально и отвечает (HTTP 200 на /docs)${NC}"
-            else
-                echo -e "${RED}⚠️ API не отвечает (Код: $HTTP_STATUS)${NC}"
-            fi
+            docker ps --filter "name=${PROJECT_PATTERN}" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
         else
             echo -e "${RED}○ ПРОЕКТ ОСТАНОВЛЕН${NC}"
         fi
         ;;
 
     *)
-        echo -e "${YELLOW}Использование: $0 {start|dev|stop|restart|status|update}${NC}"
+        echo -e "${RED}Неизвестная команда: $1${NC}"
+        show_help
         exit 1
         ;;
 esac
