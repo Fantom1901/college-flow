@@ -1,12 +1,11 @@
 from .role import UserRole
 from .duty import DutyMechanism, DutySetting, DutyStatus, DutySchedule
-
 from .group import Group
 from .user import User
-
 from .student import Student
 from .curator import Curator
 from .invite import InviteLink
+from .exchange import DutyExchange, ExchangeStatus # Добавили сюда
 
 __all__ = [
     "User",
@@ -18,5 +17,7 @@ __all__ = [
     "DutyMechanism",
     "DutyStatus",
     "DutySchedule",
-    "Curator"
+    "Curator",
+    "DutyExchange",   # И сюда
+    "ExchangeStatus"
 ]

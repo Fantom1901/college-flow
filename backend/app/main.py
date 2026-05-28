@@ -52,9 +52,6 @@ async def lifespan(app: FastAPI):
 
   # Логика при выключении
   monitor_task.cancel()
-  # Если хочешь корректно останавливать планировщик:
-  # from app.services.scheduler import scheduler
-  # scheduler.shutdown()
 
   try:
     await monitor_task
@@ -64,10 +61,17 @@ async def lifespan(app: FastAPI):
   logger.info("🛑 API остановлено.")
 
 
+# Инициализируем FastAPI и подменяем лежащий CDN jsdelivr на рабочий cdnjs/unpkg
 app = FastAPI(
     title="Nixa Duty API",
-    lifespan=lifespan
+    lifespan=lifespan,
+    swagger_ui_parameters={"syntaxHighlight.theme": "obsidian"},
 )
+
+# Переопределяем CDN ссылки глобально, чтобы Свагер не вис намертво
+app.swagger_ui_js_url = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.9.0/swagger-ui-bundle.js"
+app.swagger_ui_css_url = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.9.0/swagger-ui.css"
+
 
 # --- НАСТРОЙКА CORS ---
 app.add_middleware(
@@ -83,6 +87,7 @@ app.add_middleware(
 )
 # ----------------------
 
+# Подключаем твои роутеры (Убедись, что эта строка на месте!)
 app.include_router(api_router, prefix="/api/v1")
 
 

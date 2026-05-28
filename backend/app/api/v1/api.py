@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import users, groups, invite, auth, duty
+from app.api.v1.endpoints import users, groups, invite, auth, duty, exchange
 
 
 api_router = APIRouter()
@@ -9,3 +9,4 @@ api_router.include_router(groups.router, prefix="/groups", tags=["groups"])
 api_router.include_router(invite.router, prefix="/invite", tags=["invite"])
 api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
 api_router.include_router(duty.router, prefix="/duty", tags=["duty"])
+api_router.include_router(exchange.router, prefix="/exchange", tags=["exchange"])
