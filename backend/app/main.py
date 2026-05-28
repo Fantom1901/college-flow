@@ -91,6 +91,10 @@ app.add_middleware(
 app.include_router(api_router, prefix="/api/v1")
 
 
+# Временный дебаг
+for route in app.routes:
+    print(f"DEBUG: {route.path}")
+
 @app.get("/status")
 async def status_endpoint():
     return get_system_status()

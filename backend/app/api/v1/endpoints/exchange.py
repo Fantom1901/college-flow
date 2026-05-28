@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Path
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from app.core.database import get_db
-from app.schemas.exchange import ExchangeCreate, ExchangeResponse
+from app.schemas.exchange import ExchangeCreate, ExchangeResponse, ExchangeStatusUpdate
 from app.models.exchange import DutyExchange, ExchangeStatus
 from app.models.duty import DutySchedule, DutyStatus
 from app.models.student import Student
@@ -105,3 +105,38 @@ async def create_exchange_request(
   exchange_full = result.scalar_one()
 
   return exchange_full
+
+
+@router.patch("/{exchange_id}/status", response_model=ExchangeResponse)
+async def update_exchange_status(
+    exchange_id: int = Path(...),
+    payload: ExchangeStatusUpdate = None,
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_student)
+):
+    stmt = (
+        select(DutyExchange)
+        .where(DutyExchange.id == exchange_id)
+        .options(
+            selectinload(DutyExchange.initiator).selectinload(Student.user),
+            selectinload(DutyExchange.suggested).selectinload(Student.user),
+            selectinload(DutyExchange.initiator_duty),
+            selectinload(DutyExchange.suggested_duty)
+        )
+    )
+    result = await db.execute(stmt)
+    exchange = result.scalar_one_or_none()
+
+    if not exchange: raise HTTPException(status_code=404, detail="Заявка не найдена.")
+    if exchange.suggested_id != current_user.student_profile.id: raise HTTPException(status_code=403)
+    if exchange.status != ExchangeStatus.PENDING: raise HTTPException(status_code=400)
+
+    if payload.status == ExchangeStatus.ACCEPTED:
+        exchange.initiator_duty.student_id = exchange.suggested_id
+        exchange.suggested_duty.student_id = exchange.initiator_id
+        exchange.status = ExchangeStatus.ACCEPTED
+    elif payload.status == ExchangeStatus.REJECTED:
+        exchange.status = ExchangeStatus.REJECTED
+
+    await db.commit()
+    return exchange

@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import List, Optional
 from app.models import UserRole
 
@@ -9,9 +9,7 @@ class UserShort(BaseModel):
   tg_id: Optional[int] = None
   role: Optional[UserRole] = None
 
-  class Config:
-    from_attributes = True
-
+  model_config = ConfigDict(from_attributes=True)
 
 class StudentInGroup(BaseModel):
   id: int
@@ -19,9 +17,7 @@ class StudentInGroup(BaseModel):
   user_id: Optional[int] = None
   user: Optional[UserShort] = None
 
-  class Config:
-    from_attributes = True
-
+  model_config = ConfigDict(from_attributes=True)
 class GroupRead(BaseModel):
     id: int
     name: str
@@ -31,5 +27,4 @@ class GroupRead(BaseModel):
     def student_count(self) -> int:
         return len(self.students)
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

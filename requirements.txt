@@ -1,3 +1,6 @@
+pytest-asyncio
+httpx
+pytest
 aiofiles==25.1.0
 aiogram==3.24.0
 aiohappyeyeballs==2.6.1

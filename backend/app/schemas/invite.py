@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import List, Optional
 
 class GroupInitRequest(BaseModel):
@@ -21,8 +21,7 @@ class BulkInviteResponse(BaseModel):
     full_name: str
     link: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class CuratorInviteResponse(BaseModel):
     link: str
