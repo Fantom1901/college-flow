@@ -5,6 +5,7 @@ import useAppStore from '../store/useAppStore.js';
 import HomeView from '../components/views/HomeViews.jsx';
 import ExchangeView from '../components/views/ExchangeView';
 import SettingsView from '../components/views/SettingsView';
+import ReviewsView from '../components/views/ReviewsView';
 import Dockbar from "../components/Dockbar.jsx";
 import { IS_DEV, MOCK_USER } from '../config';
 
@@ -64,6 +65,19 @@ const AppLayout = () => {
           >
             <div className="flex-1 pb-4">
               <ExchangeView />
+            </div>
+          </div>
+
+          {/* REVIEWS */}
+          <div
+            className={`absolute inset-0 w-full h-full flex flex-col overflow-y-auto transition-opacity duration-300 ${
+              activeTab === 'reviews'
+                ? 'opacity-100 z-10'
+                : 'opacity-0 z-0 pointer-events-none'
+            }`}
+          >
+            <div className="flex-1 pb-4">
+              <ReviewsView />
             </div>
           </div>
 

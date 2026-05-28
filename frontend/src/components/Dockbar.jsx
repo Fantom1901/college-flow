@@ -1,4 +1,5 @@
 import { Home } from 'lucide-react';
+import { StarIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
 import useAppStore from '../store/useAppStore';
 import { ExchangeIcon } from './icons/ExchangeIcon';
@@ -10,6 +11,7 @@ const Dockbar = () => {
   const menuItems = [
     { id: 'home', icon: Home },
     { id: 'exchange', icon: ExchangeIcon },
+    { id: 'reviews', icon: StarIcon },
     { id: 'settings', icon: SettingsIcon },
   ];
 
@@ -17,7 +19,7 @@ const Dockbar = () => {
     // Оставляем absolute, так как он внутри AppLayout
     <div className="absolute bottom-6 left-0 right-0 flex justify-center z-50">
       <div
-        className="flex items-center justify-between bg-white/30 backdrop-blur-2xl border border-white/40 rounded-full p-[8px] relative w-[218px] h-[56px] shadow-2xl"
+        className="flex items-center justify-between bg-white/30 backdrop-blur-2xl border border-white/40 rounded-full p-[8px] relative w-[280px] h-[56px] shadow-2xl"
       >
         {menuItems.map((item) => {
           const Icon = item.icon;
