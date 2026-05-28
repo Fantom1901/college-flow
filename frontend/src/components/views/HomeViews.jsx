@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { dutyApi } from '../../api/duty';
 import DutyStack from "../DutyStack.jsx";
 import GroupHeader from "../GroupHeader.jsx";
+import Leaderboard from "../Leaderboard.jsx"; // Импортируем наш топ
 import { formatDutyDate } from '../../utils/dateFormatter';
 
 const HomeView = ({ user, isLoadingUser }) => {
@@ -21,19 +22,20 @@ const HomeView = ({ user, isLoadingUser }) => {
   });
 
   return (
-    // Чистый поток: gap-6 делает фиксированный красивый отступ между заголовком и стеком карточек
-    <div className="flex flex-col items-center justify-start w-full gap-6 select-none">
+    // Добавили h-full и распределили элементы: шапка, стек, и на весь остаток — топ
+    <div className="flex flex-col items-center justify-start w-full h-full gap-5 select-none">
 
-      {/* Название группы на самом верху */}
       <GroupHeader groupId={groupId} isLoadingUser={isLoadingUser} />
 
-      {/* Стек карточек ложится сразу под ней */}
       <div className="w-full flex justify-center">
         <DutyStack
           items={schedule || []}
           isLoading={isLoadingUser || (isLoadingDuty && !!groupId) || !groupId}
         />
       </div>
+
+      {/* Компонент Топа забирает все оставшееся место на экране */}
+      <Leaderboard groupId={groupId} />
 
       {!groupId && !isLoadingUser && (
         <div className="mt-4 text-white/20 text-[10px] text-center px-10">

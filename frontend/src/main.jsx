@@ -41,6 +41,10 @@ const queryClient = new QueryClient({
     queries: {
       retry: 1,
       refetchOnWindowFocus: false,
+      // Вот это решает проблему: 5 минут данные не будут дёргать бэк при переключении вкладок
+      staleTime: 1000 * 60 * 5,
+      // Время жизни кэша в памяти (сделай чуть больше, например 10 минут)
+      gcTime: 1000 * 60 * 10,
     },
   },
 });
