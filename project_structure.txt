@@ -1,0 +1,144 @@
+.
+├── backend
+│   ├── alembic.ini
+│   ├── app
+│   │   ├── api
+│   │   │   └── v1
+│   │   │       ├── api.py
+│   │   │       ├── dependencies.py
+│   │   │       └── endpoints
+│   │   │           ├── auth.py
+│   │   │           ├── duty.py
+│   │   │           ├── groups.py
+│   │   │           ├── invite.py
+│   │   │           └── users.py
+│   │   ├── core
+│   │   │   ├── config.py
+│   │   │   ├── database.py
+│   │   │   ├── __init__.py
+│   │   │   ├── logger.py
+│   │   │   ├── middleware.py
+│   │   │   ├── scheduler.py
+│   │   │   └── security.py
+│   │   ├── handlers
+│   │   │   └── user.py
+│   │   ├── __init__.py
+│   │   ├── main.py
+│   │   ├── models
+│   │   │   ├── curator.py
+│   │   │   ├── duty.py
+│   │   │   ├── group.py
+│   │   │   ├── __init__.py
+│   │   │   ├── invite.py
+│   │   │   ├── role.py
+│   │   │   ├── student.py
+│   │   │   └── user.py
+│   │   ├── schemas
+│   │   │   ├── duty.py
+│   │   │   ├── group.py
+│   │   │   ├── invite.py
+│   │   │   ├── student.py
+│   │   │   └── user.py
+│   │   └── services
+│   │       ├── duty_service.py
+│   │       ├── invite_service.py
+│   │       └── student_service.py
+│   ├── bot
+│   │   ├── handlers
+│   │   │   ├── __init__.py
+│   │   │   ├── start.py
+│   │   │   └── user.py
+│   │   ├── __init__.py
+│   │   ├── keyboards
+│   │   │   └── __init__.py
+│   │   ├── main.py
+│   │   └── middlewares
+│   │       └── __init__.py
+│   ├── Dockerfile
+│   ├── entrypoint.sh
+│   ├── __init__.py
+│   ├── migrations
+│   │   ├── env.py
+│   │   ├── README
+│   │   ├── script.py.mako
+│   │   └── versions
+│   │       ├── 068c4c77e779_add_duty_tables_and_student_fields.py
+│   │       ├── 2cf136b666b0_initial_migration.py
+│   │       ├── 42b9d32fac64_add_curator_id_to_groups.py
+│   │       ├── 9f8363b5fd3b_.py
+│   │       └── dfae6d2e1f8c_fix_missing_duty_table.py
+│   └── requirements.txt
+├── docker-compose.yml
+├── docs
+│   ├── api_spec.md
+│   ├── backend-spec.md
+│   ├── db-schema-spec.md
+│   ├── designer_spec.md
+│   ├── duty-lifecycle-spec.md
+│   ├── frontend-guide.md
+│   ├── frontend-spec.md
+│   ├── frontend-state-contract.md
+│   ├── git-guide.md
+│   ├── group-membership-policy.md
+│   ├── main-spec.md
+│   ├── schedule-generation-spec.md
+│   ├── telegram-ui-integration-spec.md
+│   └── user-experience-spec.md
+├── frontend
+│   ├── dist
+│   │   ├── assets
+│   │   │   ├── bg_full-Dv4jgoF_.jpg
+│   │   │   ├── index-DYv0A-Ma.css
+│   │   │   └── index-YYBt00Rp.js
+│   │   └── index.html
+│   ├── Dockerfile
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── public
+│   │   └── bg_full.jpg
+│   ├── README.md
+│   ├── src
+│   │   ├── api
+│   │   │   ├── client.js
+│   │   │   ├── duty.js
+│   │   │   ├── groups.js
+│   │   │   ├── invite.js
+│   │   │   └── users.js
+│   │   ├── assets
+│   │   │   └── bg_full.png
+│   │   ├── components
+│   │   │   ├── BackgroundImage.jsx
+│   │   │   ├── Dockbar.jsx
+│   │   │   ├── DutyCard.jsx
+│   │   │   ├── DutyStack.jsx
+│   │   │   ├── icons
+│   │   │   │   ├── ExchangeIcon.jsx
+│   │   │   │   ├── HomeIcon.jsx
+│   │   │   │   └── SetingsIcon.jsx
+│   │   │   ├── VantaBackground.jsx
+│   │   │   └── views
+│   │   │       ├── ExchangeView.jsx
+│   │   │       ├── HomeViews.jsx
+│   │   │       └── SettingsView.jsx
+│   │   ├── config.js
+│   │   ├── index.css
+│   │   ├── main.jsx
+│   │   ├── pages
+│   │   │   └── AppLayout.jsx
+│   │   ├── store
+│   │   │   └── useAppStore.js
+│   │   └── utils
+│   │       └── dateFormatter.js
+│   └── vite.config.js
+├── git_history.txt
+├── manage.sh
+├── nginx.conf
+├── project_structure.txt
+├── README.md
+├── requirements.txt
+└── scripts
+    └── logs_pretty.py
+
+32 directories, 110 files

@@ -1,0 +1,90 @@
+* a331352 | 2026-04-27T20:00:54+07:00 | feat: edit manage.sh update | Nixa
+* 906b31b | 2026-04-27T19:57:48+07:00 | Test: checking auto-deploy with dynamic branch | Nixa
+* ea06078 | 2026-04-27T19:38:49+07:00 | Test: checking auto-deploy with dynamic branch | Nixa
+* c715b34 | 2026-04-27T18:54:26+07:00 | fix(nginx): resolve CORS duplication | Nixa
+* fc0e358 | 2026-04-27T18:04:35+07:00 | feat: add docs paths to nginx and ignore logs | Nixa
+* b18d6d0 | 2026-04-25T20:54:10+07:00 | fix: endpoints swagger in nginx config | Nixa
+* 3c2acce | 2026-04-25T20:22:34+07:00 | add new BOT TOKEN | Nixa
+* df47b99 | 2026-04-25T20:03:03+07:00 | feat: added a selection branch in the update | Nixa
+* 6d3e337 | 2026-04-25T19:55:40+07:00 | feat(ui): implement glassmorphism design and neon dockbar | Nixa
+*   8f626cd | 2026-03-15T18:20:41+07:00 | Merge branch 'develop' of github.com:Fantom1901/college-flow into develop | fantom
+|\  
+| *   bae1974 | 2026-03-15T17:27:42+07:00 | fix: resolve conflicts and update nginx | fantom
+| |\  
+| * | f17c124 | 2026-03-15T17:26:47+07:00 | fix: update nginx config for docs and fullscreen | fantom
+| * | 5e49dcb | 2026-03-15T08:09:12+07:00 | fix: fullscreen and header styles 3 | fantom
+| * | 3023e7e | 2026-03-15T07:54:31+07:00 | fix: fullscreen and header styles 2 | fantom
+| * | bd167a4 | 2026-03-15T07:51:04+07:00 | fix: fullscreen and header styles | fantom
+| * | a9fb326 | 2026-03-15T07:33:59+07:00 | fit: change problem with initData | fantom
+| * | 3e54c85 | 2026-03-15T07:17:48+07:00 | feat: implement animated DutyStack and refactor app layout | fantom
+| * | b6c5b78 | 2026-03-15T01:13:26+07:00 | fix: resolve conflicts by accepting develop nginx config | fantom
+| * | 5a0d646 | 2026-03-03T23:14:38+07:00 | fix: double v1 path and baseURL | fantom
+| * | 9facb35 | 2026-03-03T23:12:37+07:00 | fix: double v1 path and baseURL | fantom
+| * | fdd3dc5 | 2026-03-03T23:08:32+07:00 | fix: remove double v1 and check paths | fantom
+| * | db3a447 | 2026-03-03T23:06:08+07:00 | fix: force telegram auth data and ready state | fantom
+| * | 09606c0 | 2026-03-03T22:53:03+07:00 | fix: total nginx api config | fantom
+| * | 3faf63a | 2026-03-03T22:50:02+07:00 | fix: total nginx api config | fantom
+| * | 750755c | 2026-03-03T22:39:18+07:00 | fix: allow headers with underscores for TG data | fantom
+| * | 75b7a2f | 2026-03-03T22:36:47+07:00 | fix: change location /api/v1 in nginx.conf | fantom
+| * | 22ef2aa | 2026-03-03T22:23:23+07:00 | fix: final nginx routing and startup | fantom
+| * | b17bb12 | 2026-03-03T22:13:31+07:00 | chore: ensure nginx image is removed | fantom
+| * | b217797 | 2026-03-03T22:01:32+07:00 | fix: move frontend build process into docker for server deployment | fantom
+| * | 2a31adc | 2026-03-03T21:55:50+07:00 | feat: setup global layout with static background, dockbar and deployment configs | fantom
+| * | f27ef31 | 2026-02-22T06:06:12+07:00 | feat: fix CORS, setup Tailwind v4 theme and connect API to HomePage | fantom
+* | | 8e3ad1e | 2026-03-15T18:19:21+07:00 | feat: implement APScheduler for auto-generation and system monitoring | fantom
+| |/  
+|/|   
+* | 409bef6 | 2026-03-15T01:06:12+07:00 | feat: add new endpoints and schemas: duty today | fantom
+* | 49035e6 | 2026-02-22T05:15:42+07:00 | fix CORSMiddleware in nginx.conf | fantom
+* | a4dd361 | 2026-02-22T05:12:45+07:00 | fix CORSMiddleware | fantom
+|/  
+* 92ba9d7 | 2026-02-13T00:06:23+07:00 | change mginx.conf, add cool down to API | fantom
+* bad105b | 2026-02-12T23:56:59+07:00 | fix endpoints | fantom
+* 77d42ac | 2026-02-12T23:51:30+07:00 | fix psutil in app/main.py | fantom
+* a83681d | 2026-02-12T23:41:56+07:00 | feat: create auto update in manage.sh | fantom
+* 0be8c63 | 2026-02-12T22:26:54+07:00 | hotfix ssl | fantom
+* 2459a41 | 2026-02-12T22:20:58+07:00 | Добавлен Nginx и исправлен скрипт запуска | fantom
+* 99d93d5 | 2026-02-12T00:14:57+07:00 | feat: complete logging system and live monitoring dashboard | fantom
+* 99ccfc5 | 2026-02-09T20:56:38+07:00 | feat: dockerized project with auto-migrations and entrypoint | fantom
+* 2260673 | 2026-02-02T01:52:40+07:00 | feat(duty): implement multi-person duty settings and access control | fantom
+* 7691997 | 2026-02-02T01:09:47+07:00 | feat: add background task scheduler for weekly duty generation | fantom
+* f31933d | 2026-02-02T00:54:22+07:00 | feat: complete duty management system with cycle generation and fixes | fantom
+* f3cb100 | 2026-02-01T22:54:24+07:00 | feat: link Group to Curator and implement initial group logic | fantom
+* 2ce1e69 | 2026-02-01T22:33:49+07:00 | feat: implement async db core with sqlalchemy, fix connection pool issues and setup start handlers | fantom
+* 3d92532 | 2026-02-01T10:55:09+07:00 | feat: initial bot structure and hybrid API integration | fantom
+* cebd621 | 2026-02-01T07:52:35+07:00 | security: cleanup git index, remove secrets and bytecode | fantom
+* ebd07c9 | 2026-01-31T18:06:51+07:00 | feat: implement partial user profile update and fix schemas | fantom
+* 2647e3c | 2026-01-31T17:59:19+07:00 | fix: update UserRead schema to include student_profile and fix lazy loading | fantom
+* ac5612a | 2026-01-31T17:36:08+07:00 | docs: update env example and cleanup old db files | fantom
+* 5f50b0c | 2026-01-31T17:31:19+07:00 | feat: migrate to postgresql and setup alembic | fantom
+* 23535af | 2026-01-28T21:26:56+07:00 | refactor: complete migration to postgress and resolve all model conflicts | fantom
+* 7add071 | 2026-01-28T20:43:48+07:00 | feat: complete base invite and user registration logic, add weight calculation service | fantom
+* fa08bbd | 2026-01-22T05:43:08+07:00 | feat: add bulk invite creation and secure role-based access | fantom
+* e67cd4e | 2026-01-21T15:42:01+07:00 | feat: update models to SQLAlchemy 2.0 and add Curator model | fantom
+* 3d01b35 | 2026-01-21T15:10:16+07:00 | feat: correction of minor inconsistencies in the database, elimination of repetitive data, basic setup of services for creating duty and their models | fantom
+* 8ece795 | 2026-01-20T13:22:32+07:00 | feat: complete telegram bot registration with group linking and eager loading | fantom
+*   c99bbc6 | 2026-01-20T12:14:52+07:00 | Merge branch 'feature/database-setup' into feature/api | fantom
+|\  
+| * 86e707c | 2026-01-20T12:11:12+07:00 | db: add student_id to invites and update migrations | fantom
+* | 719e0aa | 2026-01-20T11:47:35+07:00 | merge: fix conflicts in database and alembic config | fantom
+|\| 
+| * a88c40f | 2026-01-20T11:45:04+07:00 | db: fix migrations and add full_name to student | fantom
+| * d1ff883 | 2026-01-20T11:33:25+07:00 | feat: Changing the student and user model for a correct user registration process | fantom
+* | 160745c | 2026-01-20T11:21:51+07:00 | feat: create api student and groups | fantom
+* | cc32c7e | 2026-01-19T03:46:49+07:00 | feat: link bot with DB, implement invite validation and user registration | fantom
+|/  
+* d4704a9 | 2026-01-19T02:03:29+07:00 | feat: add invite link model and generation service | fantom
+* 4b56836 | 2026-01-19T01:22:45+07:00 | feat: create base db models: group, role, student, user and create seed script for generate admin user Nixa | fantom
+* 70c36b3 | 2026-01-15T07:00:10+07:00 | feat: add sqlalchemy orm and alembic migrations setup | fantom
+*   c2581a8 | 2026-01-15T06:07:58+07:00 | Merge remote-tracking branch 'origin/main' | fantom
+|\  
+| * 5a7a65c | 2026-01-15T05:28:11+07:00 | Remove duplicate frontend technical specification | Fantom1901
+* | fdd42ad | 2026-01-15T06:07:20+07:00 | Loading the base libraries environment and creating requirements.txt | fantom
+|/  
+* 1efbbaa | 2026-01-15T05:27:16+07:00 | Fix 5 first version specification | fantom
+* c15f288 | 2026-01-15T05:17:26+07:00 | Fix 4 first version specification | fantom
+* 5bc89ae | 2026-01-15T04:35:30+07:00 | Fix 3 first version specification | fantom
+* 32bb889 | 2026-01-15T04:20:11+07:00 | Fix 2 first version specification | fantom
+* 615e14d | 2026-01-15T04:07:24+07:00 | Fix first version specification | fantom
+* 19bcc68 | 2026-01-15T04:03:16+07:00 | Create first version specification | fantom
+* c0bfb12 | 2026-01-15T02:50:18+07:00 | first commit | fantom

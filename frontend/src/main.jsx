@@ -7,6 +7,7 @@ import { init, viewport, settingsButton, mainButton, backButton } from '@telegra
 import './index.css';
 import AppLayout from "./pages/AppLayout.jsx";
 import { BackgroundImage } from './components/BackgroundImage.jsx';
+import VantaBackground from "./components/VantaBackground.jsx";
 import Dockbar from './components/Dockbar.jsx';
 
 try {
@@ -40,6 +41,10 @@ const queryClient = new QueryClient({
     queries: {
       retry: 1,
       refetchOnWindowFocus: false,
+      // Вот это решает проблему: 5 минут данные не будут дёргать бэк при переключении вкладок
+      staleTime: 1000 * 60 * 5,
+      // Время жизни кэша в памяти (сделай чуть больше, например 10 минут)
+      gcTime: 1000 * 60 * 10,
     },
   },
 });
@@ -75,12 +80,12 @@ createRoot(document.getElementById('root')).render(
     <QueryClientProvider client={queryClient}>
       <TelegramProvider>
         <BrowserRouter>
-          <BackgroundImage />
+          <VantaBackground />
           <div style={{ paddingTop: 'var(--tg-safe-area-inset-top, 0px)' }}>
             <Routes>
               <Route path="/" element={<AppLayout />} />
             </Routes>
-            <Dockbar />
+            {/*<Dockbar />*/}
           </div>
         </BrowserRouter>
       </TelegramProvider>

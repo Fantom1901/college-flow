@@ -4,11 +4,18 @@
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* Чтобы не было двойных скроллов */
-  background-color: #1a1a1a; /* Цвет твоего хедера */
+  overflow: hidden;
+  background-color: transparent
 }
 
 @theme {
+
+  /* Переменные стекла */
+  --color-glass-bg: rgba(255, 255, 255, 0.45);
+  --glass-blur: blur(40px) saturate(180%);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.4);
+  --glass-shadow: 0 40px 100px rgba(0, 0, 0, 0.2);
+
   /* Акцентные цвета */
   --color-accent-red: #FF453A;
   --color-accent-orange: #FF9F0A;
@@ -59,4 +66,21 @@
   --tracking-sf-tight: -0.24px;
   --leading-20: 20px;
   --font-size-xs-plus: 13px;
+}
+
+@utility main-glass {
+  background: var(--color-glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+@utility inner-glass {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }

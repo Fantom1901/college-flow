@@ -1,29 +1,47 @@
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { dutyApi } from '../../api/duty';
 import DutyStack from "../DutyStack.jsx";
+import GroupHeader from "../GroupHeader.jsx";
+import Leaderboard from "../Leaderboard.jsx"; // Импортируем наш топ
+import { formatDutyDate } from '../../utils/dateFormatter';
 
-const HomeView = ({ user }) => {
-  const groupId = user?.student_profile?.group_id;
+const HomeView = ({ user, isLoadingUser }) => {
+  const groupId = user?.student_profile?.group_id || user?.curator_profile?.group_id || user?.group_id;
 
-  // Твои реальные данные из API (пока закомментим или используем моки)
-  const mockData = [
-    { id: 1, date: 'Сегодня 15 мая', users: ['Ветров Тимофей', 'Тюменцева Диана'] },
-    { id: 2, date: 'Завтра 16 мая', users: ['Иванов Иван', 'Петров Петр'] },
-    { id: 3, date: 'Послезавтра 17 мая', users: ['Сидоров Сидор', 'Алексеев Алексей'] },
-  ];
+  const { data: schedule, isLoading: isLoadingDuty } = useQuery({
+    queryKey: ['weekly-duty', groupId],
+    queryFn: () => dutyApi.getWeekly ? dutyApi.getWeekly(groupId) : dutyApi.getToday(groupId),
+    enabled: !!groupId,
+    select: (data) => data.map(item => ({
+      id: item.id,
+      date: formatDutyDate(item.date),
+      users: [item.student?.full_name || 'Имя'],
+      status: item.status
+    })).slice(0, 3)
+  });
 
   return (
-    <div className="flex flex-col items-center p-10 select-none">
-      <header className="w-full">
-        {/* Вызываем нашу анимированную колоду */}
-        <DutyStack initialItems={mockData} />
-      </header>
+    // Добавили h-full и распределили элементы: шапка, стек, и на весь остаток — топ
+    <div className="flex flex-col items-center justify-start w-full h-full gap-5 select-none">
 
-      <section className="mt-12 text-center">
-        <div className="text-label-tertiary text-[11px] uppercase tracking-widest">
-          Свайпни вверх или вниз
+      <GroupHeader groupId={groupId} isLoadingUser={isLoadingUser} />
+
+      <div className="w-full flex justify-center">
+        <DutyStack
+          items={schedule || []}
+          isLoading={isLoadingUser || (isLoadingDuty && !!groupId) || !groupId}
+        />
+      </div>
+
+      {/* Компонент Топа забирает все оставшееся место на экране */}
+      <Leaderboard groupId={groupId} />
+
+      {!groupId && !isLoadingUser && (
+        <div className="mt-4 text-white/20 text-[10px] text-center px-10">
+          Твой аккаунт не привязан к конкретной группе в базе данных.
         </div>
-      </section>
+      )}
     </div>
   );
 };
