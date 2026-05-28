@@ -5,7 +5,7 @@ export const MOCK_USER = {
   username: 'fantom',
   first_name: 'Тимофей',
   last_name: '',
-  role: 'admin',
+  role: 'student',
   group_id: 1,
   student_profile: {
     group_id: 1
