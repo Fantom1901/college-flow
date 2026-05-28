@@ -9,45 +9,50 @@ from app.models.user import User
 from app.models.role import UserRole
 
 class RoleChecker:
-  def __init__(self, allowed_roles: list[UserRole]):
-    self.allowed_roles = allowed_roles
+    def __init__(self, allowed_roles: list[UserRole]):
+        self.allowed_roles = allowed_roles
 
-  async def __call__(
-    self,
-    x_tg_data: str = Header(alias="X-TG-Data"),
-    db: AsyncSession = Depends(get_db),
-  ):
-    tg_user_data = verify_telegram_data(x_tg_data)
+    async def __call__(
+        self,
+        x_tg_data: str = Header(alias="X-TG-Data"),
+        db: AsyncSession = Depends(get_db),
+    ):
+        tg_user_data = verify_telegram_data(x_tg_data)
 
-    if not tg_user_data:
-      raise HTTPException(
-        status_code=401,
-        detail="Invalid Telegram data"
-      )
+        if not tg_user_data:
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid Telegram data"
+            )
 
-    tg_id = tg_user_data.get("id")
+        tg_id = tg_user_data.get("id")
 
-    stmt = (
-      select(User)
-      .where(User.tg_id == tg_id)
-      .options(
-        selectinload(User.student_profile),
-        selectinload(User.curator_profile)
-      )
-    )
-    result =  await db.execute(stmt)
-    user = result.scalar_one_or_none()
+        stmt = (
+            select(User)
+            .where(User.tg_id == tg_id)
+            .options(
+                selectinload(User.student_profile),
+                selectinload(User.curator_profile)
+            )
+        )
+        result = await db.execute(stmt)
+        user = result.scalar_one_or_none()
 
-    if not user:
-      raise HTTPException(
-        status_code=404,
-        detail="User not found"
-      )
+        if not user:
+            raise HTTPException(
+                status_code=404,
+                detail="User not found"
+            )
 
-    if user.role not  in self.allowed_roles:
-      raise HTTPException(
-        status_code=403,
-        detail="You don't have permission to perform this action"
-      )
+        # Приводим всё к нижнему регистру для безопасного сравнения,
+        # так как в БД роль может быть в верхнем, а в коде в нижнем
+        user_role_normalized = str(user.role).lower()
+        allowed_roles_normalized = [str(r.value).lower() for r in self.allowed_roles]
 
-    return user
+        if user_role_normalized not in allowed_roles_normalized:
+            raise HTTPException(
+                status_code=403,
+                detail=f"You don't have permission to perform this action. Required: {allowed_roles_normalized}, got: {user_role_normalized}"
+            )
+
+        return user
