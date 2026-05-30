@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { motion, AnimatePresence } from 'framer-motion'; // Добавили AnimatePresence для цифр
-import { dutyApi } from '../../api/duty';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const DAYS_OF_WEEK = [
   { id: 1, label: 'ПН' },
@@ -12,19 +10,10 @@ const DAYS_OF_WEEK = [
   { id: 6, label: 'СБ' },
 ];
 
-function GroupSettingsForm({ groupId, initialSettings }) {
-  const queryClient = useQueryClient();
-
+function GroupSettingsForm({ initialSettings, onSave, isPending }) {
   const [mechanism, setMechanism] = useState(initialSettings?.mechanism || 'alphabetical');
   const [workDays, setWorkDays] = useState(initialSettings?.work_days || [1, 2, 3, 4, 5]);
   const [personPerDay, setPersonPerDay] = useState(initialSettings?.person_per_day || 2);
-
-  const mutation = useMutation({
-    mutationFn: (data) => dutyApi.updateSettings(groupId, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['duty-settings', groupId] });
-    },
-  });
 
   const handleDayToggle = (dayId) => {
     setWorkDays(prev =>
@@ -37,7 +26,7 @@ function GroupSettingsForm({ groupId, initialSettings }) {
       className="w-full bg-white/30 backdrop-blur-2xl border border-white/40 rounded-[32px] p-5 flex flex-col gap-5"
       style={{ filter: 'drop-shadow(0px 10px 25px rgba(0, 0, 0, 0.15)) drop-shadow(0px 0px 15px rgba(191, 90, 242, 0.15))' }}
     >
-      {/* 1. Выбор механизма (Уже с пилюлей) */}
+      {/* 1. Выбор механизма */}
       <div className="flex flex-col gap-2">
         <label className="text-[10px] font-black uppercase italic tracking-wider text-white/60 pl-1">
           Алгоритм распределения
@@ -58,7 +47,6 @@ function GroupSettingsForm({ groupId, initialSettings }) {
             )}
             <span className="relative z-10">По алфавиту</span>
           </button>
-
           <button
             onClick={() => setMechanism('weighted')}
             className={`flex-1 py-2 text-xs font-extrabold italic rounded-xl relative outline-none transition-colors duration-300 ${
@@ -95,21 +83,12 @@ function GroupSettingsForm({ groupId, initialSettings }) {
               >
                 {isActive && (
                   <motion.div
-                    layoutId={`active-day-pill-${day.id}`} // уникальный ID для каждого дня
+                    layoutId={`active-day-pill-${day.id}`}
                     className="absolute inset-0 bg-white rounded-xl shadow-md"
-                    transition={{
-                      type: "spring",
-                      stiffness: 450,
-                      damping: 25,
-                    }}
+                    transition={{ type: "spring", stiffness: 450, damping: 25 }}
                   />
                 )}
-
-                {/* Текст поверх пилюли */}
-                <motion.span
-                  className="relative z-10 block"
-                  whileTap={{ scale: 0.85 }}
-                >
+                <motion.span className="relative z-10 block" whileTap={{ scale: 0.85 }}>
                   {day.label}
                 </motion.span>
               </button>
@@ -118,7 +97,7 @@ function GroupSettingsForm({ groupId, initialSettings }) {
         </div>
       </div>
 
-      {/* 3. Количество человек (С вылетающей вверх/вниз цифрой при изменении) */}
+      {/* 3. Количество человек */}
       <div className="flex flex-col gap-2">
         <label className="text-[10px] font-black uppercase italic tracking-wider text-white/60 pl-1">
           Студентов на день
@@ -132,8 +111,6 @@ function GroupSettingsForm({ groupId, initialSettings }) {
           >
             -
           </motion.button>
-
-          {/* Анимация прокрутки цифры */}
           <div className="h-6 overflow-hidden relative w-20 flex justify-center items-center">
             <AnimatePresence mode="popLayout">
               <motion.span
@@ -148,7 +125,6 @@ function GroupSettingsForm({ groupId, initialSettings }) {
               </motion.span>
             </AnimatePresence>
           </div>
-
           <motion.button
             whileTap={{ scale: 0.85 }}
             disabled={personPerDay >= 5}
@@ -160,14 +136,14 @@ function GroupSettingsForm({ groupId, initialSettings }) {
         </div>
       </div>
 
-      {/* Кнопка сохранения с эффектом нажатия */}
+      {/* Кнопка сохранения вызывает колбэк из пропсов */}
       <motion.button
         whileTap={{ scale: 0.98 }}
-        onClick={() => mutation.mutate({ mechanism, work_days: workDays, person_per_day: personPerDay })}
-        disabled={mutation.isPending}
+        onClick={() => onSave({ mechanism, work_days: workDays, person_per_day: personPerDay })}
+        disabled={isPending}
         className="w-full mt-2 py-3.5 bg-slate-950 text-white font-black italic tracking-wide rounded-2xl shadow-lg border border-white/10 outline-none"
       >
-        {mutation.isPending ? 'СОХРАНЕНИЕ...' : 'СОХРАНИТЬ НАСТРОЙКИ'}
+        {isPending ? 'СОХРАНЕНИЕ...' : 'СОХРАНИТЬ НАСТРОЙКИ'}
       </motion.button>
     </div>
   );
