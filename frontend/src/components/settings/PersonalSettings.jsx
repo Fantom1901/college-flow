@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { tgHaptics } from '../../services/telegram/tgHaptics';
 
 function PersonalSettings() {
   const [notify, setNotify] = useState(true);
+
+  const handleToggle = () => {
+    // Мягкий щелчок при переключении тумблера уведомлений
+    tgHaptics.selection();
+    setNotify(!notify);
+  };
 
   return (
     <div className="w-full flex flex-col gap-2 mt-2">
@@ -17,7 +24,7 @@ function PersonalSettings() {
 
         {/* Основа тумблера */}
         <button
-          onClick={() => setNotify(!notify)}
+          onClick={handleToggle}
           className={`w-12 h-6 rounded-full p-0.5 outline-none transition-colors duration-300 flex ${
             notify ? 'bg-slate-950 justify-end' : 'bg-slate-200 justify-start'
           }`}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { tgHaptics } from '../../services/telegram/tgHaptics';
 
 const DAYS_OF_WEEK = [
   { id: 1, label: 'ПН' },
@@ -15,10 +16,49 @@ function GroupSettingsForm({ initialSettings, onSave, isPending }) {
   const [workDays, setWorkDays] = useState(initialSettings?.work_days || [1, 2, 3, 4, 5]);
   const [personPerDay, setPersonPerDay] = useState(initialSettings?.person_per_day || 2);
 
+  const handleMechanismChange = (type) => {
+    if (mechanism !== type) {
+      tgHaptics.selection();
+      setMechanism(type);
+    }
+  };
+
   const handleDayToggle = (dayId) => {
+    tgHaptics.selection();
     setWorkDays(prev =>
       prev.includes(dayId) ? prev.filter(id => id !== dayId) : [...prev, dayId].sort()
     );
+  };
+
+  const incrementPerson = () => {
+    if (personPerDay >= 5) {
+      // Вибрируем предупреждением, если упёрлись в потолок
+      tgHaptics.notification('warning');
+      return;
+    }
+    tgHaptics.selection();
+    setPersonPerDay(p => p + 1);
+  };
+
+  const decrementPerson = () => {
+    if (personPerDay <= 1) {
+      // Вибрируем предупреждением, если упёрлись в пол
+      tgHaptics.notification('warning');
+      return;
+    }
+    tgHaptics.selection();
+    setPersonPerDay(p => p - 1);
+  };
+
+  const handleFormSubmit = async () => {
+    try {
+      await onSave({ mechanism, work_days: workDays, person_per_day: personPerDay });
+      // Сочный нативный успех после завершения отправки
+      tgHaptics.notification('success');
+    } catch (e) {
+      // Если бэк вернул ошибку — вибрируем ошибкой
+      tgHaptics.notification('error');
+    }
   };
 
   return (
@@ -33,7 +73,7 @@ function GroupSettingsForm({ initialSettings, onSave, isPending }) {
         </label>
         <div className="flex relative bg-slate-950/20 p-1 rounded-2xl border border-white/10 overflow-hidden">
           <button
-            onClick={() => setMechanism('alphabetical')}
+            onClick={() => handleMechanismChange('alphabetical')}
             className={`flex-1 py-2 text-xs font-extrabold italic rounded-xl relative outline-none transition-colors duration-300 ${
               mechanism === 'alphabetical' ? 'text-slate-950' : 'text-white/60'
             }`}
@@ -48,7 +88,7 @@ function GroupSettingsForm({ initialSettings, onSave, isPending }) {
             <span className="relative z-10">По алфавиту</span>
           </button>
           <button
-            onClick={() => setMechanism('weighted')}
+            onClick={() => handleMechanismChange('weighted')}
             className={`flex-1 py-2 text-xs font-extrabold italic rounded-xl relative outline-none transition-colors duration-300 ${
               mechanism === 'weighted' ? 'text-slate-950' : 'text-white/60'
             }`}
@@ -106,7 +146,7 @@ function GroupSettingsForm({ initialSettings, onSave, isPending }) {
           <motion.button
             whileTap={{ scale: 0.85 }}
             disabled={personPerDay <= 1}
-            onClick={() => setPersonPerDay(p => p - 1)}
+            onClick={decrementPerson}
             className="w-9 h-9 rounded-xl bg-slate-100 font-black text-slate-900 flex items-center justify-center disabled:opacity-20 outline-none"
           >
             -
@@ -128,7 +168,7 @@ function GroupSettingsForm({ initialSettings, onSave, isPending }) {
           <motion.button
             whileTap={{ scale: 0.85 }}
             disabled={personPerDay >= 5}
-            onClick={() => setPersonPerDay(p => p + 1)}
+            onClick={incrementPerson}
             className="w-9 h-9 rounded-xl bg-slate-100 font-black text-slate-900 flex items-center justify-center disabled:opacity-20 outline-none"
           >
             +
@@ -139,7 +179,7 @@ function GroupSettingsForm({ initialSettings, onSave, isPending }) {
       {/* Кнопка сохранения вызывает колбэк из пропсов */}
       <motion.button
         whileTap={{ scale: 0.98 }}
-        onClick={() => onSave({ mechanism, work_days: workDays, person_per_day: personPerDay })}
+        onClick={handleFormSubmit}
         disabled={isPending}
         className="w-full mt-2 py-3.5 bg-slate-950 text-white font-black italic tracking-wide rounded-2xl shadow-lg border border-white/10 outline-none"
       >
