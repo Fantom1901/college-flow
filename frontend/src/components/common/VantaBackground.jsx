@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import FOG from 'vanta/dist/vanta.fog.min.js'
 import * as THREE from 'three';
 
+// TODO: 0.x - Сделать парсинг данных tgWebAppThemeParams для того что бы у юзера были свои цвета
+// TODO: 0.x - сделать глобальную настройку для экономного режима в котором во первых будет отключаться Vana бг и возможно стеклянный эффект, посмотрим
+
 const VantaBackground = () => {
   const vantaRef = useRef(null);
   const [vantaEffect, setVantaEffect] = useState(null);

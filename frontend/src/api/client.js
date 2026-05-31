@@ -12,7 +12,6 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   const isDev = window.location.hostname === 'localhost';
-
   let realTgData = window.Telegram?.WebApp?.initData;
 
   if (!realTgData) {
@@ -23,7 +22,6 @@ api.interceptors.request.use((config) => {
   }
 
   const authData = isDev ? '123456789' : (realTgData || 'NO_TG_DATA_FROM_FRONT');
-
   config.headers['X-TG-Data'] = authData;
   return config;
 });
@@ -34,13 +32,8 @@ api.interceptors.response.use(
     const message = error.response?.data?.detail || error.message || 'Произошла неизвестная ошибка';
     const status = error.response?.status;
 
+    // Оставляем только логирование в консоль для дебага
     console.error(`[API Error] Status: ${status}, Message: ${message}`);
-
-    if (window.Telegram?.WebApp?.showAlert) {
-      window.Telegram.WebApp.showAlert(`Ошибка: ${message}`);
-    } else {
-      alert(`Ошибка API: ${message}`);
-    }
 
     return Promise.reject(error);
   }
