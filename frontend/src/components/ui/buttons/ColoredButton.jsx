@@ -1,24 +1,39 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const ActionButton = ({ children, onClick, variant = 'primary', className = '' }) => {
-  const variants = {
-    primary: 'bg-purple-600/40 border-purple-500/30 text-white',
-    success: 'bg-emerald-600/30 border-emerald-500/20 text-emerald-100',
-    warning: 'bg-amber-600/30 border-amber-500/20 text-amber-100',
-    danger: 'bg-rose-600/30 border-rose-500/20 text-rose-100',
-    neutral: 'bg-white/5 border-white/10 text-white/80'
+/**
+ * ColoredButton - кнопка с поддержкой акцентных цветов
+ * @param {string} variant - цвет из theme (например: 'purple', 'red', 'emerald')
+ * @param {boolean} filled - если true, заливка цветом, если false - полупрозрачная рамка
+ */
+const ColoredButton = ({
+                         children,
+                         variant = 'purple',
+                         filled = true,
+                         onClick,
+                         className = '',
+                         ...props
+                       }) => {
+  // Маппинг твоих цветов для классов Tailwind
+  const styles = {
+    purple: filled ? 'bg-accent-purple/40 border-accent-purple/30' : 'bg-transparent border-accent-purple/30',
+    red: filled ? 'bg-accent-red/40 border-accent-red/30' : 'bg-transparent border-accent-red/30',
+    green: filled ? 'bg-accent-green/40 border-accent-green/30' : 'bg-transparent border-accent-green/30',
+    yellow: filled ? 'bg-accent-yellow/40 border-accent-yellow/30' : 'bg-transparent border-accent-yellow/30',
+    blue: filled ? 'bg-accent-blue/40 border-accent-blue/30' : 'bg-transparent border-accent-blue/30',
+    white: filled ? 'bg-white/10 border-white/10' : 'bg-transparent border-white/10',
   };
 
   return (
     <motion.button
-      whileTap={{ scale: 0.95 }}
+      whileTap={{ scale: 0.96 }}
       onClick={onClick}
-      className={`py-2.5 px-4 border rounded-xl text-[11px] font-bold uppercase italic tracking-wider transition-all ${variants[variant]} ${className}`}
+      className={`w-full py-2.5 px-4 rounded-xl border text-xs font-semibold transition-all ${styles[variant]} ${className}`}
+      {...props}
     >
       {children}
     </motion.button>
   );
 };
 
-export default ActionButton;
+export default ColoredButton;
