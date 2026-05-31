@@ -12,6 +12,7 @@ import HomeView from '../views/common/HomeViews.jsx';
 import ExchangeView from '../views/ExchangeView';
 import SettingsView from '../views/SettingsView';
 import ReviewsView from '../views/common/ReviewsView.jsx';
+import AdminDashboardView from '../views/admin/AdminDashboardView.jsx';
 
 const AppLayout = () => {
   const user = useAppStore((state) => state.user);
@@ -36,7 +37,7 @@ const AppLayout = () => {
 
         <div className="flex-1 w-full relative overflow-hidden">
           {currentRole === 'admin' ? (
-            <AdminStub />
+            <AdminDashboardView />
           ) : (
             tabsConfig.map(({ id, content, roles }) => {
               const isActive = activeTab === id;

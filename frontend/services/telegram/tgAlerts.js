@@ -1,3 +1,4 @@
+import { popup } from '@telegram-apps/sdk-react';
 import { IS_DEV } from '../../src/config';
 
 class TelegramAlertsService {
@@ -10,12 +11,19 @@ class TelegramAlertsService {
       return;
     }
 
-    const tg = window.Telegram?.WebApp;
-    if (tg?.showAlert) {
-      tg.showAlert(message, () => {
+    try {
+      popup.open({
+        title: 'Внимание',
+        message: message,
+        buttons: [{ id: 'ok', type: 'default', text: 'OK' }]
+      }).then(() => {
+        if (callback) callback();
+      }).catch((err) => {
+        console.error('[TG-Alerts] Ошибка внутри промиса popup:', err);
         if (callback) callback();
       });
-    } else {
+    } catch (e) {
+      console.error('[TG-Alerts] Ошибка вызова popup.open:', e);
       alert(message);
       if (callback) callback();
     }
@@ -30,10 +38,22 @@ class TelegramAlertsService {
       return;
     }
 
-    const tg = window.Telegram?.WebApp;
-    if (tg?.showConfirm) {
-      tg.showConfirm(message, (isConfirmed) => callback(isConfirmed));
-    } else {
+    try {
+      popup.open({
+        title: 'Подтверждение',
+        message: message,
+        buttons: [
+          { id: 'yes', type: 'default', text: 'ОК' },
+          { id: 'no', type: 'destructive', text: 'Отмена' }
+        ]
+      }).then((buttonId) => {
+        callback(buttonId === 'yes');
+      }).catch((err) => {
+        console.error('[TG-Alerts] Ошибка внутри промиса confirm:', err);
+        callback(false);
+      });
+    } catch (e) {
+      console.error('[TG-Alerts] Ошибка вызова confirm popup.open:', e);
       const result = window.confirm(message);
       callback(result);
     }
