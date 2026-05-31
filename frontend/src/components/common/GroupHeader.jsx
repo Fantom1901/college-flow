@@ -1,11 +1,10 @@
 import React from 'react';
 import useGroupStore from '../../store/useGroupStore.js';
+import Typography from '../ui/typography/Typography.jsx';
 
 function GroupHeader({ isLoadingUser }) {
-  // Достаем объект группы напрямую из Zustand-стора
   const group = useGroupStore((state) => state.group);
 
-  // Состояние загрузки теперь зависит только от инициализации юзера/приложения
   if (isLoadingUser) {
     return (
       <div className="w-full flex flex-col items-center gap-1.5 py-4 animate-pulse">
@@ -17,12 +16,12 @@ function GroupHeader({ isLoadingUser }) {
 
   return (
     <div className="w-full flex flex-col items-center text-center py-1 select-none">
-      <h1 className="font-extrabold text-[24px] text-white tracking-tight italic drop-shadow-md">
+      <Typography variant="h1">
         {group?.name || "Без группы"}
-      </h1>
-      <span className="text-[11px] font-black uppercase tracking-widest text-white/50 italic mt-0.5">
+      </Typography>
+      <Typography variant="sub">
         Моя группа
-      </span>
+      </Typography>
     </div>
   );
 }

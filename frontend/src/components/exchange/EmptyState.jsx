@@ -1,6 +1,11 @@
 import React from 'react';
 import { Clock } from 'lucide-react';
+import Typography from "../ui/typography/Typography.jsx";
 
+/**
+ * EmptyState - Состояние пустого списка
+ * @param {'incoming' | 'outgoing' | 'history'} activeTab
+ */
 export const EmptyState = ({ activeTab }) => {
   const messages = {
     incoming: 'Входящих заявок пока нет',
@@ -16,9 +21,9 @@ export const EmptyState = ({ activeTab }) => {
         size={32}
         className="text-slate-400 animate-pulse"
       />
-      <span className="font-extrabold text-[13px] uppercase italic tracking-wider text-slate-400 text-center">
+      <Typography variant="badge" className="text-slate-400 text-center">
         {text}
-      </span>
+      </Typography>
     </div>
   );
 };

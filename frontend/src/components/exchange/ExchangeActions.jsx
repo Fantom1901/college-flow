@@ -1,71 +1,56 @@
 import React from 'react';
 import { Check, X, Ban } from 'lucide-react';
+import Badge from '../ui/feedback/Badge.jsx';
+import GlassButton from '../ui/buttons/GlassButton.jsx';
 
 export const ExchangeActions = ({ exchangeId, activeTab, status, onUpdateStatus, isLoading }) => {
 
-  // 1. История: Увеличил интенсивность подложки
+  // 1. История
   if (activeTab === 'history') {
-    if (status === 'accepted') {
-      return (
-        <span className="text-accent-green font-black text-[11px] uppercase italic tracking-widest bg-accent-green/30 px-3 py-1 rounded-full">
-          Принято
-        </span>
-      );
-    }
-    if (status === 'rejected') {
-      return (
-        <span className="text-accent-red font-black text-[11px] uppercase italic tracking-widest bg-accent-red/30 px-3 py-1 rounded-full">
-          Отклонено
-        </span>
-      );
-    }
-    return (
-      <span className="text-slate-400 font-black text-[11px] uppercase italic tracking-widest bg-white/20 px-3 py-1 rounded-full">
-        Отменено
-      </span>
-    );
+    const statusMap = {
+      accepted: { label: 'Принято', variant: 'green' },
+      rejected: { label: 'Отклонено', variant: 'red' },
+      default: { label: 'Отменено', variant: 'gray' }
+    };
+    const { label, variant } = statusMap[status] || statusMap.default;
+    return <Badge variant={variant}>{label}</Badge>;
   }
 
-  // 2. Исходящие: Увеличил фон для лучшей видимости
+  // 2. Исходящие
   if (activeTab === 'outgoing') {
     return (
-      <button
-        disabled={isLoading}
+      <GlassButton
+        loading={isLoading}
         onClick={() => onUpdateStatus(exchangeId, 'cancelled')}
-        className="flex items-center gap-1.5 h-8 px-4 rounded-xl bg-white/20 hover:bg-white/30 border border-white/20 active:scale-95 transition-all outline-none disabled:opacity-50"
+        icon={<Ban size={14} />}
+        className="text-accent-orange"
       >
-        <Ban size={14} className="text-accent-orange" />
-        <span className="text-accent-orange font-extrabold text-[12px] uppercase italic tracking-wider">
-          {isLoading ? 'Отмена...' : 'Отменить'}
-        </span>
-      </button>
+        Отменить
+      </GlassButton>
     );
   }
 
-  // 3. Входящие: Максимально отчетливый фон кнопок
+  // 3. Входящие
   return (
     <div className="flex items-center gap-2 w-full justify-between">
-      <button
-        disabled={isLoading}
+      <GlassButton
+        loading={isLoading}
         onClick={() => onUpdateStatus(exchangeId, 'rejected')}
-        className="flex-1 flex items-center justify-center gap-1.5 h-8 rounded-xl bg-white/20 hover:bg-white/30 border border-white/20 active:scale-95 transition-all outline-none disabled:opacity-50"
+        icon={<X size={14} />}
+        className="text-accent-red"
       >
-        <X size={14} className="text-accent-red" />
-        <span className="text-accent-red font-extrabold text-[12px] uppercase italic tracking-wider">
-          Отклонить
-        </span>
-      </button>
+        Отклонить
+      </GlassButton>
 
-      <button
-        disabled={isLoading}
+      <GlassButton
+        loading={isLoading}
         onClick={() => onUpdateStatus(exchangeId, 'accepted')}
-        className="flex-1 flex items-center justify-center gap-1.5 h-8 rounded-xl bg-white/30 hover:bg-white/40 border border-white/30 active:scale-95 transition-all outline-none disabled:opacity-50"
+        density="dense"
+        icon={<Check size={14} />}
+        className="text-accent-green"
       >
-        <Check size={14} className="text-accent-green" />
-        <span className="text-accent-green font-extrabold text-[12px] uppercase italic tracking-wider">
-          Принять
-        </span>
-      </button>
+        Принять
+      </GlassButton>
     </div>
   );
 };

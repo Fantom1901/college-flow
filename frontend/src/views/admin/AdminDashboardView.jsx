@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { tgAlerts, tgHaptics, tgBiometrics } from '../../../services/telegram';
+import { tgAlerts, tgBiometrics, tgHaptics } from '../../../services/telegram';
 
 const AdminDashboardView = () => {
   const [biometricStatus, setBiometricStatus] = useState('Не проверялось');
@@ -65,13 +65,38 @@ const AdminDashboardView = () => {
       <div className="flex flex-col gap-2 bg-white/5 p-4 rounded-2xl border border-white/10">
         <h3 className="text-sm font-semibold mb-1 text-purple-200">2. Тактильная отдача (Haptics)</h3>
         <div className="grid grid-cols-3 gap-2">
-          <button onClick={() => testHaptic('notification', 'success')} className="py-2 bg-emerald-600/30 border border-emerald-500/20 text-xs rounded-lg">Success</button>
-          <button onClick={() => testHaptic('notification', 'warning')} className="py-2 bg-amber-600/30 border border-amber-500/20 text-xs rounded-lg">Warning</button>
-          <button onClick={() => testHaptic('notification', 'error')} className="py-2 bg-rose-600/30 border border-rose-500/20 text-xs rounded-lg">Error</button>
+          <button
+            onClick={() => testHaptic('notification', 'success')}
+            className="py-2 bg-emerald-600/30 border border-emerald-500/20 text-xs rounded-lg"
+          >
+            Success
+          </button>
+          <button
+            onClick={() => testHaptic('notification', 'warning')}
+            className="py-2 bg-amber-600/30 border border-amber-500/20 text-xs rounded-lg"
+          >
+            Warning
+          </button>
+          <button
+            onClick={() => testHaptic('notification', 'error')}
+            className="py-2 bg-rose-600/30 border border-rose-500/20 text-xs rounded-lg"
+          >
+            Error
+          </button>
         </div>
         <div className="grid grid-cols-2 gap-2 mt-1">
-          <button onClick={() => testHaptic('impact', 'light')} className="py-2 bg-white/5 border border-white/10 text-xs rounded-lg">Impact Light</button>
-          <button onClick={() => testHaptic('impact', 'heavy')} className="py-2 bg-white/5 border border-white/10 text-xs rounded-lg">Impact Heavy</button>
+          <button
+            onClick={() => testHaptic('impact', 'light')}
+            className="py-2 bg-white/5 border border-white/10 text-xs rounded-lg"
+          >
+            Impact Light
+          </button>
+          <button
+            onClick={() => testHaptic('impact', 'heavy')}
+            className="py-2 bg-white/5 border border-white/10 text-xs rounded-lg"
+          >
+            Impact Heavy
+          </button>
         </div>
         <button
           onClick={() => testHaptic('selection')}
