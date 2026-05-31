@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import useAppStore from '../store/useAppStore';
 import { ExchangeIcon } from './icons/ExchangeIcon';
 import { SettingsIcon } from './icons/SetingsIcon.jsx';
+import { tgHaptics } from "../../services/telegram/index.js";
 
 /**
  * Функция строгого расчёта ширины докбара на основе количества вкладок.
@@ -50,6 +51,13 @@ const Dockbar = ({ role }) => {
     }
   }, [activeTab, menuItems, setActiveTab]);
 
+  const handleTabClick = (tabId) => {
+    if (tabId !== activeTab) {
+      tgHaptics.selection();
+      setActiveTab(tabId);
+    }
+  }
+
   return (
     <div className="absolute bottom-6 left-0 right-0 flex justify-center z-50">
       <div
@@ -67,7 +75,7 @@ const Dockbar = ({ role }) => {
           return (
             <button
               key={item.id}
-              onClick={() => setActiveTab(item.id)}
+              onClick={() => handleTabClick(item.id)}
               className="relative w-[60px] h-[40px] flex items-center justify-center rounded-full outline-none"
             >
               {isActive && (
