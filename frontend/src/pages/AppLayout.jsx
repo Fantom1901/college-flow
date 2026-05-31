@@ -43,25 +43,27 @@ const AppLayout = () => {
   const spacerHeight = contentTopInset > 0 ? `${contentTopInset + 16}px` : '24px';
 
   return (
-    <div className="h-screen w-full p-3 flex flex-col justify-end overflow-hidden">
+    <div className="h-screen w-full p-3 flex flex-col justify-end overflow-hidden bg-red-900/20">
 
-      {/* ВРЕМЕННАЯ ПЛАШКА ДЛЯ ОТЛАДКИ НА ТЕЛЕФОНЕ */}
+      {/* Наш дебаггер */}
       <div className="fixed top-2 left-2 z-[9999] bg-black/90 text-green-400 p-2 rounded text-[10px] font-mono border border-green-500 pointer-events-none">
         <div>Supported: {isSupported}</div>
         <div>Mounted: {isMounted}</div>
         <div>ContentTopInset: {contentTopInset}px</div>
+        <div>SpacerHeight: {spacerHeight}</div>
       </div>
 
-      <main className="main-glass w-full max-w-md h-full rounded-[40px] overflow-hidden relative flex flex-col px-4 shadow-2xl border border-white/10">
+      {/* КАРТОЧКА: Красим бордер в синий, чтобы увидеть её реальные границы */}
+      <main className="main-glass w-full max-w-md h-full rounded-[40px] overflow-hidden relative flex flex-col px-4 shadow-2xl border-2 border-blue-500">
 
-        {/* ЖЕЛЕЗОБЕТОННАЯ РАСПОРКА: Физически сдвигает всё, что ниже, из-под плашки ТГ */}
+        {/* РАСПОРКА: Красим в ядовито-жёлтый, чтобы увидеть, где она физически находится */}
         <div
-          className="w-full flex-shrink-0"
+          className="w-full flex-shrink-0 bg-yellow-500/50"
           style={{ height: spacerHeight }}
         />
 
-        {/* Контентная зона (теперь чистый относительный контейнер без инлайн паддингов) */}
-        <div className="flex-1 w-full relative overflow-hidden">
+        {/* КОНТЕНТНАЯ ЗОНА: Красим в фиолетовый */}
+        <div className="flex-1 w-full relative overflow-hidden bg-purple-500/20">
           {currentRole === 'admin' ? (
             <div className="absolute inset-0 w-full h-full flex flex-col overflow-y-auto pb-4">
               <AdminDashboardView />
@@ -71,9 +73,10 @@ const AppLayout = () => {
               const isActive = activeTab === id;
 
               return (
+                /* ВКЛАДКА: Красим границы вкладки в зелёный */
                 <div
                   key={id}
-                  className={`absolute inset-0 w-full h-full flex flex-col overflow-y-auto transition-opacity duration-300 ${
+                  className={`absolute inset-0 w-full h-full flex flex-col overflow-y-auto border-2 border-green-500 transition-opacity duration-300 ${
                     isActive ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
                   }`}
                 >
@@ -90,7 +93,7 @@ const AppLayout = () => {
           )}
         </div>
 
-        {/* Навигация (Докбар) зафиксирована снизу */}
+        {/* Навигация */}
         <div className="flex-shrink-0 pb-5 pt-2 z-20">
           <Dockbar role={currentRole} />
         </div>
