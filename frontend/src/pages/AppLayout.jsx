@@ -3,7 +3,6 @@ import useAppStore from '../store/useAppStore.js';
 
 import AppLoader from '../components/status/AppLoader.jsx';
 import AppError from '../components/status/AppError.jsx';
-import AdminStub from '../components/status/AdminStub.jsx';
 import Dockbar from "../components/Dockbar.jsx";
 import AccessGuard from '../components/AccessGuard.jsx';
 
@@ -32,12 +31,18 @@ const AppLayout = () => {
   ];
 
   return (
-    <div className="min-h-screen w-full p-2 flex items-start justify-center">
-      <main className="main-glass w-full max-w-md h-[91vh] rounded-[48px] overflow-hidden relative flex flex-col pt-6 px-4">
+    /* ФИКС 1: items-center центрирует приложение строго по вертикали, h-screen предотвращает лишний скролл фона */
+    <div className="h-screen w-full p-3 flex items-center justify-center overflow-hidden">
 
+      {/* ФИКС 2: Меняем h-[91vh] на жесткое управление высотой в рамках h-full / max-h, чтобы карточка не ломала пропорции */}
+      <main className="main-glass w-full max-w-md h-full max-h-[85vh] rounded-[40px] overflow-hidden relative flex flex-col pt-6 px-4 shadow-2xl border border-white/10">
+
+        {/* Контентная зона */}
         <div className="flex-1 w-full relative overflow-hidden">
           {currentRole === 'admin' ? (
-            <AdminDashboardView />
+            <div className="absolute inset-0 w-full h-full flex flex-col overflow-y-auto pb-4">
+              <AdminDashboardView />
+            </div>
           ) : (
             tabsConfig.map(({ id, content, roles }) => {
               const isActive = activeTab === id;
@@ -50,7 +55,6 @@ const AppLayout = () => {
                   }`}
                 >
                   <div className="flex-1 pb-4">
-                    {/* Если у вкладки заданы роли — оборачиваем в гард, иначе рендерим просто так */}
                     {roles ? (
                       <AccessGuard allowedRoles={roles}>{content}</AccessGuard>
                     ) : (
@@ -63,7 +67,8 @@ const AppLayout = () => {
           )}
         </div>
 
-        <div className="flex-shrink-0 pb-6 pt-2">
+        {/* Навигация (Докбар) зафиксирована снизу с аккуратными отступами */}
+        <div className="flex-shrink-0 pb-5 pt-2 z-20">
           <Dockbar role={currentRole} />
         </div>
 
