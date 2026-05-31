@@ -27,10 +27,6 @@ const AppLayout = () => {
   // Безопасная проверка поддержки без вызова несуществующих функций
   const isSupported = typeof viewport !== 'undefined' && viewport.mount ? 'ДА' : 'НЕТ';
 
-  // Вытаскиваем числовой сигнал отступа под контент ТГ (три точки/закрыть) с помощью хука useSignal
-  // В режиме разработки (IS_DEV) viewport не монтируется, поэтому ставим фолбек в 0
-  //const contentTopInset = !IS_DEV ? useSignal(viewport.contentSafeAreaInsetTop) : 0;
-
   if (serverStatus === 'loading' || serverStatus === 'offline') return <AppLoader />;
   if (serverStatus === 'error') return <AppError />;
 
@@ -43,6 +39,9 @@ const AppLayout = () => {
     { id: 'settings', content: <SettingsView /> },
   ];
 
+  // Вычисляем динамический верхний отступ для контента
+  const calculatedPaddingTop = contentTopInset > 0 ? `${contentTopInset + 16}px` : '24px';
+
   return (
     <div className="h-screen w-full p-3 flex flex-col justify-end overflow-hidden">
 
@@ -53,19 +52,15 @@ const AppLayout = () => {
         <div>ContentTopInset: {contentTopInset}px</div>
       </div>
 
-      <main
-        className="main-glass w-full max-w-md h-full rounded-[40px] overflow-hidden relative flex flex-col px-4 shadow-2xl border border-white/10"
-        style={{
-          /* Берём отступ от ТГ (46px) и накидываем сверху 16px,
-             чтобы гарантированно уйти под кнопки Телеграма.
-             Если мы в браузере (вернуло 0), ставим красивые 24px.
-          */
-          paddingTop: contentTopInset > 0 ? `${contentTopInset + 16}px` : '24px'
-        }}
-      >
+      <main className="main-glass w-full max-w-md h-full rounded-[40px] overflow-hidden relative flex flex-col px-4 shadow-2xl border border-white/10">
 
-        {/* Контентная зона */}
-        <div className="flex-1 w-full relative overflow-hidden">
+        {/* Контентная зона.
+          ФИКС: Переносим инлайн-стиль отступа сюда, чтобы он хватал внутренние absolute-элементы
+        */}
+        <div
+          className="flex-1 w-full relative overflow-hidden"
+          style={{ paddingTop: calculatedPaddingTop }}
+        >
           {currentRole === 'admin' ? (
             <div className="absolute inset-0 w-full h-full flex flex-col overflow-y-auto pb-4">
               <AdminDashboardView />
@@ -80,6 +75,8 @@ const AppLayout = () => {
                   className={`absolute inset-0 w-full h-full flex flex-col overflow-y-auto transition-opacity duration-300 ${
                     isActive ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
                   }`}
+                  /* ФИКС: Для абсолютных вкладок тоже дублируем верхний отступ, чтобы inset-0 не ломал верстку */
+                  style={{ paddingTop: calculatedPaddingTop }}
                 >
                   <div className="flex-1 pb-4">
                     {roles ? (
