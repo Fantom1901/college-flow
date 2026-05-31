@@ -4,6 +4,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.core.database import Base
 from typing import Optional
 
+# TODO: 1.x - создать статистику посещаемости дя того что бы потом сделать полоску хп для каждого студентика и общую для группы
+
 class User(Base):
   __tablename__ = "users"
 

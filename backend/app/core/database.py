@@ -8,6 +8,8 @@ from loguru import logger
 
 from app.core.config import settings
 
+# TODO 1.1 - Интегрировать Redis для кеширования популярных запросов
+
 engine = create_async_engine(
   settings.DATABASE_URL,
   pool_recycle=1800,
