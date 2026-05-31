@@ -44,9 +44,9 @@ const AppLayout = () => {
   ];
 
   return (
-    <div className="h-screen w-full p-3 flex items-center justify-center overflow-hidden">
+    <div className="h-screen w-full p-3 flex flex-col justify-end overflow-hidden">
 
-      {/* ВРЕМЕННАЯ ПЛАШКА ДЛЯ ОТЛАДКИ НА ТЕЛЕФОНЕ */}
+      {/* ВРЕМЕННАЯ ПЛАШКА ДЛЯ ОТЛАДКИ НА ТЕЛЕФОНЕ (пока оставь, потом выпилим) */}
       <div className="fixed top-2 left-2 z-[9999] bg-black/90 text-green-400 p-2 rounded text-[10px] font-mono border border-green-500 pointer-events-none">
         <div>Supported: {isSupported}</div>
         <div>Mounted: {isMounted}</div>
@@ -54,13 +54,13 @@ const AppLayout = () => {
       </div>
 
       <main
-        className="main-glass w-full max-w-md h-full max-h-[85vh] rounded-[40px] overflow-hidden relative flex flex-col px-4 shadow-2xl border border-white/10"
+        className="main-glass w-full max-w-md h-full rounded-[40px] overflow-hidden relative flex flex-col px-4 shadow-2xl border border-white/10"
         style={{
-          /* Если сигнал ТГ вернул отступ больше нуля (мы на мобилке в ТГ),
-             сдвигаем контент на эту высоту плюс 12px зазора.
-             Если мы в браузере или деве, ставим дефолтные 24px.
+          /* Берём отступ от ТГ (46px) и накидываем сверху 16px,
+             чтобы гарантированно уйти под кнопки Телеграма.
+             Если мы в браузере (вернуло 0), ставим красивые 24px.
           */
-          paddingTop: contentTopInset > 0 ? `${contentTopInset + 12}px` : '24px'
+          paddingTop: contentTopInset > 0 ? `${contentTopInset + 16}px` : '24px'
         }}
       >
 
