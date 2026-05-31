@@ -35,7 +35,7 @@ const AppLayout = () => {
   ];
 
   // Вычисляем точный отступ сверху для всего интерфейса приложения
-  const topPadding = contentTopInset > 0 ? `${contentTopInset + 16}px` : '24px';
+  const topPadding = contentTopInset > 0 ? `${contentTopInset + 26}px` : '24px';
 
   return (
     /* ФИКС: Паддинг сверху переезжает на самый корневой контейнер.
