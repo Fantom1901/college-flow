@@ -16,13 +16,14 @@ class TelegramHapticsService {
 
   selection() {
     if (IS_DEV) {
-      console.log('%c[Haptic-Dev] 📳 Вибрация: изменение выбора (selection)', 'color: #888;');
+      console.log('%c[Haptic-Dev] 📳 Вибрация: изменение выбора (подмена на light impact)', 'color: #888;');
       return;
     }
     try {
-      hapticFeedback.selectionChanged();
+      // Подменяем капризный selectionChanged на чёткий лёгкий клик
+      hapticFeedback.impactOccurred('light');
     } catch (e) {
-      console.error('[TG-Haptics] Ошибка вызова selection:', e);
+      console.error('[TG-Haptics] Ошибка вызова selection (light impact):', e);
     }
   }
 
