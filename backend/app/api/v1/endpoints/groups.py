@@ -84,18 +84,30 @@ async def init_group(
   data: GroupInitRequest,
   db: AsyncSession = Depends(get_db),
 ):
-  stmt = select(InviteLink).where(InviteLink.code == data.invite_code)
-  result = await db.execute(stmt)
-  invite = result.scalar_one_or_none()
+  # 1. Пытаемся найти юзера
+  stmt_user = select(User).where(User.tg_id == data.tg_id)
+  res_user = await db.execute(stmt_user)
+  user = res_user.scalar_one_or_none()
 
-  if not invite or invite.role != UserRole.CURATOR:
-    raise HTTPException(status_code=403, detail="Неверный код приглашения")
+  print(f"DEBUG: init_group called with tg_id={data.tg_id}, code='{data.invite_code}'")
 
+  # 2. ЛОГИКА ОБХОДА: если юзер уже есть и он КУРАТОР, не требуем код
+  is_existing_curator = user and user.role == UserRole.CURATOR
+
+  if not is_existing_curator:
+    # Требуем код только если это новый куратор
+    stmt = select(InviteLink).where(InviteLink.code == data.invite_code)
+    result = await db.execute(stmt)
+    invite = result.scalar_one_or_none()
+
+    if not invite or invite.role != UserRole.CURATOR:
+      raise HTTPException(status_code=403, detail="Неверный код приглашения")
+
+    # Помечаем код использованным только для новых
+    invite.is_used = True
+
+  # 3. Дальше создание/обновление пользователя и группы
   try:
-    stmt_user = select(User).where(User.tg_id == data.tg_id)
-    res_user = await db.execute(stmt_user)
-    user = res_user.scalar_one_or_none()
-
     if not user:
       user = User(
         tg_id=data.tg_id,
@@ -107,10 +119,7 @@ async def init_group(
     else:
       user.username = data.username
       user.role = UserRole.CURATOR
-
-    new_group = Group(name=data.group_name)
-    db.add(new_group)
-    await db.flush()
+      await db.flush()
 
     stmt_curator = select(Curator).where(Curator.user_id == user.id)
     res_curator = await db.execute(stmt_curator)
@@ -122,10 +131,10 @@ async def init_group(
         full_name=data.full_name,
       )
       db.add(curator_profile)
-      await db.flush()
     else:
       curator_profile.full_name = data.full_name
-      await db.flush()
+
+    await db.flush()
 
     new_group = Group(
       name=data.group_name,
@@ -134,8 +143,9 @@ async def init_group(
     db.add(new_group)
     await db.flush()
 
-    invite.is_used = True
-    invite.group_id = new_group.id
+    # Если был найден инвайт, привязываем группу к нему
+    if not is_existing_curator and 'invite' in locals() and invite:
+      invite.group_id = new_group.id
 
     await db.commit()
     return {
@@ -146,5 +156,4 @@ async def init_group(
 
   except Exception as e:
     await db.rollback()
-    print(f"DEBUG: Ошибка в init_group: {e}")
     raise HTTPException(status_code=500, detail=f"Ошибка базы: {str(e)}")
