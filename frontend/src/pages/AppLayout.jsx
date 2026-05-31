@@ -13,7 +13,6 @@ import ExchangeView from '../views/ExchangeView';
 import SettingsView from '../views/SettingsView';
 import ReviewsView from '../views/common/ReviewsView.jsx';
 import AdminDashboardView from '../views/admin/AdminDashboardView.jsx';
-import { IS_DEV } from '../config.js';
 
 const AppLayout = () => {
   const user = useAppStore((state) => state.user);
@@ -22,10 +21,6 @@ const AppLayout = () => {
 
   // Читаем сигналы напрямую через хук
   const contentTopInset = useSignal(viewport.contentSafeAreaInsetTop) || 0;
-  const isMounted = useSignal(viewport.isMounted) ? 'ДА' : 'НЕТ';
-
-  // Безопасная проверка поддержки
-  const isSupported = typeof viewport !== 'undefined' && viewport.mount ? 'ДА' : 'НЕТ';
 
   if (serverStatus === 'loading' || serverStatus === 'offline') return <AppLoader />;
   if (serverStatus === 'error') return <AppError />;
@@ -39,31 +34,23 @@ const AppLayout = () => {
     { id: 'settings', content: <SettingsView /> },
   ];
 
-  // Вычисляем точную высоту распорки
-  const spacerHeight = contentTopInset > 0 ? `${contentTopInset + 16}px` : '24px';
+  // Вычисляем точный отступ сверху для всего интерфейса приложения
+  const topPadding = contentTopInset > 0 ? `${contentTopInset + 16}px` : '24px';
 
   return (
-    <div className="h-screen w-full p-3 flex flex-col justify-end overflow-hidden bg-red-900/20">
+    /* ФИКС: Паддинг сверху переезжает на самый корневой контейнер.
+       Теперь всё, что внутри (включая стеклянный main), физически начнется ниже кнопок ТГ! */
+    <div
+      className="h-screen w-full p-3 flex flex-col justify-end overflow-hidden"
+      style={{ paddingTop: topPadding }}
+    >
 
-      {/* Наш дебаггер */}
-      <div className="fixed top-2 left-2 z-[9999] bg-black/90 text-green-400 p-2 rounded text-[10px] font-mono border border-green-500 pointer-events-none">
-        <div>Supported: {isSupported}</div>
-        <div>Mounted: {isMounted}</div>
-        <div>ContentTopInset: {contentTopInset}px</div>
-        <div>SpacerHeight: {spacerHeight}</div>
-      </div>
+      {/* КАРТОЧКА: Теперь она занимает ВСЁ доступное ей пространство БЕЗ вылета в стратосферу,
+          так как родитель сверху её ограничил своим paddingTop. Скругления [40px] теперь встанут идеально! */}
+      <main className="main-glass w-full max-w-md flex-1 rounded-[40px] overflow-hidden relative flex flex-col px-4 shadow-2xl border border-white/10">
 
-      {/* КАРТОЧКА: Красим бордер в синий, чтобы увидеть её реальные границы */}
-      <main className="main-glass w-full max-w-md h-full rounded-[40px] overflow-hidden relative flex flex-col px-4 shadow-2xl border-2 border-blue-500">
-
-        {/* РАСПОРКА: Красим в ядовито-жёлтый, чтобы увидеть, где она физически находится */}
-        <div
-          className="w-full flex-shrink-0 bg-yellow-500/50"
-          style={{ height: spacerHeight }}
-        />
-
-        {/* КОНТЕНТНАЯ ЗОНА: Красим в фиолетовый */}
-        <div className="flex-1 w-full relative overflow-hidden bg-purple-500/20">
+        {/* Контентная зона (чистая, без распорок, занимает весь main) */}
+        <div className="flex-1 w-full relative overflow-hidden mt-4">
           {currentRole === 'admin' ? (
             <div className="absolute inset-0 w-full h-full flex flex-col overflow-y-auto pb-4">
               <AdminDashboardView />
@@ -73,10 +60,9 @@ const AppLayout = () => {
               const isActive = activeTab === id;
 
               return (
-                /* ВКЛАДКА: Красим границы вкладки в зелёный */
                 <div
                   key={id}
-                  className={`absolute inset-0 w-full h-full flex flex-col overflow-y-auto border-2 border-green-500 transition-opacity duration-300 ${
+                  className={`absolute inset-0 w-full h-full flex flex-col overflow-y-auto transition-opacity duration-300 ${
                     isActive ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
                   }`}
                 >
@@ -93,7 +79,7 @@ const AppLayout = () => {
           )}
         </div>
 
-        {/* Навигация */}
+        {/* Навигация (Докбар) зафиксирована снизу */}
         <div className="flex-shrink-0 pb-5 pt-2 z-20">
           <Dockbar role={currentRole} />
         </div>
