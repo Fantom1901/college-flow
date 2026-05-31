@@ -1,9 +1,8 @@
 import React from 'react';
-import { viewport, useSignal } from '@tma.js/sdk-react';
 import useAppStore from '../store/useAppStore.js';
 
-import AppLoader from '../components/status/AppLoader.jsx';
-import AppError from '../components/status/AppError.jsx';
+import TelegramSafeProvider from '../components/common/TelegramSafeProvider.jsx';
+import AppInitializer from "../components/status/AppInitializer.jsx";
 import Dockbar from "../components/Dockbar.jsx";
 import AccessGuard from '../components/AccessGuard.jsx';
 
@@ -16,17 +15,11 @@ import AdminDashboardView from '../views/admin/AdminDashboardView.jsx';
 
 const AppLayout = () => {
   const user = useAppStore((state) => state.user);
-  const serverStatus = useAppStore((state) => state.serverStatus);
   const activeTab = useAppStore((state) => state.activeTab);
-
-  // Читаем сигналы напрямую через хук
-  const contentTopInset = useSignal(viewport.contentSafeAreaInsetTop) || 0;
-
-  if (serverStatus === 'loading' || serverStatus === 'offline') return <AppLoader />;
-  if (serverStatus === 'error') return <AppError />;
 
   const currentRole = user?.role;
 
+  // Конфигурация доступных табов
   const tabsConfig = [
     { id: 'home', content: <HomeView user={user} isLoadingUser={false} /> },
     { id: 'exchange', content: <ExchangeView />, roles: ['student', 'leader'] },
@@ -34,22 +27,11 @@ const AppLayout = () => {
     { id: 'settings', content: <SettingsView /> },
   ];
 
-  // Вычисляем точный отступ сверху для всего интерфейса приложения
-  const topPadding = contentTopInset > 0 ? `${contentTopInset + 36}px` : '24px';
-
   return (
-    /* ФИКС: Паддинг сверху переезжает на самый корневой контейнер.
-       Теперь всё, что внутри (включая стеклянный main), физически начнется ниже кнопок ТГ! */
-    <div
-      className="h-screen w-full p-3 flex flex-col justify-end overflow-hidden"
-      style={{ paddingTop: topPadding }}
-    >
+    <AppInitializer>
+      <TelegramSafeProvider>
 
-      {/* КАРТОЧКА: Теперь она занимает ВСЁ доступное ей пространство БЕЗ вылета в стратосферу,
-          так как родитель сверху её ограничил своим paddingTop. Скругления [40px] теперь встанут идеально! */}
-      <main className="main-glass w-full max-w-md flex-1 rounded-[40px] overflow-hidden relative flex flex-col px-4 shadow-2xl border border-white/10">
-
-        {/* Контентная зона (чистая, без распорок, занимает весь main) */}
+        {/* Контентная зона */}
         <div className="flex-1 w-full relative overflow-hidden mt-4">
           {currentRole === 'admin' ? (
             <div className="absolute inset-0 w-full h-full flex flex-col overflow-y-auto pb-4">
@@ -84,8 +66,8 @@ const AppLayout = () => {
           <Dockbar role={currentRole} />
         </div>
 
-      </main>
-    </div>
+      </TelegramSafeProvider>
+    </AppInitializer>
   );
 };
 
