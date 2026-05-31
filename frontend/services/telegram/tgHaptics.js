@@ -1,4 +1,4 @@
-import { hapticFeedback } from '@telegram-apps/sdk-react';
+import { hapticFeedback } from '@tma.js/sdk';
 import { IS_DEV } from '../../src/config';
 
 class TelegramHapticsService {
@@ -8,6 +8,9 @@ class TelegramHapticsService {
       return;
     }
     try {
+      // Проверяем поддержку хаптиков версией ТГ
+      if (!hapticFeedback.isSupported()) return;
+
       hapticFeedback.notificationOccurred(type);
     } catch (e) {
       console.error('[TG-Haptics] Ошибка вызова notification:', e);
@@ -20,7 +23,9 @@ class TelegramHapticsService {
       return;
     }
     try {
-      // Подменяем капризный selectionChanged на чёткий лёгкий клик
+      if (!hapticFeedback.isSupported()) return;
+
+      // Оставляем твою проверенную подмену на чёткий лёгкий клик вместо вялого selectionChanged
       hapticFeedback.impactOccurred('light');
     } catch (e) {
       console.error('[TG-Haptics] Ошибка вызова selection (light impact):', e);
@@ -33,6 +38,8 @@ class TelegramHapticsService {
       return;
     }
     try {
+      if (!hapticFeedback.isSupported()) return;
+
       hapticFeedback.impactOccurred(style);
     } catch (e) {
       console.error('[TG-Haptics] Ошибка вызова impact:', e);

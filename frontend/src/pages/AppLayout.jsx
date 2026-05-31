@@ -1,4 +1,5 @@
 import React from 'react';
+import { viewport, useSignal } from '@tma.js/sdk-react';
 import useAppStore from '../store/useAppStore.js';
 
 import AppLoader from '../components/status/AppLoader.jsx';
@@ -12,11 +13,16 @@ import ExchangeView from '../views/ExchangeView';
 import SettingsView from '../views/SettingsView';
 import ReviewsView from '../views/common/ReviewsView.jsx';
 import AdminDashboardView from '../views/admin/AdminDashboardView.jsx';
+import { IS_DEV } from '../config.js';
 
 const AppLayout = () => {
   const user = useAppStore((state) => state.user);
   const serverStatus = useAppStore((state) => state.serverStatus);
   const activeTab = useAppStore((state) => state.activeTab);
+
+  // Вытаскиваем числовой сигнал отступа под контент ТГ (три точки/закрыть) с помощью хука useSignal
+  // В режиме разработки (IS_DEV) viewport не монтируется, поэтому ставим фолбек в 0
+  const contentTopInset = !IS_DEV ? useSignal(viewport.contentSafeAreaInsetTop) : 0;
 
   if (serverStatus === 'loading' || serverStatus === 'offline') return <AppLoader />;
   if (serverStatus === 'error') return <AppError />;
@@ -36,10 +42,11 @@ const AppLayout = () => {
       <main
         className="main-glass w-full max-w-md h-full max-h-[85vh] rounded-[40px] overflow-hidden relative flex flex-col px-4 shadow-2xl border border-white/10"
         style={{
-          /* ФИКС: Используем контентную зону из доков ТГ.
-             Если переменная пустая (ТГ её ещё не выставил или мы в браузере),
-             используется стандартный отступ в 24px. */
-          paddingTop: 'calc(var(--tg-content-safe-area-inset-top, 0px) + 12px)'
+          /* Если сигнал ТГ вернул отступ больше нуля (мы на мобилке в ТГ),
+             сдвигаем контент на эту высоту плюс 12px зазора.
+             Если мы в браузере или деве, ставим дефолтные 24px.
+          */
+          paddingTop: contentTopInset > 0 ? `${contentTopInset + 12}px` : '24px'
         }}
       >
 

@@ -1,8 +1,8 @@
-import { popup } from '@telegram-apps/sdk-react';
+import { popup } from '@tma.js/sdk';
 import { IS_DEV } from '../../src/config';
 
 class TelegramAlertsService {
-  showAlert(message, callback = null) {
+  async showAlert(message, callback = null) {
     if (!message) return;
 
     if (IS_DEV) {
@@ -12,24 +12,30 @@ class TelegramAlertsService {
     }
 
     try {
-      popup.open({
+      // Проверяем поддержку согласно новой доке
+      if (!popup.isSupported()) {
+        alert(message);
+        if (callback) callback();
+        return;
+      }
+
+      // Вызываем переименованный метод .show()
+      const buttonId = await popup.show({
         title: 'Внимание',
         message: message,
         buttons: [{ id: 'ok', type: 'default', text: 'OK' }]
-      }).then(() => {
-        if (callback) callback();
-      }).catch((err) => {
-        console.error('[TG-Alerts] Ошибка внутри промиса popup:', err);
-        if (callback) callback();
       });
+
+      // Логика завершения промиса
+      if (callback) callback();
     } catch (e) {
-      console.error('[TG-Alerts] Ошибка вызова popup.open:', e);
+      console.error('[TG-Alerts] Ошибка вызова popup.show:', e);
       alert(message);
       if (callback) callback();
     }
   }
 
-  showConfirm(message, callback) {
+  async showConfirm(message, callback) {
     if (!message || typeof callback !== 'function') return;
 
     if (IS_DEV) {
@@ -39,21 +45,26 @@ class TelegramAlertsService {
     }
 
     try {
-      popup.open({
+      if (!popup.isSupported()) {
+        const result = window.confirm(message);
+        callback(result);
+        return;
+      }
+
+      // Вызываем новый .show() для конфирма
+      const buttonId = await popup.show({
         title: 'Подтверждение',
         message: message,
         buttons: [
           { id: 'yes', type: 'default', text: 'ОК' },
           { id: 'no', type: 'destructive', text: 'Отмена' }
         ]
-      }).then((buttonId) => {
-        callback(buttonId === 'yes');
-      }).catch((err) => {
-        console.error('[TG-Alerts] Ошибка внутри промиса confirm:', err);
-        callback(false);
       });
+
+      // Новая дока говорит: если юзер не нажал кнопку, вернет null, обрабатываем как отмену (false)
+      callback(buttonId === 'yes');
     } catch (e) {
-      console.error('[TG-Alerts] Ошибка вызова confirm popup.open:', e);
+      console.error('[TG-Alerts] Ошибка вызова confirm popup.show:', e);
       const result = window.confirm(message);
       callback(result);
     }
