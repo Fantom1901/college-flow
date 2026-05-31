@@ -31,11 +31,19 @@ const AppLayout = () => {
   ];
 
   return (
-    /* ФИКС 1: items-center центрирует приложение строго по вертикали, h-screen предотвращает лишний скролл фона */
     <div className="h-screen w-full p-3 flex items-center justify-center overflow-hidden">
 
-      {/* ФИКС 2: Меняем h-[91vh] на жесткое управление высотой в рамках h-full / max-h, чтобы карточка не ломала пропорции */}
-      <main className="main-glass w-full max-w-md h-full max-h-[85vh] rounded-[40px] overflow-hidden relative flex flex-col pt-6 px-4 shadow-2xl border border-white/10">
+      <main
+        className="main-glass w-full max-w-md h-full max-h-[85vh] rounded-[40px] overflow-hidden relative flex flex-col px-4 shadow-2xl border border-white/10"
+        style={{
+          /* ФИКС КНОПОК ТГ:
+            Используем переменную --tg-safe-area-inset-top, которую заполняет инициализированный viewport.
+            Если мы в деве или браузере — сработает фолбек на 0px, и прибавится базовый отступ 24px (pt-6).
+            На телефоне к высоте системных кнопок красиво накинется микро-отступ, чтобы контент не лип к плашке.
+          */
+          paddingTop: `calc(var(--tg-safe-area-inset-top, 0px) + 20px)`
+        }}
+      >
 
         {/* Контентная зона */}
         <div className="flex-1 w-full relative overflow-hidden">
@@ -67,7 +75,7 @@ const AppLayout = () => {
           )}
         </div>
 
-        {/* Навигация (Докбар) зафиксирована снизу с аккуратными отступами */}
+        {/* Навигация (Докбар) зафиксирована снизу */}
         <div className="flex-shrink-0 pb-5 pt-2 z-20">
           <Dockbar role={currentRole} />
         </div>
