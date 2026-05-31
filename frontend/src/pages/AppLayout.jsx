@@ -36,12 +36,10 @@ const AppLayout = () => {
       <main
         className="main-glass w-full max-w-md h-full max-h-[85vh] rounded-[40px] overflow-hidden relative flex flex-col px-4 shadow-2xl border border-white/10"
         style={{
-          /* ФИКС КНОПОК ТГ:
-            Используем переменную --tg-safe-area-inset-top, которую заполняет инициализированный viewport.
-            Если мы в деве или браузере — сработает фолбек на 0px, и прибавится базовый отступ 24px (pt-6).
-            На телефоне к высоте системных кнопок красиво накинется микро-отступ, чтобы контент не лип к плашке.
-          */
-          paddingTop: `calc(var(--tg-safe-area-inset-top, 0px) + 20px)`
+          /* ФИКС: Используем контентную зону из доков ТГ.
+             Если переменная пустая (ТГ её ещё не выставил или мы в браузере),
+             используется стандартный отступ в 24px. */
+          paddingTop: 'calc(var(--tg-content-safe-area-inset-top, 0px) + 12px)'
         }}
       >
 
