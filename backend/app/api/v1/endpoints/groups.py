@@ -136,11 +136,17 @@ async def init_group(
 
     await db.flush()
 
-    new_group = Group(
-      name=data.group_name,
-      curator_id=curator_profile.id,
-    )
+    new_group = Group(name=data.group_name)
     db.add(new_group)
+    await db.flush()  # Получаем new_group.id
+
+    # 2. Связываем через curator_profile, который у нас уже есть
+    # Так как в таблице curators есть group_id, мы обновляем именно его
+    curator_profile.group_id = new_group.id
+
+    # 3. Дополнительно обновляем объект-связь, чтобы ORM "поняла" изменения
+    curator_profile.group = new_group
+
     await db.flush()
 
     # Если был найден инвайт, привязываем группу к нему
