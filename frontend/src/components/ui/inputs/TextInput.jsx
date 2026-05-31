@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { tgHaptics } from '../../../../services/telegram/index.js';
 
 /**
- * Premium TextInput - Текстовое поле в стиле Apple Glassmorphism & Нео-брутализм.
- * Снабжено микро-анимациями, физикой пружин и тактильным откликом на ввод.
+ * Premium TextInput - Адаптирован под полусветлый/стеклянный фон.
+ * Исправлена контрастность текста, видимость иконок и глубина фокуса.
  */
 const TextInput = ({
                      label,
@@ -29,54 +29,52 @@ const TextInput = ({
     }
   }, [errorText, onError]);
 
-  // Обработчик ввода с эффектом механического клика Apple клавиатуры
+  // Обработчик ввода с эффектом механического клика
   const handleInputChange = (e) => {
     const newValue = e.target.value;
     onChange?.(newValue);
-
-    // Ультра-легкий тактильный клик на каждый ввод символа для ощущения физического интерфейса
     if (newValue.length !== value?.length) {
       tgHaptics.selection();
     }
   };
 
-  // Вычисление динамических стилей на основе переменных твоей темы
+  // Пересчитанные стили под светлый/стеклянный фон для идеальной читаемости
   const getInputStyles = () => {
     if (disabled) {
-      return 'bg-white/5 border-white/5 text-white/40 cursor-not-allowed select-none backdrop-blur-sm';
+      return 'bg-slate-500/5 border-slate-900/5 text-slate-900/40 cursor-not-allowed select-none backdrop-blur-sm';
     }
     if (errorText) {
-      return 'bg-accent-red/10 border-accent-red text-white placeholder-white/20 focus:border-accent-red focus:shadow-[0_0_20px_rgba(255,69,58,0.25)]';
+      return 'bg-accent-red/10 border-accent-red text-slate-900 placeholder-accent-red/40 focus:border-accent-red focus:shadow-[0_0_20px_rgba(255,69,58,0.2)]';
     }
     if (isFocused) {
-      // Премиальное глубокое стекло Apple: матовость увеличивается, рамка подсвечивается чисто белым
-      return 'bg-black/40 backdrop-blur-xl border-white text-white placeholder-white/40 shadow-[0_4px_24px_rgba(0,0,0,0.3)]';
+      // При фокусе вместо глухого чёрного делаем чистое глубокое матовое стекло,
+      // слегка притемняя фон, чтобы рамка и тёмный текст контрастировали
+      return 'bg-white/60 backdrop-blur-xl border-slate-950 text-slate-950 placeholder-slate-900/30 shadow-[0_8px_32px_rgba(0,0,0,0.12)]';
     }
-    // Дефолтное состояние: легкое матовое стекло, мягко реагирующее на наведение
-    return 'bg-white/10 backdrop-blur-md border-white/15 text-white placeholder-white/20 hover:border-white/25 hover:bg-white/12';
+    // Дефолтное состояние: аккуратное плотное стекло, текст тёмный и контрастный
+    return 'bg-white/40 backdrop-blur-md border-slate-900/15 text-slate-900 placeholder-slate-900/40 hover:border-slate-900/30 hover:bg-white/50';
   };
 
   return (
-    // motion.div позволяет всей карточке инпута физически реагировать на нажатие
     <motion.div
       whileTap={disabled ? {} : { scale: 0.99 }}
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
       className={`w-full flex flex-col gap-1.5 ${className}`}
     >
-      {/* Кастомный Apple-style Лейбл: мелкий, жирный, с аккуратным межбуквенным интервалом */}
+      {/* Лейбл теперь тёмно-серый, чтобы не теряться на светлом фоне */}
       {label && (
-        <label className="text-[11px] font-black italic tracking-wider text-label-secondary uppercase pl-1 select-none transition-colors duration-300">
+        <label className="text-[11px] font-black italic tracking-wider text-slate-700 uppercase pl-1 select-none transition-colors duration-300">
           {label}
         </label>
       )}
 
       {/* Оболочка инпута */}
       <div className="relative w-full">
-        {/* Анимированная левая иконка с микро-смещением */}
+        {/* Анимированная левая иконка — теперь цвета Slate вместо белого */}
         {icon && (
           <motion.div
             animate={{
-              x: isFocused ? 2 : 0, // Иконка элегантно делает шаг вправо при фокусе
+              x: isFocused ? 2 : 0,
               scale: isFocused ? 1.05 : 1
             }}
             transition={{ type: 'spring', stiffness: 350, damping: 25 }}
@@ -84,13 +82,13 @@ const TextInput = ({
           >
             {React.cloneElement(icon, {
               className: `w-5 h-5 transition-colors duration-300 ${
-                isFocused ? 'text-white' : errorText ? 'text-accent-red' : 'text-label-tertiary'
+                isFocused ? 'text-slate-950' : errorText ? 'text-accent-red' : 'text-slate-500'
               }`
             })}
           </motion.div>
         )}
 
-        {/* Нативный input с плавными переходами */}
+        {/* Нативный input со стабильным контрастом */}
         <input
           type={type}
           value={value}
@@ -107,7 +105,7 @@ const TextInput = ({
             rounded-xl 
             border 
             text-[14px] 
-            font-medium 
+            font-bold 
             outline-none 
             transition-all 
             duration-300 
@@ -118,7 +116,7 @@ const TextInput = ({
         />
       </div>
 
-      {/* Выезд сообщения об ошибке с физикой пружины Apple (Плавное скольжение) */}
+      {/* Выезд сообщения об ошибке */}
       <AnimatePresence>
         {errorText && (
           <motion.span
