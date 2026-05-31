@@ -24,7 +24,7 @@ const AppLayout = () => {
   const contentTopInset = useSignal(viewport.contentSafeAreaInsetTop) || 0;
   const isMounted = useSignal(viewport.isMounted) ? 'ДА' : 'НЕТ';
 
-  // Безопасная проверка поддержки без вызова несуществующих функций
+  // Безопасная проверка поддержки
   const isSupported = typeof viewport !== 'undefined' && viewport.mount ? 'ДА' : 'НЕТ';
 
   if (serverStatus === 'loading' || serverStatus === 'offline') return <AppLoader />;
@@ -39,13 +39,13 @@ const AppLayout = () => {
     { id: 'settings', content: <SettingsView /> },
   ];
 
-  // Вычисляем динамический верхний отступ для контента
-  const calculatedPaddingTop = contentTopInset > 0 ? `${contentTopInset + 16}px` : '24px';
+  // Вычисляем точную высоту распорки
+  const spacerHeight = contentTopInset > 0 ? `${contentTopInset + 16}px` : '24px';
 
   return (
     <div className="h-screen w-full p-3 flex flex-col justify-end overflow-hidden">
 
-      {/* ВРЕМЕННАЯ ПЛАШКА ДЛЯ ОТЛАДКИ НА ТЕЛЕФОНЕ (пока оставь, потом выпилим) */}
+      {/* ВРЕМЕННАЯ ПЛАШКА ДЛЯ ОТЛАДКИ НА ТЕЛЕФОНЕ */}
       <div className="fixed top-2 left-2 z-[9999] bg-black/90 text-green-400 p-2 rounded text-[10px] font-mono border border-green-500 pointer-events-none">
         <div>Supported: {isSupported}</div>
         <div>Mounted: {isMounted}</div>
@@ -54,13 +54,14 @@ const AppLayout = () => {
 
       <main className="main-glass w-full max-w-md h-full rounded-[40px] overflow-hidden relative flex flex-col px-4 shadow-2xl border border-white/10">
 
-        {/* Контентная зона.
-          ФИКС: Переносим инлайн-стиль отступа сюда, чтобы он хватал внутренние absolute-элементы
-        */}
+        {/* ЖЕЛЕЗОБЕТОННАЯ РАСПОРКА: Физически сдвигает всё, что ниже, из-под плашки ТГ */}
         <div
-          className="flex-1 w-full relative overflow-hidden"
-          style={{ paddingTop: calculatedPaddingTop }}
-        >
+          className="w-full flex-shrink-0"
+          style={{ height: spacerHeight }}
+        />
+
+        {/* Контентная зона (теперь чистый относительный контейнер без инлайн паддингов) */}
+        <div className="flex-1 w-full relative overflow-hidden">
           {currentRole === 'admin' ? (
             <div className="absolute inset-0 w-full h-full flex flex-col overflow-y-auto pb-4">
               <AdminDashboardView />
@@ -75,8 +76,6 @@ const AppLayout = () => {
                   className={`absolute inset-0 w-full h-full flex flex-col overflow-y-auto transition-opacity duration-300 ${
                     isActive ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
                   }`}
-                  /* ФИКС: Для абсолютных вкладок тоже дублируем верхний отступ, чтобы inset-0 не ломал верстку */
-                  style={{ paddingTop: calculatedPaddingTop }}
                 >
                   <div className="flex-1 pb-4">
                     {roles ? (
