@@ -46,32 +46,32 @@ const TelegramProvider = ({ children }) => {
       if (window.Telegram?.WebApp) {
         const tg = window.Telegram.WebApp;
         tg.ready();
-
-        // Задаем тему для бэкграунда и хедера в тон приложения
         tg.setHeaderColor('#1a1a1a');
         tg.setBackgroundColor('#1a1a1a');
       }
 
       // Безопасно монтируем viewport по новой доке v3
-      if (viewport.mount.isSupported()) {
+      if (viewport && typeof viewport.mount === 'function') {
         viewport.mount()
           .then(() => {
             // Принудительно расширяем вьюпорт
             viewport.expand();
 
-            // Если поддерживается полноэкранный режим
-            if (viewport.requestFullscreen.isSupported()) {
+            // Безопасно проверяем флскрин
+            if (viewport.requestFullscreen && typeof viewport.requestFullscreen === 'function') {
               viewport.requestFullscreen().catch((err) => {
                 console.warn('[Telegram SDK] Ошибка перехода в фулскрин:', err);
               });
             }
 
-            // МАГИЯ ИЗ ДОКИ: Биндим CSS-переменные в DOM, чтобы заработал var(--tg-content-safe-area-inset-top)
+            // Биндим CSS-переменные в DOM
             viewport.bindCssVars();
           })
           .catch((err) => {
             console.error('[Telegram SDK] Ошибка при асинхронном монтировании viewport:', err);
           });
+      } else {
+        console.warn('[Telegram SDK] Компонент viewport не обнаружен в SDK');
       }
     } catch (e) {
       console.warn('[Telegram SDK] Не удалось инициализировать SDK, возможно запущено вне Telegram:', e);

@@ -20,9 +20,16 @@ const AppLayout = () => {
   const serverStatus = useAppStore((state) => state.serverStatus);
   const activeTab = useAppStore((state) => state.activeTab);
 
+  // Читаем сигналы напрямую через хук
+  const contentTopInset = useSignal(viewport.contentSafeAreaInsetTop) || 0;
+  const isMounted = useSignal(viewport.isMounted) ? 'ДА' : 'НЕТ';
+
+  // Безопасная проверка поддержки без вызова несуществующих функций
+  const isSupported = typeof viewport !== 'undefined' && viewport.mount ? 'ДА' : 'НЕТ';
+
   // Вытаскиваем числовой сигнал отступа под контент ТГ (три точки/закрыть) с помощью хука useSignal
   // В режиме разработки (IS_DEV) viewport не монтируется, поэтому ставим фолбек в 0
-  const contentTopInset = !IS_DEV ? useSignal(viewport.contentSafeAreaInsetTop) : 0;
+  //const contentTopInset = !IS_DEV ? useSignal(viewport.contentSafeAreaInsetTop) : 0;
 
   if (serverStatus === 'loading' || serverStatus === 'offline') return <AppLoader />;
   if (serverStatus === 'error') return <AppError />;
@@ -38,6 +45,13 @@ const AppLayout = () => {
 
   return (
     <div className="h-screen w-full p-3 flex items-center justify-center overflow-hidden">
+
+      {/* ВРЕМЕННАЯ ПЛАШКА ДЛЯ ОТЛАДКИ НА ТЕЛЕФОНЕ */}
+      <div className="fixed top-2 left-2 z-[9999] bg-black/90 text-green-400 p-2 rounded text-[10px] font-mono border border-green-500 pointer-events-none">
+        <div>Supported: {isSupported}</div>
+        <div>Mounted: {isMounted}</div>
+        <div>ContentTopInset: {contentTopInset}px</div>
+      </div>
 
       <main
         className="main-glass w-full max-w-md h-full max-h-[85vh] rounded-[40px] overflow-hidden relative flex flex-col px-4 shadow-2xl border border-white/10"
