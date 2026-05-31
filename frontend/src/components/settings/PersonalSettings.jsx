@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { tgHaptics } from '../../services/telegram/tgHaptics';
+import { tgHaptics } from "../../../services/telegram/index.js";
 
 function PersonalSettings() {
   const [notify, setNotify] = useState(true);

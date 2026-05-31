@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { tgHaptics } from '../../services/telegram/tgHaptics';
+import {tgHaptics} from "../../../services/telegram/index.js";
 
 const DAYS_OF_WEEK = [
   { id: 1, label: 'ПН' },
