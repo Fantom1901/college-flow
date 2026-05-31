@@ -7,10 +7,12 @@ import { GroupInitForm } from "../components/settings/GroupInitForm.jsx";
 import useAppStore from '../store/useAppStore.js';
 import useGroupStore from '../store/useGroupStore.js';
 import { groupsApi } from '../api/groups.js';
-import { tgHaptics } from "../../services/telegram/index.js"; // Корректируй точки, если надо
+import { tgHaptics } from "../../services/telegram/index.js";
+import { simulateGroupInitialization } from '../../services/initApp.js';
 
 /**
- * Равноправная страница для первоначальной настройки группы куратором.
+ * GroupInitLayout - Страница первоначальной настройки группы куратором.
+ * Синхронизирована со строгими типами Pydantic-модели GroupInitRequest на FastAPI.
  */
 const GroupInitLayout = () => {
   const queryClient = useQueryClient();
@@ -20,92 +22,106 @@ const GroupInitLayout = () => {
 
   const mutation = useMutation({
     mutationFn: async (payload) => {
-      // payload прилетает из формы: { fullName: "...", groupName: "..." }
+      // payload содержит: { fullName: "...", groupName: "..." }
 
-      // ДЕВ-МОД: Чистая симуляция Zustand
+      // Если запущен локальный сервер Vite (DEV), уходим в симулятор
       if (import.meta.env.DEV) {
-        await new Promise((resolve) => setTimeout(resolve, 800)); // Имитируем пинг бэка
-
-        // Возвращаем фейковый ответ группы
-        return {
-          id: 777,
-          name: payload.groupName,
-          students: [], // Изначально пустая группа
-          weekly_duty: [],
-          leaderboard: [],
-          settings: {
-            mechanism: 'alphabetical',
-            work_days: [1, 3, 5],
-            person_per_day: 2,
-            group_id: 777
-          }
-        };
+        return simulateGroupInitialization(payload, queryClient);
       }
 
-      // ПРОД: Скорректированный запрос на FastAPI под твои два поля
-      // Если бэк ждет snake_case, мапим: { full_name: payload.fullName, group_name: payload.groupName }
+      // Достаем инвайт-код из URL (если куратор зашел по ссылке вида ?startapp=code или ?tgWebAppStartParam=code)
+      const urlParams = new URLSearchParams(window.location.search);
+      const inviteCode = urlParams.get('tgWebAppStartParam') || urlParams.get('startapp') || 'default_curator_code';
+
+      // Гарантируем получение числового Telegram ID
+      const rawTgId = user?.tg_id || window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+      const cleanTgId = rawTgId ? parseInt(rawTgId, 10) : null;
+
+      // Валидация перед отправкой, чтобы фронт не слал заведомый мусор
+      if (!cleanTgId || isNaN(cleanTgId)) {
+        throw new Error('Критическая ошибка: Не удалось определить твой Telegram ID для регистрации профиля.');
+      }
+
+      // ПРОД: Отправляем строго по спецификации OpenAPI схемы GroupInitRequest
       return groupsApi.initGroup({
-        full_name: payload.fullName,
-        group_name: payload.groupName
+        invite_code: String(inviteCode).trim(),
+        full_name: String(payload.fullName).trim(),
+        group_name: String(payload.groupName).trim(),
+        tg_id: cleanTgId, // Обязательный integer
+        username: user?.username || window.Telegram?.WebApp?.initDataUnsafe?.user?.username || null // Опциональный string/null
       });
     },
     onSuccess: (data, variables) => {
       if (tgHaptics?.notification) tgHaptics.notification('success');
 
-      // Обновляем Zustand сторы на лету
-      const { setGroup } = useGroupStore.getState();
-      const { setUser } = useAppStore.getState();
-
-      setGroup(data); // Закидываем созданную группу в стейт
-
-      // Обновляем текущего юзера, прописав ему ФИО и ID созданной группы
-      setUser({
-        ...user,
-        curator_profile: {
-          id: data.id,
-          full_name: variables.fullName,
-          group_id: data.id
-        }
-      });
-
-      // Инвалидируем кэш для прома на всякий случай
       if (!import.meta.env.DEV) {
+        const { setGroup } = useGroupStore.getState();
+        const { setUser } = useAppStore.getState();
+
+        // Схема GroupInitResponse возвращает group_id и group_name
+        setGroup({
+          id: data.group_id,
+          name: data.group_name,
+          students: [] // Изначально группа пустая, студенты зайдут сами по инвайтам
+        });
+
+        // Синхронизируем сессию куратора в стейте
+        setUser({
+          ...user,
+          curator_profile: {
+            id: data.group_id, // Привязываем временный ID профиля
+            full_name: variables.fullName,
+            group_id: data.group_id
+          }
+        });
+
+        // Сбрасываем кэши React Query для обновления данных во всем приложении
         queryClient.invalidateQueries({ queryKey: ['userMe'] });
         queryClient.invalidateQueries({ queryKey: ['myGroup'] });
       }
 
-      // ТУШИМ ЭКРАН ИНИЦИАЛИЗАЦИИ -> main.jsx мгновенно переключит на AppLayout
+      // Закрываем экран инициализации, пускаем куратора в панель управления
       setNeedsGroupInit(false);
     },
     onError: (err) => {
       if (tgHaptics?.notification) tgHaptics.notification('error');
-      const backendMessage = err?.response?.data?.detail?.[0]?.msg || err?.response?.data?.detail || err?.message;
-      setErrorText(backendMessage || 'Ошибка создания группы.');
+
+      // Логируем полную ошибку в консоль TMA, чтобы было легче дебажить через Eruda/VConsole
+      console.error('[GroupInit] Ошибка при отправке запроса:', err?.response?.data || err);
+
+      // Парсим ошибки валидации FastAPI (они лежат в массиве detail)
+      let backendMessage = '';
+      if (err?.response?.data?.detail && Array.isArray(err.response.data.detail)) {
+        backendMessage = err.response.data.detail
+          .map(error => `${error.loc.join('.')}: ${error.msg}`)
+          .join(' | ');
+      } else {
+        backendMessage = err?.response?.data?.detail || err?.message;
+      }
+
+      setErrorText(backendMessage || 'Ошибка создания группы. Проверь корректность данных.');
     }
   });
 
+  /**
+   * Передача данных заполненной формы в триггер мутации React Query.
+   * @param {Object} formData - Объект с полями fullName и groupName
+   */
   const handleFormSubmit = (formData) => {
+    setErrorText('');
     mutation.mutate(formData);
   };
 
   return (
     <AppInitializer>
       <TelegramSafeProvider>
-
-        <div className="flex-1 w-full relative overflow-y-auto mt-4 px-4 pb-6 flex flex-col items-center justify-center min-h-[80vh]">
+        <div className="flex-1 w-full flex flex-col items-center justify-center py-6 overflow-y-auto scrollbar-none">
           <GroupInitForm
             onSubmit={handleFormSubmit}
             isLoading={mutation.isPending}
+            error={errorText}
           />
-
-          {/* Вывод ошибки мутации, если бэк или симуляция упали */}
-          {errorText && (
-            <div className="mt-4 max-w-md w-full px-4 py-2.5 bg-red-500/10 border border-red-500/20 rounded-lg text-sm text-red-400 text-center">
-              {errorText}
-            </div>
-          )}
         </div>
-
       </TelegramSafeProvider>
     </AppInitializer>
   );

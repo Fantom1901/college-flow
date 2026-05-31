@@ -6,11 +6,11 @@ import { init, viewport } from '@tma.js/sdk-react';
 
 import './index.css';
 import AppLayout from "./pages/AppLayout.jsx";
-import GroupInitLayout from "./pages/GroupInitLayout.jsx"; // Твой новый равноправный макет-страница
+import GroupInitLayout from "./pages/GroupInitLayout.jsx";
 import VantaBackground from "./components/common/VantaBackground.jsx";
 import { initApp } from '../services/initApp';
 import { IS_DEV } from './config';
-import useAppStore from './store/useAppStore.js'; // Подключаем глобальный стор
+import useAppStore from './store/useAppStore.js';
 
 // Настройка React Query клиента
 const queryClient = new QueryClient({
@@ -32,8 +32,8 @@ const TelegramProvider = ({ children }) => {
     if (didInit.current) return;
     didInit.current = true;
 
-    // 1. Запуск инициализации приложения (стейты, моки или запросы к бэку)
-    initApp();
+    // 1. Запуск инициализации приложения — ПЕРЕДАЕМ queryClient, чтобы избежать краша с моками обменов
+    initApp(queryClient);
 
     // 2. Инициализация Telegram SDK (только для продакшена)
     if (IS_DEV) {
@@ -42,7 +42,6 @@ const TelegramProvider = ({ children }) => {
     }
 
     try {
-      // Инициализируем жизненный цикл SDK v3 синхронно
       init();
 
       if (window.Telegram?.WebApp) {
@@ -52,21 +51,17 @@ const TelegramProvider = ({ children }) => {
         tg.setBackgroundColor('#1a1a1a');
       }
 
-      // Безопасно монтируем viewport по новой доке v3
       if (viewport && typeof viewport.mount === 'function') {
         viewport.mount()
           .then(() => {
-            // Принудительно расширяем вьюпорт
             viewport.expand();
 
-            // Безопасно проверяем флскрин
             if (viewport.requestFullscreen && typeof viewport.requestFullscreen === 'function') {
               viewport.requestFullscreen().catch((err) => {
                 console.warn('[Telegram SDK] Ошибка перехода в фулскрин:', err);
               });
             }
 
-            // Биндим CSS-переменные в DOM
             viewport.bindCssVars();
           })
           .catch((err) => {
@@ -83,7 +78,6 @@ const TelegramProvider = ({ children }) => {
   return children;
 };
 
-// Выносим роутинг в отдельный подкомпонент, чтобы хукuseAppStore работал внутри контекста провайдеров
 const AppRoutes = () => {
   const needsGroupInit = useAppStore((state) => state.needsGroupInit);
 
@@ -102,10 +96,7 @@ createRoot(document.getElementById('root')).render(
     <QueryClientProvider client={queryClient}>
       <TelegramProvider>
         <BrowserRouter>
-          {/* Анимированный фоновый компонент */}
           <VantaBackground />
-
-          {/* Отрисовка роутов с динамической подменой страниц */}
           <AppRoutes />
         </BrowserRouter>
       </TelegramProvider>

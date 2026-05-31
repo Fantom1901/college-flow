@@ -1,10 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { tgHaptics } from '../../../../services/telegram/index.js';
+import { tgHaptics } from '../../../../services/telegram/index.js'; // Корректный импорт твоего сервиса хаптиков
 
 /**
- * Premium TextInput - Адаптирован под полусветлый/стеклянный фон.
- * Исправлена контрастность текста, видимость иконок и глубина фокуса.
+ * TextInput - Профессиональное текстовое поле в стиле нео-брутализма и Glassmorphic.
+ * Полностью синхронизировано с дизайн-системой проекта "college-flow" и Telegram WebApp.
+ *
+ * @param {string} label - Текст лейбла над инпутом
+ * @param {string} value - Текущее значение поля
+ * @param {function} onChange - Коллбэк при изменении значения
+ * @param {string} placeholder - Подсказка внутри поля
+ * @param {string} type - Тип инпута (text, password, email, number)
+ * @param {string} errorText - Текст ошибки для визуализации валидации
+ * @param {function} onError - Коллбэк, вызываемый при обнаружении ошибки
+ * @param {React.ReactNode} icon - Иконка слева (опционально)
+ * @param {boolean} disabled - Состояние блокировки поля
+ * @param {string} className - Дополнительные кастомные Tailwind классы
  */
 const TextInput = ({
                      label,
@@ -29,16 +40,17 @@ const TextInput = ({
     }
   }, [errorText, onError]);
 
-  // Обработчик ввода с эффектом механического клика
+  // Обработчик ввода с эффектом механического клика Apple клавиатуры
   const handleInputChange = (e) => {
     const newValue = e.target.value;
     onChange?.(newValue);
+    // Ультра-легкий тактильный клик на каждый ввод символа для ощущения физического интерфейса
     if (newValue.length !== value?.length) {
       tgHaptics.selection();
     }
   };
 
-  // Пересчитанные стили под светлый/стеклянный фон для идеальной читаемости
+  // Пересчитанные цвета для состояний под светлый/стеклянный фон
   const getInputStyles = () => {
     if (disabled) {
       return 'bg-slate-500/5 border-slate-900/5 text-slate-900/40 cursor-not-allowed select-none backdrop-blur-sm';
@@ -47,21 +59,21 @@ const TextInput = ({
       return 'bg-accent-red/10 border-accent-red text-slate-900 placeholder-accent-red/40 focus:border-accent-red focus:shadow-[0_0_20px_rgba(255,69,58,0.2)]';
     }
     if (isFocused) {
-      // При фокусе вместо глухого чёрного делаем чистое глубокое матовое стекло,
-      // слегка притемняя фон, чтобы рамка и тёмный текст контрастировали
+      // Чистое, глубокое светлое матовое стекло при фокусе, без грязной черноты
       return 'bg-white/60 backdrop-blur-xl border-slate-950 text-slate-950 placeholder-slate-900/30 shadow-[0_8px_32px_rgba(0,0,0,0.12)]';
     }
-    // Дефолтное состояние: аккуратное плотное стекло, текст тёмный и контрастный
+    // Дефолтное состояние: контрастный темный текст на матовой светлой подложке
     return 'bg-white/40 backdrop-blur-md border-slate-900/15 text-slate-900 placeholder-slate-900/40 hover:border-slate-900/30 hover:bg-white/50';
   };
 
   return (
+    // Оригинальный motion.div для физического отклика всей карточки на нажатие
     <motion.div
       whileTap={disabled ? {} : { scale: 0.99 }}
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
       className={`w-full flex flex-col gap-1.5 ${className}`}
     >
-      {/* Лейбл теперь тёмно-серый, чтобы не теряться на светлом фоне */}
+      {/* Лейбл изменен на темный Slate для читаемости */}
       {label && (
         <label className="text-[11px] font-black italic tracking-wider text-slate-700 uppercase pl-1 select-none transition-colors duration-300">
           {label}
@@ -70,11 +82,11 @@ const TextInput = ({
 
       {/* Оболочка инпута */}
       <div className="relative w-full">
-        {/* Анимированная левая иконка — теперь цвета Slate вместо белого */}
+        {/* Анимированная левая иконка с оригинальным микро-смещением по X */}
         {icon && (
           <motion.div
             animate={{
-              x: isFocused ? 2 : 0,
+              x: isFocused ? 2 : 0, // Иконка делает шаг вправо при фокусе
               scale: isFocused ? 1.05 : 1
             }}
             transition={{ type: 'spring', stiffness: 350, damping: 25 }}
@@ -88,12 +100,15 @@ const TextInput = ({
           </motion.div>
         )}
 
-        {/* Нативный input со стабильным контрастом */}
+        {/* Нативный input с твоим оригинальным онфокусом */}
         <input
           type={type}
           value={value}
           onChange={handleInputChange}
-          onFocus={() => setIsFocused(true)}
+          onFocus={() => {
+            setIsFocused(true);
+            tgHaptics.selection(); // Возвращен легкий клик при фокусе
+          }}
           onBlur={() => setIsFocused(false)}
           placeholder={placeholder}
           disabled={disabled}
@@ -116,7 +131,7 @@ const TextInput = ({
         />
       </div>
 
-      {/* Выезд сообщения об ошибке */}
+      {/* Оригинальный плавный выезд ошибки с физикой яблочной пружины */}
       <AnimatePresence>
         {errorText && (
           <motion.span

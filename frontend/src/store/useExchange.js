@@ -1,76 +1,80 @@
-import { create } from 'zustand'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { exchangeApi } from '../api/exchange.js'
-import { IS_DEV, MOCK_EXCHANGE } from '../config.js'
+import { create } from 'zustand';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { exchangeApi } from '../api/exchange.js';
+import { IS_DEV, MOCK_EXCHANGE } from '../config.js';
 
-// 1. Маленький Zustand-стор для сохранения активной вкладки при навигации
+/**
+ * useExchangeStore - Локальный UI-стейт для сохранения активной вкладки обменов.
+ */
 export const useExchangeStore = create((set) => ({
-  activeTab: 'incoming', // 'incoming' | 'outgoing' | 'history'
+  activeTab: 'incoming', // Допустимые вкладки: 'incoming' | 'outgoing' | 'history'
   setActiveTab: (tab) => set({ activeTab: tab }),
-}))
+}));
 
-// 2. React Query хук для получения всех списков обмена (с поддержкой Dev Mode)
+/**
+ * useExchangeData - Хук React Query для безопасного получения списков обмена дежурствами.
+ * Автоматически подменяет ответ на MOCK_EXCHANGE, если активен дев-режим.
+ */
 export const useExchangeData = () => {
   return useQuery({
     queryKey: ['exchangeRequests'],
     queryFn: () => {
       if (IS_DEV) {
-        // В дев-моде мгновенно отдаем моки из конфига
-        return Promise.resolve(MOCK_EXCHANGE)
+        return Promise.resolve(MOCK_EXCHANGE);
       }
-      // В продакшене идем по сети на бэк
-      return exchangeApi.getRequests()
+      return exchangeApi.getRequests();
     },
     select: (data) => ({
       incoming: data?.incoming || [],
       outgoing: data?.outgoing || [],
       history: data?.history || [],
     }),
-    staleTime: IS_DEV ? Infinity : 1000 * 30, // В дев-моде кэш не устаревает автоматически
-  })
-}
+    staleTime: IS_DEV ? Infinity : 1000 * 30,
+  });
+};
 
-// 3. React Query мутация для изменения статуса (с симуляцией задержки сети для Dev Mode)
+/**
+ * useUpdateExchangeStatus - Мутация обработки заявок (аппрув / отмена / режект).
+ * В дев-режиме вручную пересобирает кэш квери-клиента для моментального апдейта интерфейса.
+ */
 export const useUpdateExchangeStatus = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({ exchangeId, status }) => {
       if (IS_DEV) {
-        // Имитируем пинг сети в 600мс, чтобы покрутить лоадер на кнопках
-        return new Promise((resolve) => setTimeout(resolve, 600))
+        return new Promise((resolve) => setTimeout(resolve, 600)); // Симуляция пинга сети
       }
-      return exchangeApi.updateStatus(exchangeId, status)
+      return exchangeApi.updateStatus(exchangeId, status);
     },
     onSuccess: (data, variables) => {
       if (IS_DEV) {
-        // Локально обновляем кэш в дев-моде, чтобы карточка перенеслась в историю/исчезла
+        // Оптимистичное обновление кэша для тестирования перетаскивания карточек в UI
         queryClient.setQueryData(['exchangeRequests'], (oldData) => {
-          if (!oldData) return oldData
+          if (!oldData) return oldData;
+          let foundRequest = null;
 
-          let foundRequest = null
           const nextData = {
             incoming: oldData.incoming.filter(r => {
-              if (r.id === variables.exchangeId) { foundRequest = { ...r, status: variables.status }; return false }
-              return true
+              if (r.id === variables.exchangeId) { foundRequest = { ...r, status: variables.status }; return false; }
+              return true;
             }),
             outgoing: oldData.outgoing.filter(r => {
-              if (r.id === variables.exchangeId) { foundRequest = { ...r, status: variables.status }; return false }
-              return true
+              if (r.id === variables.exchangeId) { foundRequest = { ...r, status: variables.status }; return false; }
+              return true;
             }),
             history: [...oldData.history]
-          }
+          };
 
           if (foundRequest) {
-            nextData.history.unshift(foundRequest)
+            nextData.history.unshift(foundRequest);
           }
-
-          return nextData
-        })
+          return nextData;
+        });
       } else {
-        // В продакшене просто триггерим полный перезапрос данных с бэка
-        queryClient.invalidateQueries({ queryKey: ['exchangeRequests'] })
+        // На проде сбрасываем кэш и тянем свежак с FastAPI
+        queryClient.invalidateQueries({ queryKey: ['exchangeRequests'] });
       }
     },
-  })
-}
+  });
+};
