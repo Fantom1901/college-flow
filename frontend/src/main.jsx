@@ -6,9 +6,11 @@ import { init, viewport } from '@tma.js/sdk-react';
 
 import './index.css';
 import AppLayout from "./pages/AppLayout.jsx";
+import GroupInitLayout from "./pages/GroupInitLayout.jsx"; // Твой новый равноправный макет-страница
 import VantaBackground from "./components/common/VantaBackground.jsx";
 import { initApp } from '../services/initApp';
 import { IS_DEV } from './config';
+import useAppStore from './store/useAppStore.js'; // Подключаем глобальный стор
 
 // Настройка React Query клиента
 const queryClient = new QueryClient({
@@ -81,6 +83,20 @@ const TelegramProvider = ({ children }) => {
   return children;
 };
 
+// Выносим роутинг в отдельный подкомпонент, чтобы хукuseAppStore работал внутри контекста провайдеров
+const AppRoutes = () => {
+  const needsGroupInit = useAppStore((state) => state.needsGroupInit);
+
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={needsGroupInit ? <GroupInitLayout /> : <AppLayout />}
+      />
+    </Routes>
+  );
+};
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
@@ -89,9 +105,8 @@ createRoot(document.getElementById('root')).render(
           {/* Анимированный фоновый компонент */}
           <VantaBackground />
 
-          <Routes>
-            <Route path="/" element={<AppLayout />} />
-          </Routes>
+          {/* Отрисовка роутов с динамической подменой страниц */}
+          <AppRoutes />
         </BrowserRouter>
       </TelegramProvider>
     </QueryClientProvider>

@@ -1,16 +1,17 @@
 export const IS_DEV = true;
+export const MOCK_FORCE_INIT = true;
 
 export const MOCK_USER = {
   id: 1337,
   tg_id: 123456789,
   username: 'fantom',
-  role: 'student', // 'student' | 'leader' | 'curator' | 'admin'
-  student_profile: {
-    id: 10,
-    full_name: 'Ветров Тимофей',
-    group_id: 1
-  },
-  curator_profile: null
+  role: 'curator', // Наш тест заточен под куратора
+  student_profile: null,
+  curator_profile: {
+    id: 5,
+    full_name: 'Петрова Анна Николаевна',
+    group_id: MOCK_FORCE_INIT ? null : 1 // Авто-подмена ID в зависимости от флага
+  }
 };
 
 // Превращаем MOCK_GROUP в единый монолит данных группы

@@ -2,13 +2,29 @@ import { create } from 'zustand';
 
 const useAppStore = create((set, get) => ({
   user: null,
+  group: null, // Данные текущей группы (id, name, students)
   serverStatus: 'offline', // 'offline' | 'loading' | 'online' | 'error'
   activeTab: 'home',
+  needsGroupInit: false, // Флаг принудительного открытия экрана создания группы для куратора
 
-  // Экшены для изменения состояния
+  // Экшены для изменения базового состояния
   setUser: (userData) => set({ user: userData }),
   setServerStatus: (status) => set({ serverStatus: status }),
   setActiveTab: (tab) => set({ activeTab: tab }),
+
+  // Новые экшены для работы с группами и инициализацией
+  setGroup: (groupData) => set({ group: groupData }),
+  setNeedsGroupInit: (needed) => set({ needsGroupInit: needed }),
+
+  /**
+   * Сброс данных авторизации и состояния приложения
+   */
+  clearAuth: () => set({
+    user: null,
+    group: null,
+    needsGroupInit: false,
+    serverStatus: 'offline'
+  }),
 
   // Хелперы ролей (Вычисляемые свойства через get())
   isStudent: () => get().user?.role === 'student',
