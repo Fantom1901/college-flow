@@ -14,7 +14,7 @@ export const MOCK_USER = {
   id: 1337,
   tg_id: 123456789,
   username: 'fantom',
-  role: 'student', // Допустимые роли по OpenAPI: "admin", "curator", "leader", "student"
+  role: 'admin', // Допустимые роли по OpenAPI: "admin", "curator", "leader", "student"
   student_profile: 1,
   curator_profile: {
     full_name: 'Петрова Анна Николаевна',
