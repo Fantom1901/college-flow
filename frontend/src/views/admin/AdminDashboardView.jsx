@@ -115,6 +115,7 @@ const AdminDashboardView = () => {
         </div>
         <button
           onClick={testBiometricsInit}
+
           className="w-full py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-medium transition-all"
         >
           Шаг 1: Инициализировать менеджер

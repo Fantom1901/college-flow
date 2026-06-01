@@ -82,6 +82,7 @@ const ComponentSandboxView = () => {
           </GlassButton>
           <PrimaryButton
             onClick={handleNextStep}
+            variant={"solid"}
             disabled={currentStep === totalSteps - 1}
             className="flex-1 text-xs"
           >
