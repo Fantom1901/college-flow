@@ -34,7 +34,7 @@ function GroupSettingsForm({ initialSettings, onSave, isPending }) {
   };
 
   return (
-    <GlassCard variant="form">
+    <GlassCard variant="main">
       <FormRow label="Алгоритм распределения">
         <TabSelector
           options={MECHANISM_OPTIONS}

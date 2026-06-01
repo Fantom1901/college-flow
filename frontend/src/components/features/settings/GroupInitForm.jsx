@@ -83,7 +83,7 @@ export const GroupInitForm = ({ onSubmit, isLoading, error }) => {
 
   return (
     <form onSubmit={handleSubmit} className="w-full">
-      <GlassCard variant="form">
+      <GlassCard variant="main">
         {/* Хедер формы */}
         <div className="text-center flex flex-col gap-1">
           <Typography variant="h1">
