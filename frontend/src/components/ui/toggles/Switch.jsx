@@ -13,13 +13,10 @@ const Switch = ({ checked, onChange }) => {
     const newState = !checked;
 
     // Вибрация подтверждения при включении
-    if (newState) {
-      tgHaptics.notification('success');
-    } else {
-      tgHaptics.selection();
-    }
+    tgHaptics.selection();
 
     onChange(newState);
+
   };
 
   return (
