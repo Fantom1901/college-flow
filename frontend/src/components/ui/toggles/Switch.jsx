@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import {tgHaptics} from "../../../../services/telegram/index.js";
 
 /**
  * Switch - Изолированный переключатель (тумблер)
@@ -7,12 +8,27 @@ import { motion } from 'framer-motion';
  * @param {function} onChange - Функция вызова при клике
  */
 const Switch = ({ checked, onChange }) => {
+
+  const handleToggle = () => {
+    const newState = !checked;
+
+    // Вибрация подтверждения при включении
+    if (newState) {
+      tgHaptics.notification('success');
+    } else {
+      tgHaptics.selection();
+    }
+
+    onChange(newState);
+  };
+
   return (
     <button
       type="button"
-      onClick={() => onChange(!checked)} // Вызываем колбэк с инверсией
+      onClick={handleToggle}
       className={`w-12 h-6 rounded-full p-0.5 outline-none transition-colors duration-300 flex ${
-        checked ? 'bg-slate-950 justify-end' : 'bg-slate-200 justify-start'
+        // Если включен — загорается зеленым, если выключен — оригинал (bg-slate-200)
+        checked ? 'bg-accent-green justify-end' : 'bg-slate-200 justify-start'
       }`}
     >
       <motion.div
