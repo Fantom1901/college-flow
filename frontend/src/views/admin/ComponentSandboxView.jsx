@@ -10,6 +10,7 @@ import Counter from '../../components/ui/inputs/Counter.jsx';
 import Switch from '../../components/ui/toggles/Switch.jsx';
 import Badge from '../../components/ui/feedback/Badge.jsx';
 import CyberStepper from '../../components/ui/feedback/CyberStepper.jsx';
+import CyberLoader from "../../components/ui/loaders/CyberLoader.jsx";
 
 /**
  * @file ComponentSandboxView.jsx
@@ -25,22 +26,19 @@ const ComponentSandboxView = () => {
   const [count, setCount] = useState(1);
   const [isSwitched, setIsSwitched] = useState(false);
 
+  // Состояние для лоадера
+  const [loaderStatus, setLoaderStatus] = useState('loading');
+
   // Стейт для тестирования степпера
   const [currentStep, setCurrentStep] = useState(0);
   const totalSteps = 6;
 
-  /**
-   * Переключает степпер на следующий шаг.
-   */
   const handleNextStep = () => {
     if (currentStep < totalSteps - 1) {
       setCurrentStep(prev => prev + 1);
     }
   };
 
-  /**
-   * Возвращает степпер на шаг назад (экшен отката).
-   */
   const handlePrevStep = () => {
     if (currentStep > 0) {
       setCurrentStep(prev => prev - 1);
@@ -88,6 +86,36 @@ const ComponentSandboxView = () => {
           >
             Далее
           </PrimaryButton>
+        </div>
+      </GlassCard>
+
+      {/* СЕКЦИЯ CYBER LOADER */}
+      <GlassCard className="p-4 space-y-4">
+        <Typography variant="h2" className="text-sm font-semibold text-slate-300">CyberLoader</Typography>
+
+        <div className="flex justify-center py-4">
+          <CyberLoader status={loaderStatus} size={64} />
+        </div>
+
+        <div className="flex gap-2">
+          <button
+            onClick={() => setLoaderStatus('loading')}
+            className={`flex-1 py-2 text-[10px] font-bold rounded-lg border transition-all ${loaderStatus === 'loading' ? 'bg-accent-purple/20 border-accent-purple text-accent-purple' : 'bg-slate-800 border-slate-700'}`}
+          >
+            Loading
+          </button>
+          <button
+            onClick={() => setLoaderStatus('success')}
+            className={`flex-1 py-2 text-[10px] font-bold rounded-lg border transition-all ${loaderStatus === 'success' ? 'bg-accent-green/20 border-accent-green text-accent-green' : 'bg-slate-800 border-slate-700'}`}
+          >
+            Success
+          </button>
+          <button
+            onClick={() => setLoaderStatus('error')}
+            className={`flex-1 py-2 text-[10px] font-bold rounded-lg border transition-all ${loaderStatus === 'error' ? 'bg-accent-red/20 border-accent-red text-accent-red' : 'bg-slate-800 border-slate-700'}`}
+          >
+            Error
+          </button>
         </div>
       </GlassCard>
 
