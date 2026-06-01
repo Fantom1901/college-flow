@@ -1,6 +1,6 @@
 import React from 'react';
 import { Clock } from 'lucide-react';
-import Typography from "../ui/typography/Typography.jsx";
+import Typography from "../../ui/typography/Typography.jsx";
 
 /**
  * EmptyState - Состояние пустого списка

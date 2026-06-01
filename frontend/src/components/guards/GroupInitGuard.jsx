@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import useAppStore from '../store/useAppStore';
-import GroupInitForm from './settings/GroupInitForm'; // Твоя будущая форма из Шага 4
+import useAppStore from '../../store/useAppStore.js';
+import GroupInitForm from '../features/settings/GroupInitForm.jsx'; // Твоя будущая форма из Шага 4
 
 /**
  * Изолированный компонент-перехватчик для инициализации группы куратора.

@@ -1,5 +1,5 @@
 import React from 'react';
-import GlassTabs from '../ui/inputs/GlassTabs.jsx';
+import GlassTabs from '../../ui/inputs/GlassTabs.jsx';
 
 export const ExchangeTabs = ({ activeTab, setActiveTab }) => {
   const tabs = [

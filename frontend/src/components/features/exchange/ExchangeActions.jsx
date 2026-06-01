@@ -1,7 +1,7 @@
 import React from 'react';
 import { Check, X, Ban } from 'lucide-react';
-import Badge from '../ui/feedback/Badge.jsx';
-import GlassButton from '../ui/buttons/GlassButton.jsx';
+import Badge from '../../ui/feedback/Badge.jsx';
+import GlassButton from '../../ui/buttons/GlassButton.jsx';
 
 export const ExchangeActions = ({ exchangeId, activeTab, status, onUpdateStatus, isLoading }) => {
 

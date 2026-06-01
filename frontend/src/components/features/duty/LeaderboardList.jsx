@@ -1,5 +1,5 @@
 import React from 'react';
-import GlassCard from '../cards/GlassCard.jsx';
+import GlassCard from '../../ui/cards/GlassCard.jsx';
 import LeaderboardRow from './LeaderboardRow.jsx';
 
 /**

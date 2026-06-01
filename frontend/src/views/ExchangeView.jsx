@@ -1,10 +1,10 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useExchangeStore, useExchangeData, useUpdateExchangeStatus } from '../store/useExchange.js';
-import { ExchangeTabs } from '../components/exchange/ExchangeTabs.jsx';
-import { ExchangeCard } from '../components/exchange/ExchangeCard.jsx';
-import { ExchangeActions } from '../components/exchange/ExchangeActions.jsx';
-import { EmptyState } from '../components/exchange/EmptyState.jsx';
+import { ExchangeTabs } from '../components/features/exchange/ExchangeTabs.jsx';
+import { ExchangeCard } from '../components/features/exchange/ExchangeCard.jsx';
+import { ExchangeActions } from '../components/features/exchange/ExchangeActions.jsx';
+import { EmptyState } from '../components/features/exchange/EmptyState.jsx';
 
 export const ExchangeView = () => {
   const { activeTab, setActiveTab } = useExchangeStore();

@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { tgHaptics } from "../../../services/telegram/index.js";
+import { tgHaptics } from "../../../../services/telegram/index.js";
 
 // Импортируем наши атомы и молекулы
-import GlassCard from '../ui/cards/GlassCard.jsx';
-import FormRow from '../ui/inputs/FormRow.jsx';
-import TabSelector from '../ui/inputs/TabSelector.jsx';
-import MultiSelectGrid from '../ui/inputs/MultiSelectGrid.jsx';
-import Counter from '../ui/inputs/Counter.jsx';
-import PrimaryButton from '../ui/buttons/PrimaryButton.jsx';
+import GlassCard from '../../ui/cards/GlassCard.jsx';
+import FormRow from '../../ui/inputs/FormRow.jsx';
+import TabSelector from '../../ui/inputs/TabSelector.jsx';
+import MultiSelectGrid from '../../ui/inputs/MultiSelectGrid.jsx';
+import Counter from '../../ui/inputs/Counter.jsx';
+import PrimaryButton from '../../ui/buttons/PrimaryButton.jsx';
 
 const DAYS_OF_WEEK = [
   { id: 1, label: 'ПН' }, { id: 2, label: 'ВТ' }, { id: 3, label: 'СР' },

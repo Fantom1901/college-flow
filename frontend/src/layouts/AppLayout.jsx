@@ -1,10 +1,10 @@
 import React from 'react';
 import useAppStore from '../store/useAppStore.js';
 
-import TelegramSafeProvider from '../components/common/TelegramSafeProvider.jsx';
+import TelegramSafeProvider from '../providers/TelegramSafeProvider.jsx';
 import AppInitializer from "../components/status/AppInitializer.jsx";
-import Dockbar from "../components/Dockbar.jsx";
-import AccessGuard from '../components/AccessGuard.jsx';
+import Dockbar from "../components/navigation/Dockbar.jsx";
+import AccessGuard from '../components/guards/AccessGuard.jsx';
 
 // Импорт контента вкладок
 import HomeView from '../views/common/HomeViews.jsx';

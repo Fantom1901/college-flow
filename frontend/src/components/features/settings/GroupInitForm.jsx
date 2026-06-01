@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import GlassCard from "../ui/cards/GlassCard.jsx";
-import Typography from "../ui/typography/Typography.jsx";
-import TextInput from "../ui/inputs/TextInput.jsx";
-import PrimaryButton from "../ui/buttons/PrimaryButton.jsx";
+import GlassCard from "../../ui/cards/GlassCard.jsx";
+import Typography from "../../ui/typography/Typography.jsx";
+import TextInput from "../../ui/inputs/TextInput.jsx";
+import PrimaryButton from "../../ui/buttons/PrimaryButton.jsx";
 import { User, Users } from 'lucide-react';
 
 /**

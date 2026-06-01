@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import TelegramSafeProvider from '../components/common/TelegramSafeProvider.jsx';
+import TelegramSafeProvider from '../providers/TelegramSafeProvider.jsx';
 import AppInitializer from "../components/status/AppInitializer.jsx";
-import { GroupInitForm } from "../components/settings/GroupInitForm.jsx";
+import { GroupInitForm } from "../components/features/settings/GroupInitForm.jsx";
 
 import useAppStore from '../store/useAppStore.js';
 import useGroupStore from '../store/useGroupStore.js';

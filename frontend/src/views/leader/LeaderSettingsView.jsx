@@ -5,8 +5,8 @@ import useGroupStore from '../../store/useGroupStore.js';
 import { dutyApi } from '../../api/duty.js';
 import { IS_DEV } from '../../config.js';
 
-import GroupSettingsForm from '../../components/settings/GroupSettingsForm.jsx';
-import PersonalSettings from '../../components/settings/PersonalSettings.jsx';
+import GroupSettingsForm from '../../components/features/settings/GroupSettingsForm.jsx';
+import PersonalSettings from '../../components/features/settings/PersonalSettings.jsx';
 
 function LeaderSettingsView() {
   const user = useAppStore((state) => state.user);

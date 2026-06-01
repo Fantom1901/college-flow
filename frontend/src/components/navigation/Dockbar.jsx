@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { Home, StarIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
-import useAppStore from '../store/useAppStore';
-import { ExchangeIcon } from './icons/ExchangeIcon';
-import { SettingsIcon } from './icons/SetingsIcon.jsx';
-import { tgHaptics } from "../../services/telegram/index.js";
+import useAppStore from '../../store/useAppStore.js';
+import { ExchangeIcon } from '../icons/ExchangeIcon.jsx';
+import { SettingsIcon } from '../icons/SetingsIcon.jsx';
+import { tgHaptics } from "../../../services/telegram/index.js";
 
 /**
  * Функция строгого расчёта ширины докбара на основе количества вкладок.

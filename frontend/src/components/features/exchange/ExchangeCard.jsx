@@ -1,8 +1,8 @@
 import React from 'react';
 import { ArrowLeftRight } from 'lucide-react';
-import GlassCard from '../ui/cards/GlassCard.jsx';
-import MiniAvatar from '../ui/feedback/MiniAvatar.jsx';
-import Typography from '../ui/typography/Typography.jsx';
+import GlassCard from '../../ui/cards/GlassCard.jsx';
+import MiniAvatar from '../../ui/feedback/MiniAvatar.jsx';
+import Typography from '../../ui/typography/Typography.jsx';
 
 export const ExchangeCard = ({ request, children }) => {
   const initiatorName = request.initiator_duty?.student?.full_name || 'Неизвестно';

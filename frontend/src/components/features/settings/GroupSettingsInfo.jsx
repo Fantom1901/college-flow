@@ -1,7 +1,7 @@
 import React from 'react';
-import GlassCard from '../ui/cards/GlassCard.jsx';
-import WhiteCard from '../ui/cards/WhiteCard.jsx';
-import Typography from '../ui/typography/Typography.jsx';
+import GlassCard from '../../ui/cards/GlassCard.jsx';
+import WhiteCard from '../../ui/cards/WhiteCard.jsx';
+import Typography from '../../ui/typography/Typography.jsx';
 
 const DAY_LABELS = { 1: 'ПН', 2: 'ВТ', 3: 'СР', 4: 'ЧТ', 5: 'ПТ', 6: 'СБ', 7: 'ВС' };
 

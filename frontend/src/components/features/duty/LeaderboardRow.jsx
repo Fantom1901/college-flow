@@ -1,8 +1,8 @@
 import React from 'react';
-import WhiteCard from '../cards/WhiteCard.jsx';
-import MiniAvatar from '../feedback/MiniAvatar.jsx';
-import RankBadge from '../feedback/RankBadge.jsx';
-import Typography from '../typography/Typography.jsx';
+import WhiteCard from '../../ui/cards/WhiteCard.jsx';
+import MiniAvatar from '../../ui/feedback/MiniAvatar.jsx';
+import RankBadge from '../../ui/feedback/RankBadge.jsx';
+import Typography from '../../ui/typography/Typography.jsx';
 
 /**
  * LeaderboardRow - Строка одного студента в рейтинге

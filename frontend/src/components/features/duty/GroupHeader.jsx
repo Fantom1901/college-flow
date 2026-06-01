@@ -1,6 +1,6 @@
 import React from 'react';
-import useGroupStore from '../../store/useGroupStore.js';
-import Typography from '../ui/typography/Typography.jsx';
+import useGroupStore from '../../../store/useGroupStore.js';
+import Typography from '../../ui/typography/Typography.jsx';
 
 function GroupHeader({ isLoadingUser }) {
   const group = useGroupStore((state) => state.group);

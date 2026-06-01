@@ -1,7 +1,7 @@
 import React from 'react';
 import useGroupStore from '../../store/useGroupStore.js';
-import GroupSettingsInfo from '../../components/settings/GroupSettingsInfo.jsx';
-import PersonalSettings from '../../components/settings/PersonalSettings.jsx';
+import GroupSettingsInfo from '../../components/features/settings/GroupSettingsInfo.jsx';
+import PersonalSettings from '../../components/features/settings/PersonalSettings.jsx';
 
 function StudentSettingsView() {
   const group = useGroupStore((state) => state.group);

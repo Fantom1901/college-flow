@@ -2,8 +2,8 @@ import React from 'react';
 import useAppStore from '../../store/useAppStore.js';
 import useGroupStore from '../../store/useGroupStore.js';
 import DutyStack from "../../components/common/DutyStack.jsx";
-import GroupHeader from "../../components/common/GroupHeader.jsx";
-import Leaderboard from "../../components/common/Leaderboard.jsx";
+import GroupHeader from "../../components/features/duty/GroupHeader.jsx";
+import Leaderboard from "../../components/features/duty/Leaderboard.jsx";
 import { formatDutyDate } from '../../utils/dateFormatter.js';
 
 const HomeView = () => {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { tgHaptics } from "../../../services/telegram/index.js";
-import Typography from '../ui/typography/Typography.jsx';
-import SwitchRow from '../ui/toggles/SwitchRow.jsx';
+import { tgHaptics } from "../../../../services/telegram/index.js";
+import Typography from '../../ui/typography/Typography.jsx';
+import SwitchRow from '../../ui/toggles/SwitchRow.jsx';
 
 function PersonalSettings() {
   const [notify, setNotify] = useState(true);
