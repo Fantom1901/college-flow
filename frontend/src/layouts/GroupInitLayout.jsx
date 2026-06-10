@@ -134,6 +134,7 @@ const GroupInitLayout = () => {
   };
 
   // Хэндлер отправки второго шага (Список студентов)
+  // Хэндлер отправки второго шага (Список студентов)
   const handleStudentsSubmit = () => {
     if (bulkCreateMutation.isPending || currentStep !== 1) return;
     setErrorText('');
@@ -148,8 +149,11 @@ const GroupInitLayout = () => {
       return;
     }
 
+    // БЕРЕМ ID ИЗ СТОРА НАПРЯМУЮ, ЕСЛИ ЛОКАЛЬНЫЙ СТЭЙТ ПУСТОЙ
+    const currentGroupId = createdGroupId || useGroupStore.getState().group?.id || 1;
+
     bulkCreateMutation.mutate({
-      groupId: createdGroupId || 1, // Дефолт для дева, если упало
+      groupId: Number(currentGroupId),
       names: namesArray
     });
   };
