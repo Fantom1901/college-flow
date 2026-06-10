@@ -4,7 +4,7 @@
  */
 
 export const IS_DEV = true;
-export const MOCK_FORCE_INIT = true;
+export const MOCK_FORCE_INIT = false;
 
 /**
  * MOCK_USER - Текущая сессия пользователя.
