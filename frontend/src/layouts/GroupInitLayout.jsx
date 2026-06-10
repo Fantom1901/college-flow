@@ -12,7 +12,6 @@ import { simulateGroupInitialization } from '../../services/initApp.js';
 
 /**
  * GroupInitLayout - Страница первоначальной настройки группы куратором.
- * Синхронизирована со строгими типами Pydantic-модели GroupInitRequest на FastAPI.
  */
 const GroupInitLayout = () => {
   const queryClient = useQueryClient();
@@ -20,41 +19,16 @@ const GroupInitLayout = () => {
   const setNeedsGroupInit = useAppStore((state) => state.setNeedsGroupInit);
   const [errorText, setErrorText] = useState('');
 
-  // Предохранитель от двойных кликов/отправок при перерендере
   const isSuccessfullyDispatched = useRef(false);
 
   const mutation = useMutation({
-    mutationFn: async (payload) => {
-      // Если запущен локальный сервер Vite (DEV), уходим в симулятор
+    mutationFn: async (fullPayload) => {
       if (import.meta.env.DEV) {
-        return simulateGroupInitialization(payload, queryClient);
+        return simulateGroupInitialization(fullPayload, queryClient);
       }
 
-      // ИСПРАВЛЕНО: Сначала жестко берём инвайт-код из официального Telegram SDK (start_param),
-      // так как на мобилках в URL параметров tgWebAppStartParam или startapp просто НЕТ.
-      const inviteCode =
-        window.Telegram?.WebApp?.initDataUnsafe?.start_param ||
-        new URLSearchParams(window.location.search).get('tgWebAppStartParam') ||
-        new URLSearchParams(window.location.search).get('startapp') ||
-        'default_curator_code';
-
-      // Гарантируем получение числового Telegram ID
-      const rawTgId = user?.tg_id || window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-      const cleanTgId = rawTgId ? parseInt(rawTgId, 10) : null;
-
-      // Валидация перед отправкой, чтобы фронт не слал заведомый мусор
-      if (!cleanTgId || isNaN(cleanTgId)) {
-        throw new Error('Критическая ошибка: Не удалось определить твой Telegram ID для регистрации профиля.');
-      }
-
-      // ПРОД: Отправляем строго по спецификации OpenAPI схемы GroupInitRequest
-      return groupsApi.initGroup({
-        invite_code: String(inviteCode).trim(),
-        full_name: String(payload.fullName).trim(),
-        group_name: String(payload.groupName).trim(),
-        tg_id: cleanTgId, // Обязательный integer
-        username: user?.username || window.Telegram?.WebApp?.initDataUnsafe?.user?.username || null // Опциональный string/null
-      });
+      // Отправляем на бэк полностью готовый и валидный объект
+      return groupsApi.initGroup(fullPayload);
     },
     onSuccess: (data, variables) => {
       isSuccessfullyDispatched.current = true;
@@ -65,38 +39,31 @@ const GroupInitLayout = () => {
         const { setGroup } = useGroupStore.getState();
         const { setUser } = useAppStore.getState();
 
-        // Схема GroupInitResponse возвращает group_id и group_name
         setGroup({
           id: data.group_id,
           name: data.group_name,
-          students: [] // Изначально группа пустая, студенты зайдут сами по инвайтам
+          students: []
         });
 
-        // Синхронизируем сессию куратора в стейте
         setUser({
           ...user,
           curator_profile: {
-            id: data.group_id, // Привязываем временный ID профиля
-            full_name: variables.fullName,
+            id: data.group_id,
+            full_name: variables.full_name,
             group_id: data.group_id
           }
         });
 
-        // Сбрасываем кэши React Query для обновления данных во всем приложении
         queryClient.invalidateQueries({ queryKey: ['userMe'] });
         queryClient.invalidateQueries({ queryKey: ['myGroup'] });
       }
 
-      // Закрываем экран инициализации, пускаем куратора в панель управления
       setNeedsGroupInit(false);
     },
     onError: (err) => {
       if (tgHaptics?.notification) tgHaptics.notification('error');
-
-      // Логируем полную ошибку в консоль TMA, чтобы было легче дебажить через Eruda/VConsole
       console.error('[GroupInit] Ошибка при отправке запроса:', err?.response?.data || err);
 
-      // Парсим ошибки валидации FastAPI (они лежат в массиве detail)
       let backendMessage = '';
       if (err?.response?.data?.detail && Array.isArray(err.response.data.detail)) {
         backendMessage = err.response.data.detail
@@ -111,13 +78,40 @@ const GroupInitLayout = () => {
   });
 
   /**
-   * Передача данных заполненной формы в триггер мутации React Query.
-   * @param {Object} formData - Объект с полями fullName и groupName
+   * Обработка отправки формы
+   * @param {Object} formData - Данные из инпута (fullName, groupName)
    */
   const handleFormSubmit = (formData) => {
     if (isSuccessfullyDispatched.current || mutation.isPending) return;
     setErrorText('');
-    mutation.mutate(formData);
+
+    // 1. Извлекаем инвайт-код из Telegram SDK (на мобилках) или параметров строки
+    const inviteCode =
+      window.Telegram?.WebApp?.initDataUnsafe?.start_param ||
+      new URLSearchParams(window.location.search).get('tgWebAppStartParam') ||
+      new URLSearchParams(window.location.search).get('startapp') ||
+      'default_curator_code';
+
+    // 2. Получаем ID пользователя
+    const rawTgId = user?.tg_id || window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+    const cleanTgId = rawTgId ? parseInt(rawTgId, 10) : null;
+
+    if (!cleanTgId || isNaN(cleanTgId)) {
+      setErrorText('Критическая ошибка: Не удалось определить ваш Telegram ID.');
+      return;
+    }
+
+    // 3. Формируем чистый payload строго под Pydantic-модель бэкенда
+    const fullPayload = {
+      invite_code: String(inviteCode).trim(),
+      full_name: String(formData.fullName).trim(),
+      group_name: String(formData.groupName).trim(),
+      tg_id: cleanTgId,
+      username: user?.username || window.Telegram?.WebApp?.initDataUnsafe?.user?.username || null
+    };
+
+    // Запускаем отправку
+    mutation.mutate(fullPayload);
   };
 
   return (
