@@ -14,7 +14,7 @@ import CyberStepper from '../components/ui/feedback/CyberStepper.jsx';
 
 import useAppStore from '../store/useAppStore.js';
 import useGroupStore from '../store/useGroupStore.js';
-import { groupsApi } from '../api/groups.js'; // Убедись, что тут есть bulkCreate
+import { inviteApi } from '../api/invite.js'; // Убедись, что тут есть bulkCreate
 import { tgHaptics } from "../../services/telegram/index.js";
 import { simulateGroupInitialization } from '../../services/initApp.js';
 
@@ -87,11 +87,8 @@ const GroupInitLayout = () => {
   // МУТАЦИЯ 2: Массовое создание студентов
   const bulkCreateMutation = useMutation({
     mutationFn: async ({ groupId, names }) => {
-      if (import.meta.env.DEV) {
-        return names.map((name, i) => ({ name, link: `https://t.me/bot?start=std_${groupId}_${i}` }));
-      }
-      // Передаем в API правильное имя поля: group_id
-      return groupsApi.bulkCreate(groupId, names);
+      // ВАЖНО: вызываем inviteApi, как ты и просил
+      return inviteApi.bulkCreate(groupId, names);
     },
     onSuccess: (data) => {
       if (tgHaptics?.notification) tgHaptics.notification('success');
@@ -101,7 +98,7 @@ const GroupInitLayout = () => {
     onError: (err) => {
       if (tgHaptics?.notification) tgHaptics.notification('error');
       console.error('[BulkCreate] Error:', err?.response?.data || err);
-      setErrorText(err?.response?.data?.detail || 'Ошибка при генерации ссылок.');
+      setErrorText(err?.response?.data?.detail || 'Ошибка генерации.');
     }
   });
 
