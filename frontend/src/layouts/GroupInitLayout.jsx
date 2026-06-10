@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import TelegramSafeProvider from '../providers/TelegramSafeProvider.jsx';
 import AppInitializer from "../components/status/AppInitializer.jsx";
@@ -20,18 +20,23 @@ const GroupInitLayout = () => {
   const setNeedsGroupInit = useAppStore((state) => state.setNeedsGroupInit);
   const [errorText, setErrorText] = useState('');
 
+  // Предохранитель от двойных кликов/отправок при перерендере
+  const isSuccessfullyDispatched = useRef(false);
+
   const mutation = useMutation({
     mutationFn: async (payload) => {
-      // payload содержит: { fullName: "...", groupName: "..." }
-
       // Если запущен локальный сервер Vite (DEV), уходим в симулятор
       if (import.meta.env.DEV) {
         return simulateGroupInitialization(payload, queryClient);
       }
 
-      // Достаем инвайт-код из URL (если куратор зашел по ссылке вида ?startapp=code или ?tgWebAppStartParam=code)
-      const urlParams = new URLSearchParams(window.location.search);
-      const inviteCode = urlParams.get('tgWebAppStartParam') || urlParams.get('startapp') || 'default_curator_code';
+      // ИСПРАВЛЕНО: Сначала жестко берём инвайт-код из официального Telegram SDK (start_param),
+      // так как на мобилках в URL параметров tgWebAppStartParam или startapp просто НЕТ.
+      const inviteCode =
+        window.Telegram?.WebApp?.initDataUnsafe?.start_param ||
+        new URLSearchParams(window.location.search).get('tgWebAppStartParam') ||
+        new URLSearchParams(window.location.search).get('startapp') ||
+        'default_curator_code';
 
       // Гарантируем получение числового Telegram ID
       const rawTgId = user?.tg_id || window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
@@ -52,6 +57,8 @@ const GroupInitLayout = () => {
       });
     },
     onSuccess: (data, variables) => {
+      isSuccessfullyDispatched.current = true;
+
       if (tgHaptics?.notification) tgHaptics.notification('success');
 
       if (!import.meta.env.DEV) {
@@ -108,6 +115,7 @@ const GroupInitLayout = () => {
    * @param {Object} formData - Объект с полями fullName и groupName
    */
   const handleFormSubmit = (formData) => {
+    if (isSuccessfullyDispatched.current || mutation.isPending) return;
     setErrorText('');
     mutation.mutate(formData);
   };
@@ -118,7 +126,7 @@ const GroupInitLayout = () => {
         <div className="flex-1 w-full flex flex-col items-center justify-center py-6 overflow-y-auto scrollbar-none">
           <GroupInitForm
             onSubmit={handleFormSubmit}
-            isLoading={mutation.isPending}
+            isLoading={mutation.isPending || isSuccessfullyDispatched.current}
             error={errorText}
           />
         </div>
