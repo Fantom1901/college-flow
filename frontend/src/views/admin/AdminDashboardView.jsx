@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
 import { tgAlerts, tgBiometrics, tgHaptics } from '../../../services/telegram';
+// Импортируем наш API инвайтов
+import { inviteApi } from '../../api/invite.js'; // Скорректируй путь к файлу, если нужно
 
 const AdminDashboardView = () => {
   const [biometricStatus, setBiometricStatus] = useState('Не проверялось');
   const [bioType, setBioType] = useState('unknown');
+
+  // Состояния для инвайта куратора
+  const [curatorLink, setCuratorLink] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const testHaptic = (type, style) => {
     if (type === 'notification') {
@@ -35,6 +41,41 @@ const AdminDashboardView = () => {
       tgHaptics.notification('error');
       tgAlerts.showAlert('Отказ в аутентификации или ошибка.');
     }
+  };
+
+  // Метод генерации ссылки для куратора
+  const generateCuratorLink = async () => {
+    setIsGenerating(true);
+    try {
+      tgHaptics.impact('light');
+      const data = await inviteApi.createCuratorLink();
+
+      // Согласно схеме CuratorInviteResponse возвращается объект { link: "string" }
+      if (data && data.link) {
+        setCuratorLink(data.link);
+        tgHaptics.notification('success');
+      } else {
+        throw new Error('Ссылка отсутствует в ответе сервера');
+      }
+    } catch (error) {
+      console.error(error);
+      tgHaptics.notification('error');
+      tgAlerts.showAlert('Не удалось сгенерировать ссылку для куратора.');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  // Хелпер для быстрого копирования инвайта
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        tgHaptics.notification('success');
+        tgAlerts.showAlert('Ссылка скопирована в буфер обмена!');
+      })
+      .catch(() => {
+        tgAlerts.showAlert(`Скопируйте вручную: ${text}`);
+      });
   };
 
   return (
@@ -115,7 +156,6 @@ const AdminDashboardView = () => {
         </div>
         <button
           onClick={testBiometricsInit}
-
           className="w-full py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-medium transition-all"
         >
           Шаг 1: Инициализировать менеджер
@@ -127,6 +167,31 @@ const AdminDashboardView = () => {
           Шаг 2: Запросить отпечаток / лицо
         </button>
       </div>
+
+      {/* Блок приглашений (Новый) */}
+      <div className="flex flex-col gap-2 bg-white/5 p-4 rounded-2xl border border-white/10">
+        <h3 className="text-sm font-semibold mb-1 text-purple-200">4. Управление инвайтами</h3>
+        <button
+          onClick={generateCuratorLink}
+          disabled={isGenerating}
+          className="w-full py-2.5 bg-fuchsia-600/40 hover:bg-fuchsia-600/60 border border-fuchsia-500/30 rounded-xl text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isGenerating ? 'Генерация...' : 'Создать ссылку для куратора'}
+        </button>
+
+        {curatorLink && (
+          <div
+            onClick={() => copyToClipboard(curatorLink)}
+            className="mt-2 p-3 bg-fuchsia-950/40 border border-fuchsia-500/20 rounded-xl cursor-pointer hover:bg-fuchsia-950/60 transition-all flex flex-col gap-1 group"
+          >
+            <span className="text-[10px] uppercase tracking-wider text-fuchsia-400 font-semibold">Ссылка создана (Нажмите, чтобы скопировать):</span>
+            <span className="text-xs font-mono break-all text-white/90 group-hover:text-white">
+              {curatorLink}
+            </span>
+          </div>
+        )}
+      </div>
+
     </div>
   );
 };
