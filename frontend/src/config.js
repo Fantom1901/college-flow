@@ -4,7 +4,7 @@
  */
 
 export const IS_DEV = true;
-export const MOCK_FORCE_INIT = false;
+export const MOCK_FORCE_INIT = true;
 
 /**
  * MOCK_USER - Текущая сессия пользователя.
@@ -14,7 +14,7 @@ export const MOCK_USER = {
   id: 1337,
   tg_id: 123456789,
   username: 'fantom',
-  role: 'admin', // Допустимые роли по OpenAPI: "admin", "curator", "leader", "student"
+  role: 'curator', // Допустимые роли по OpenAPI: "admin", "curator", "leader", "student"
   student_profile: 1,
   curator_profile: {
     full_name: 'Петрова Анна Николаевна',
