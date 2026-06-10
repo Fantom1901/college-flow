@@ -88,8 +88,9 @@ async def init_group(
   result = await db.execute(stmt)
   invite = result.scalar_one_or_none()
 
-  if not invite or invite.role != UserRole.CURATOR:
-    raise HTTPException(status_code=403, detail="Неверный код приглашения")
+  # ДОБАВЛЯЕМ ПРОВЕРКУ: если инвайта нет, роль не та ИЛИ ОН УЖЕ ИСПОЛЬЗОВАН
+  if not invite or invite.role != UserRole.CURATOR or invite.is_used:
+    raise HTTPException(status_code=403, detail="Код приглашения недействителен или уже использован")
 
   try:
     stmt_user = select(User).where(User.tg_id == data.tg_id)
