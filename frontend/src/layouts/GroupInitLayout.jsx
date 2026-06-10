@@ -84,22 +84,23 @@ const GroupInitLayout = () => {
     }
   });
 
-  // МУТАЦИЯ 2: Массовое создание студентов (Вызывается на шаге 1)
+  // МУТАЦИЯ 2: Массовое создание студентов
   const bulkCreateMutation = useMutation({
     mutationFn: async ({ groupId, names }) => {
-      // Твой роут: api.post('v1/invite/bulk-create', { group_id: groupId, names })
       if (import.meta.env.DEV) {
         return names.map((name, i) => ({ name, link: `https://t.me/bot?start=std_${groupId}_${i}` }));
       }
+      // Передаем в API правильное имя поля: group_id
       return groupsApi.bulkCreate(groupId, names);
     },
     onSuccess: (data) => {
       if (tgHaptics?.notification) tgHaptics.notification('success');
       setGeneratedLinks(data);
-      setCurrentStep(2); // Двигаем на экран со ссылками
+      setCurrentStep(2);
     },
     onError: (err) => {
       if (tgHaptics?.notification) tgHaptics.notification('error');
+      console.error('[BulkCreate] Error:', err?.response?.data || err);
       setErrorText(err?.response?.data?.detail || 'Ошибка при генерации ссылок.');
     }
   });
@@ -135,6 +136,7 @@ const GroupInitLayout = () => {
 
   // Хэндлер отправки второго шага (Список студентов)
   // Хэндлер отправки второго шага (Список студентов)
+// Хэндлер отправки второго шага (Список студентов)
   const handleStudentsSubmit = () => {
     if (bulkCreateMutation.isPending || currentStep !== 1) return;
     setErrorText('');
@@ -149,14 +151,21 @@ const GroupInitLayout = () => {
       return;
     }
 
-    // БЕРЕМ ID ИЗ СТОРА НАПРЯМУЮ, ЕСЛИ ЛОКАЛЬНЫЙ СТЭЙТ ПУСТОЙ
-    const currentGroupId = createdGroupId || useGroupStore.getState().group?.id || 1;
+    // Железобетонно берем ID группы
+    const currentGroupId = createdGroupId || useGroupStore.getState().group?.id;
 
+    if (!currentGroupId) {
+      setErrorText('Ошибка: ID группы не найден. Перезапустите страницу.');
+      return;
+    }
+
+    // ВНИМАНИЕ: Передаем ключ group_id ровно так, как ждет axios и Pydantic!
     bulkCreateMutation.mutate({
-      groupId: Number(currentGroupId),
+      groupId: Number(currentGroupId), // для мутации локально
       names: namesArray
     });
   };
+
 
   // Финальный клик «Готово» на 3 шаге
   const handleFinalFinish = () => {
