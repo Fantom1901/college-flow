@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import GlassCard from '../ui/cards/GlassCard.jsx';
 import Typography from '../ui/typography/Typography.jsx';
+import CyberLoader from '../ui/loaders/CyberLoader.jsx'; // Корректный импорт твоего нового лоадера
 
-const AppLoader = () => {
+/**
+ * AppLoader - Профессиональный экран инициализации приложения.
+ * Интегрирован с футуристичным CyberLoader и дизайн-системой проекта.
+ * * @param {string} status - Статус загрузки для CyberLoader ('loading' | 'success' | 'error')
+ * @param {string} text - Кастомный текст инициализации под спиннером
+ */
+const AppLoader = ({ status = 'loading', text = 'Инициализация приложения...' }) => {
   const [isMinimumLoadingDone, setIsMinimumLoadingDone] = useState(false);
 
   useEffect(() => {
-    // Принудительно держим лоадер минимум 1 секунду
+    // Гарантированно держим лоадер на экране минимум 1 секунду для плавности анимации
     const timer = setTimeout(() => {
       setIsMinimumLoadingDone(true);
     }, 1000);
@@ -14,17 +21,14 @@ const AppLoader = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Если приложение уже загрузилось (но мы еще не дождались таймера),
-  // или если мы хотим просто контролировать это извне,
-  // тут можно добавить проверку props.isLoaded.
-  // Но для текущей задачи — таймер отрабатывает идеально.
-
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4">
-      <GlassCard variant="form" className="items-center text-center gap-4">
-        <div className="w-8 h-8 border-4 border-t-transparent border-white rounded-full animate-spin" />
-        <Typography variant="body" className="opacity-80">
-          Инициализация приложения...
+      <GlassCard variant="form" className="items-center text-center gap-5 p-6">
+        {/* Твой кастомный кибер-лоадер вместо дефолтной крутилки */}
+        <CyberLoader status={status} />
+
+        <Typography variant="body" className="opacity-80 font-bold tracking-wide">
+          {text}
         </Typography>
       </GlassCard>
     </div>
