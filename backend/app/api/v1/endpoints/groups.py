@@ -8,8 +8,9 @@ from app.models.invite import InviteLink
 from app.models.curator import Curator
 from app.models.group import Group
 from app.models.role import UserRole
-# Импортируй свои Pydantic схемы (измени пути, если они другие)
-from app.schemas.groups import GroupInitRequest, GroupInitResponse
+
+# ИСПРАВЛЕНО: Импорт схем из правильного модуля (в единственном числе)
+from app.schemas.group import GroupInitRequest, GroupInitResponse
 
 router = APIRouter()
 
