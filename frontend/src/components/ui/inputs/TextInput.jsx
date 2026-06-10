@@ -32,22 +32,10 @@ const TextInput = ({
                    }) => {
   const [isFocused, setIsFocused] = useState(false);
 
-  // Вызов haptic-вибрации при обнаружении ошибки
-  useEffect(() => {
-    if (errorText) {
-      tgHaptics.notification('error');
-      if (onError) onError(errorText);
-    }
-  }, [errorText, onError]);
-
-  // Обработчик ввода с эффектом механического клика Apple клавиатуры
+  // Обработчик изменения текста (без тактильного спама)
   const handleInputChange = (e) => {
     const newValue = e.target.value;
     onChange?.(newValue);
-    // Ультра-легкий тактильный клик на каждый ввод символа для ощущения физического интерфейса
-    if (newValue.length !== value?.length) {
-      tgHaptics.selection();
-    }
   };
 
   // Пересчитанные цвета для состояний под светлый/стеклянный фон
@@ -59,34 +47,28 @@ const TextInput = ({
       return 'bg-accent-red/10 border-accent-red text-slate-900 placeholder-accent-red/40 focus:border-accent-red focus:shadow-[0_0_20px_rgba(255,69,58,0.2)]';
     }
     if (isFocused) {
-      // Чистое, глубокое светлое матовое стекло при фокусе, без грязной черноты
       return 'bg-white/60 backdrop-blur-xl border-slate-950 text-slate-950 placeholder-slate-900/30 shadow-[0_8px_32px_rgba(0,0,0,0.12)]';
     }
-    // Дефолтное состояние: контрастный темный текст на матовой светлой подложке
     return 'bg-white/40 backdrop-blur-md border-slate-900/15 text-slate-900 placeholder-slate-900/40 hover:border-slate-900/30 hover:bg-white/50';
   };
 
   return (
-    // Оригинальный motion.div для физического отклика всей карточки на нажатие
     <motion.div
       whileTap={disabled ? {} : { scale: 0.99 }}
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
       className={`w-full flex flex-col gap-1.5 ${className}`}
     >
-      {/* Лейбл изменен на темный Slate для читаемости */}
       {label && (
         <label className="text-[11px] font-black italic tracking-wider text-slate-700 uppercase pl-1 select-none transition-colors duration-300">
           {label}
         </label>
       )}
 
-      {/* Оболочка инпута */}
       <div className="relative w-full">
-        {/* Анимированная левая иконка с оригинальным микро-смещением по X */}
         {icon && (
           <motion.div
             animate={{
-              x: isFocused ? 2 : 0, // Иконка делает шаг вправо при фокусе
+              x: isFocused ? 2 : 0,
               scale: isFocused ? 1.05 : 1
             }}
             transition={{ type: 'spring', stiffness: 350, damping: 25 }}
@@ -100,15 +82,11 @@ const TextInput = ({
           </motion.div>
         )}
 
-        {/* Нативный input с твоим оригинальным онфокусом */}
         <input
           type={type}
           value={value}
           onChange={handleInputChange}
-          onFocus={() => {
-            setIsFocused(true);
-            tgHaptics.selection(); // Возвращен легкий клик при фокусе
-          }}
+          onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           placeholder={placeholder}
           disabled={disabled}
@@ -131,7 +109,6 @@ const TextInput = ({
         />
       </div>
 
-      {/* Оригинальный плавный выезд ошибки с физикой яблочной пружины */}
       <AnimatePresence>
         {errorText && (
           <motion.span
