@@ -9,7 +9,7 @@ from app.models.curator import Curator
 from app.models.group import Group
 from app.models.role import UserRole
 
-# ИСПРАВЛЕНО: Импорт схем из правильного модуля (в единственном числе)
+# Чистый импорт из обновленного файла схем
 from app.schemas.group import GroupInitRequest, GroupInitResponse
 
 router = APIRouter()
